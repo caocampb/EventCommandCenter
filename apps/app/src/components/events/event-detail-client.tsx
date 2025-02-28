@@ -62,15 +62,6 @@ function InfoItem({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
-// Coming soon badge for MVP features in development
-function ComingSoonBadge() {
-  return (
-    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
-      Coming Soon
-    </span>
-  );
-}
-
 interface EventDetailProps {
   event: Event;
 }
@@ -144,18 +135,32 @@ export default function EventDetailClient({ event }: EventDetailProps) {
             >
               Edit Event
             </Link>
-            <Link 
-              href={`/en/events/${event.id}/timeline`}
-              className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
-            >
-              <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
-                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2" />
-                <line x1="9" y1="2" x2="9" y2="6" stroke="currentColor" strokeWidth="2" />
-                <line x1="15" y1="2" x2="15" y2="6" stroke="currentColor" strokeWidth="2" />
-              </svg>
-              Timeline
-            </Link>
+            <div className="flex gap-3">
+              <Link 
+                href={`/en/events/${event.id}/timeline`}
+                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
+              >
+                <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" strokeWidth="2" />
+                  <line x1="9" y1="2" x2="9" y2="6" stroke="currentColor" strokeWidth="2" />
+                  <line x1="15" y1="2" x2="15" y2="6" stroke="currentColor" strokeWidth="2" />
+                </svg>
+                Timeline
+              </Link>
+              <Link 
+                href={`/en/events/${event.id}/vendors`}
+                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
+              >
+                <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17 21V19C17 16.7909 15.2091 15 13 15H5C2.79086 15 1 16.7909 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M23 21V19C22.9986 17.1771 21.765 15.5857 20 15.13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16 3.13C17.7699 3.58317 19.0078 5.17799 19.0078 7.005C19.0078 8.83201 17.7699 10.4268 16 10.88" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Vendors
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -215,29 +220,6 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               } 
             />
           )}
-        </div>
-        
-        {/* Future features - marked clearly */}
-        <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-          <div className="flex justify-between items-center mb-3">
-            <SectionHeader title="Timeline" />
-            <ComingSoonBadge />
-          </div>
-          
-          <p className="text-gray-400 text-sm">
-            In the future, you'll be able to create detailed timeline blocks for your event here.
-          </p>
-          
-          <div className="mt-4 border-t border-[#1F1F1F] pt-4">
-            <div className="flex justify-between items-center mb-3">
-              <SectionHeader title="Vendors" />
-              <ComingSoonBadge />
-            </div>
-            
-            <p className="text-gray-400 text-sm">
-              Vendor management will be available in an upcoming update.
-            </p>
-          </div>
         </div>
       </div>
     </div>

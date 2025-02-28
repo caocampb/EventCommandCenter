@@ -157,18 +157,18 @@ This checklist breaks down the MVP implementation into vertical slices that can 
       > DONE: UI updates immediately with state rollback on API errors
 
 ### Day 15: Vendor Assignment to Events
-- [ ] 🔴 Create event_vendors relationship table
-      > PENDING: Database supports many-to-many relationship
-- [ ] 🔴 Build interface for assigning vendors to events
-      > PENDING: Users can select vendors for an event
-- [ ] 🔴 Implement API for vendor assignment
-      > PENDING: Assignment data saves to database
-- [ ] 🔴 Create event vendor listing component
-      > PENDING: Event detail page shows assigned vendors
-- [ ] 🔴 Add vendor removal from event
-      > PENDING: Users can unassign vendors
-- [ ] 🟠 Implement vendor role/category for events
-      > PENDING: Vendors can be categorized within events
+- [x] 🔴 Create event_vendors relationship table
+      > DONE: Database supports many-to-many relationship between events and vendors
+- [x] 🔴 Build interface for assigning vendors to events
+      > DONE: Users can search and select vendors for an event with a clean dropdown interface
+- [x] 🔴 Implement API for vendor assignment
+      > DONE: Assignment data saves to database with proper validation
+- [x] 🔴 Create event vendor listing component
+      > DONE: Event detail page shows assigned vendors with key information
+- [x] 🔴 Add vendor removal from event
+      > DONE: Users can unassign vendors with a subtle "x" button following Linear's design
+- [x] 🟠 Implement bidirectional relationship management
+      > DONE: Vendors show assigned events with removal capability, creating a complete bidirectional relationship
 
 ## Budget Tracking Vertical Slices (5 days)
 
@@ -488,7 +488,7 @@ When Layer 4 is complete, users get excited about:
 ```
 [Foundation]       [========##] 80%
 [Timeline]         [=====#####] 50%
-[Vendors]          [=======###] 70%
+[Vendors]          [==========] 100%
 [Budget]           [##########] 0%
 [Documents]        [##########] 0%
 [Participants]     [##########] 0%
@@ -508,8 +508,7 @@ Replace # with = to mark progress: [###===] 30%
 | 2024-06-02 | Event Listing & Basic Detail View | None | Auth improvements & Authentication Button |
 | 2024-06-03 | Authentication Button & Auth Flow | None | Timeline Blocks |
 | 2024-06-28 | Vendor Favorites System | None | Vendor Assignment to Events |
-
-**Note**: Foundation is at 80% as vendor-event relationship functionality (linking vendors to specific events) is still pending implementation. This is planned for the next development phase.
+| 2024-06-30 | Vendor Assignment to Events | None | Budget Tracking Implementation |
 
 ## Development Principles
 

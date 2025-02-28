@@ -35,36 +35,55 @@ type EventDbRow = {
 };
 
 // GET /api/events - Get all events
-export async function GET() {
+export async function GET(request: Request) {
   try {
     console.log("GET /api/events - Starting request");
+    
+    // Get URL params for filtering
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search') || '';
+    const exclude = url.searchParams.get('exclude') || '';
+    
+    console.log(`Search param: ${search}, Exclude param: ${exclude}`);
+    
     // TEMPORARY FOR MVP DEVELOPMENT:
     // Use service role client to bypass RLS policies during development
     // TODO: Implement proper authentication before production
     
-    // Fetch events using service role client to bypass RLS
-    const { data, error } = await serviceRoleClient
+    // Start the query
+    let query = serviceRoleClient
       .from("events")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .select("*");
     
-    console.log("GET response:", { data, error });
-      
+    // Apply filters if present
+    if (search) {
+      query = query.ilike('name', `%${search}%`);
+    }
+    
+    // Exclude events if IDs are provided
+    if (exclude) {
+      const excludeIds = exclude.split(',').filter(id => id.trim() !== '');
+      if (excludeIds.length > 0) {
+        query = query.not('id', 'in', `(${excludeIds.join(',')})`);
+      }
+    }
+    
+    // Order the results
+    query = query.order("created_at", { ascending: false });
+    
+    // Execute the query
+    const { data, error } = await query;
+    
     if (error) {
       console.error("Error fetching events:", error);
       return NextResponse.json(
-        { error: "Failed to fetch events: " + error.message },
+        { error: "Failed to fetch events" },
         { status: 500 }
       );
     }
     
-    // If no data or empty array, return empty array
-    if (!data || data.length === 0) {
-      return NextResponse.json({ data: [] });
-    }
-    
-    // Map column names to camelCase for frontend
-    const events = data.map((event: EventDbRow) => ({
+    // Transform database model to API response (camelCase)
+    const transformedData = (data || []).map((event: EventDbRow) => ({
       id: event.id,
       name: event.name,
       startDate: event.start_date,
@@ -76,14 +95,14 @@ export async function GET() {
       type: event.type,
       parentEventId: event.parent_event_id,
       createdAt: event.created_at,
-      updatedAt: event.updated_at,
+      updatedAt: event.updated_at
     }));
     
-    return NextResponse.json({ data: events });
+    return NextResponse.json({ data: transformedData });
   } catch (error) {
-    console.error("Error in events GET route:", error);
+    console.error("Error in GET /api/events:", error);
     return NextResponse.json(
-      { error: "Internal server error: " + (error instanceof Error ? error.message : String(error)) },
+      { error: "An unexpected error occurred" },
       { status: 500 }
     );
   }

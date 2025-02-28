@@ -213,6 +213,37 @@ Implications: Expected effects of this decision (optional)
 - Star icons maintain consistent styling and placement across all views
 - Filter controls follow a unified pattern that can be extended to other modules
 
+### 2024-06-30: Bidirectional Event-Vendor Relationship with Linear-Style UI
+
+**Context**: Needed to implement a relationship between events and vendors that allows management from both sides of the relationship while maintaining a clean, consistent UI.
+
+**Decision**: Created a bidirectional relationship management system with these key features:
+1. Junction table (`event_vendors`) to support many-to-many relationships
+2. API endpoints supporting operations from both sides (vendor-to-event and event-to-vendor)
+3. Inline vendor assignment with real-time search filtering 
+4. Subtle "x" removal buttons that appear on hover for both directions
+5. Optimistic UI updates for immediate feedback
+
+**Reasoning**:
+- Following Linear's design philosophy of contextual UI that only appears when relevant
+- A true bidirectional relationship makes management intuitive from both perspectives
+- Subtle UI elements maintain a clean interface while still providing necessary functionality
+- Optimistic updates create a responsive feel even when network operations take time
+- Consistent styling across both relationship directions maintains UI coherence
+
+**Implications**:
+- Users can efficiently manage assignments from either the event or vendor perspective
+- The consistent removal UI creates a predictable mental model for relationship management
+- The optimistic UI approach will be reused in other relationship management features
+- The established search and filtering pattern provides a foundation for other selection interfaces
+
+**Technical Implementation**:
+- The junction table approach allows for future extensions (like adding roles or notes)
+- Search-driven dropdowns follow the same pattern for consistency and future reuse
+- API endpoints handle both data validation and optimistic UI error scenarios
+- Hover-based UI elements reduce visual clutter without sacrificing functionality
+- TypeScript interfaces ensure consistent data handling across components
+
 ## When to Add Entries
 
 Add entries to this log when you:
