@@ -81,8 +81,10 @@ export async function PATCH(
 ) {
   try {
     const id = params.id;
+    console.log("PATCH request received for event ID:", id);
     
     if (!id) {
+      console.error("No event ID provided in params");
       return NextResponse.json(
         { error: "Event ID is required" },
         { status: 400 }
@@ -92,12 +94,12 @@ export async function PATCH(
     // Parse and validate request body
     const body = await request.json();
     
-    console.log("Updating event data:", JSON.stringify(body, null, 2));
+    console.log("PATCH: Received event data:", JSON.stringify(body, null, 2));
     
     const validationResult = eventSchema.safeParse(body);
     
     if (!validationResult.success) {
-      console.error("Validation error:", validationResult.error.format());
+      console.error("PATCH: Validation error:", validationResult.error.format());
       return NextResponse.json(
         { error: "Validation error", details: validationResult.error.format() },
         { status: 400 }
@@ -105,8 +107,10 @@ export async function PATCH(
     }
     
     const validatedData = validationResult.data;
+    console.log("PATCH: Validated data:", validatedData);
     
     // Map camelCase to snake_case for database columns
+    console.log("PATCH: About to update database record");
     const { data, error } = await serviceRoleClient
       .from("events")
       .update({
@@ -124,8 +128,10 @@ export async function PATCH(
       .eq("id", id)
       .select();
     
+    console.log("PATCH: Database response:", { data, error });
+    
     if (error) {
-      console.error("Error updating event:", error);
+      console.error("PATCH: Error updating event:", error);
       return NextResponse.json(
         { error: "Failed to update event: " + error.message },
         { status: 500 }
@@ -133,6 +139,7 @@ export async function PATCH(
     }
     
     if (!data || data.length === 0) {
+      console.error("PATCH: No data returned after update");
       return NextResponse.json(
         { error: "Event not found" },
         { status: 404 }
@@ -155,6 +162,7 @@ export async function PATCH(
       updatedAt: data[0].updated_at,
     };
     
+    console.log("PATCH: Successfully updated event, returning:", updatedEvent.id);
     return NextResponse.json({ data: updatedEvent });
   } catch (error) {
     console.error("Error in event PATCH route:", error);

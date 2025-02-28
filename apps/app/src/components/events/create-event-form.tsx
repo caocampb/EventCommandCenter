@@ -35,12 +35,17 @@ export function CreateEventForm({
     description?: string;
     type?: string;
     parentEventId?: string;
+    createdAt?: string;
+    updatedAt?: string;
   };
   mode?: 'create' | 'edit';
 }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Log that the component rendered with the correct mode and data
+  console.log(`CreateEventForm rendered in ${mode} mode`, event?.id);
 
   // Set default dates properly formatted for datetime-local input
   const now = new Date();
@@ -62,6 +67,9 @@ export function CreateEventForm({
       parentEventId: event?.parentEventId,
     },
   });
+
+  // Log validation errors when they occur
+  console.log("Current form errors:", form.formState.errors);
 
   // Handle API errors consistently
   const handleApiError = useCallback(async (response: Response) => {
@@ -88,16 +96,24 @@ export function CreateEventForm({
     setError(null);
 
     try {
-      // Format dates properly for API submission
+      // Format dates properly for API submission and clean nullish values
       const apiValues = {
         ...values,
         startDate: formatDateForAPI(values.startDate),
         endDate: formatDateForAPI(values.endDate),
+        // Ensure type and parentEventId are properly handled
+        type: values.type || undefined,
+        parentEventId: values.parentEventId || undefined,
       };
 
+      // Add debugging logs
+      console.log("Form submitted in mode:", mode);
+      console.log("Form values:", apiValues);
+      
       let response;
       
       if (mode === 'create') {
+        console.log("Creating new event");
         // Create new event
         response = await fetch("/api/events", {
           method: "POST",
@@ -108,7 +124,11 @@ export function CreateEventForm({
         });
       } else {
         // Update existing event
-        response = await fetch(`/api/events/${event!.id}`, {
+        console.log("Updating event with ID:", event?.id);
+        const updateUrl = `/api/events/${event!.id}`;
+        console.log("Update URL:", updateUrl);
+        
+        response = await fetch(updateUrl, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -117,15 +137,44 @@ export function CreateEventForm({
         });
       }
 
+      console.log("Response status:", response.status);
+      
       if (!response.ok) {
+        console.log("Response not OK. Status:", response.status);
         await handleApiError(response);
       }
 
       const data = await response.json();
+      console.log("Response data:", data);
       
       // Redirect to the events list
-      router.push("/events");
-      router.refresh();
+      console.log("Update successful, about to redirect");
+      
+      // Try multiple redirection methods to ensure at least one works
+      try {
+        if (mode === 'edit') {
+          // For edit mode, redirect to the event detail page instead of the list
+          const eventDetailUrl = `/events/${event!.id}`;
+          console.log(`Redirecting to event detail: ${eventDetailUrl}`);
+          window.location.href = eventDetailUrl;
+        } else {
+          // For create mode, redirect to the events list
+          router.push("/events");
+          console.log("Router.push called");
+          router.refresh();
+          console.log("Router.refresh called");
+          
+          // Set a small timeout and try direct navigation as fallback
+          setTimeout(() => {
+            console.log("Fallback redirect triggered");
+            window.location.href = "/events";
+          }, 500);
+        }
+      } catch (navError) {
+        console.error("Navigation error:", navError);
+        // Last resort: direct navigation
+        window.location.href = "/events";
+      }
     } catch (err) {
       console.error("Form submission error:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -264,6 +313,10 @@ export function CreateEventForm({
             type="submit"
             disabled={isLoading}
             className="px-5 py-2.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-all duration-120 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
+            onClick={() => {
+              // Extra debugging - log when button is clicked directly
+              console.log("Update button clicked - form will validate and submit");
+            }}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
@@ -276,6 +329,69 @@ export function CreateEventForm({
             ) : (
               mode === 'create' ? 'Create Event' : 'Update Event'
             )}
+          </button>
+          
+          {/* Debug button that bypasses form validation for testing */}
+          <button
+            type="button"
+            disabled={isLoading}
+            className="ml-2 px-3 py-2 bg-gray-700 text-white rounded-md text-[13px]"
+            onClick={async () => {
+              console.log("DEBUG: Manual update triggered, bypassing validation");
+              
+              // Get current form values
+              const currentValues = form.getValues();
+              console.log("DEBUG: Current form values:", currentValues);
+              
+              try {
+                setIsLoading(true);
+                // Format dates for API
+                const apiValues = {
+                  ...currentValues,
+                  startDate: formatDateForAPI(currentValues.startDate),
+                  endDate: formatDateForAPI(currentValues.endDate),
+                  // Ensure type and parentEventId are properly handled
+                  type: currentValues.type || undefined,
+                  parentEventId: currentValues.parentEventId || undefined,
+                };
+                
+                console.log("DEBUG: Sending values to API:", apiValues);
+                const updateUrl = `/api/events/${event!.id}`;
+                
+                const response = await fetch(updateUrl, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(apiValues),
+                });
+                
+                console.log("DEBUG: Response status:", response.status);
+                
+                if (!response.ok) {
+                  const errorText = await response.text();
+                  console.error("DEBUG: API error response:", errorText);
+                  throw new Error(`API returned ${response.status}: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                console.log("DEBUG: API success response:", data);
+                
+                // Force redirect to the appropriate page
+                if (mode === 'edit') {
+                  // For edit mode, redirect to the event detail page
+                  window.location.href = `/events/${event!.id}`;
+                } else {
+                  // For create mode, redirect to the events list
+                  window.location.href = "/events";
+                }
+              } catch (err) {
+                console.error("DEBUG: Error during manual update:", err);
+                setError(err instanceof Error ? err.message : String(err));
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+          >
+            Debug Update
           </button>
         </div>
       </form>

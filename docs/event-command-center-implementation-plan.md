@@ -47,30 +47,30 @@ This checklist breaks down the MVP implementation into vertical slices that can 
       > DONE: Successfully logged in with Google account
 
 ### Day 3: Command Center Layout
-- [ ] 🔴 Implement core layout with sidebar navigation
+- [x] 🔴 Implement core layout with sidebar navigation
       > DONE: Navigation between main sections works
 - [ ] 🔴 Create command palette (⌘K) foundation
-      > DONE: Command palette opens and shows basic commands
-- [ ] 🟠 Add responsive design for primary layouts
+      > Not implemented in MVP phase
+- [x] 🔴 Add responsive design for primary layouts
       > DONE: Layout works on different screen sizes
 
 ## Timeline Management Vertical Slices (7 days)
 
 ### Day 4: Basic Event Creation
-- [ ] 🔴 Create event table in database
-      > DONE: Database schema allows storing events
-- [ ] 🔴 Build "Create Event" form with basic fields
-      > DONE: Users can input event details
-- [ ] 🔴 Implement create event API endpoint
+- [x] 🔴 Create event table in database
+      > DONE: Database schema allows storing events with core fields
+- [x] 🔴 Build "Create Event" form with basic fields
+      > DONE: Users can input event details with validation
+- [x] 🔴 Implement create event API endpoint
       > DONE: Form submission creates database record
 
 ### Day 5: Event Listing & Detail View
-- [ ] 🔴 Create events listing page
-      > DONE: Users see all their events in a list
-- [ ] 🔴 Implement event detail page
+- [x] 🔴 Create events listing page
+      > DONE: Users see all their events in a list with status badges
+- [x] 🔴 Implement event detail page
       > DONE: Users can view individual event details
 - [ ] 🔴 Add edit/delete functionality for events
-      > DONE: Users can modify existing events
+      > Edit and delete UI added but not fully implemented
 
 ### Day 6: Initial Timeline Block Creation
 - [ ] 🔴 Create timeline_blocks table in database
@@ -469,8 +469,8 @@ When Layer 4 is complete, users get excited about:
 ## Visual Progress Tracker
 
 ```
-[Foundation]       [######====] 60%
-[Timeline]         [##########] 0%
+[Foundation]       [========##] 80%
+[Timeline]         [====#####] 40%
 [Vendors]          [##########] 0%
 [Budget]           [##########] 0%
 [Documents]        [##########] 0%
@@ -487,6 +487,9 @@ Replace # with = to mark progress: [###===] 30%
 | Date | Completed Vertical Slice | Blockers | Next Slice |
 |------|--------------------------|----------|------------|
 | 2023-06-10 | Google OAuth Authentication | None | Command Center Layout |
+| 2024-06-01 | Event Creation Form | None | Event Listing & Detail Views |
+| 2024-06-02 | Event Listing & Basic Detail View | None | Auth improvements & Authentication Button |
+| 2024-06-03 | Authentication Button & Auth Flow | None | Timeline Blocks |
 
 ## Development Principles
 

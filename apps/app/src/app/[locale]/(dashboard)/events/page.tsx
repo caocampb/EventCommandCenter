@@ -118,7 +118,7 @@ export default async function EventsPage() {
               {events.map((event) => (
                 <tr 
                   key={event.id} 
-                  className="hover:bg-[#1E1E1E] transition-colors duration-120 text-[14px]"
+                  className="hover:bg-[#1E1E1E] transition-colors duration-120 text-[14px] cursor-pointer"
                 >
                   <td className="px-5 py-3.5">
                     <Link href={`/events/${event.id}`} className="block">
@@ -133,13 +133,19 @@ export default async function EventsPage() {
                     </Link>
                   </td>
                   <td className="px-5 py-3.5 text-[13px] font-medium text-gray-400 whitespace-nowrap">
-                    {formatDate(event.startDate.toString())}
+                    <Link href={`/events/${event.id}`} className="block">
+                      {formatDate(event.startDate.toString())}
+                    </Link>
                   </td>
                   <td className="px-5 py-3.5 text-[13px] text-gray-300">
-                    {event.location}
+                    <Link href={`/events/${event.id}`} className="block">
+                      {event.location}
+                    </Link>
                   </td>
                   <td className="px-5 py-3.5">
-                    <StatusBadge status={event.status} />
+                    <Link href={`/events/${event.id}`} className="block">
+                      <StatusBadge status={event.status} />
+                    </Link>
                   </td>
                 </tr>
               ))}

@@ -2,6 +2,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import React from 'react';
 import { Event } from "@/types/events";
 import { CreateEventForm } from "@/components/events/create-event-form";
 
@@ -39,6 +40,18 @@ export default async function EditEventPage({ params }: { params: { id: string }
     updatedAt: eventData.updated_at,
   };
 
+  // Debug log the event data
+  console.log("Edit page - event data:", JSON.stringify(event, null, 2));
+
+  // Convert dates to strings to match the form's expected types
+  const eventForForm = {
+    ...event,
+    startDate: typeof event.startDate === 'object' ? event.startDate.toISOString() : event.startDate,
+    endDate: typeof event.endDate === 'object' ? event.endDate.toISOString() : event.endDate,
+    createdAt: typeof event.createdAt === 'object' ? event.createdAt.toISOString() : event.createdAt,
+    updatedAt: typeof event.updatedAt === 'object' ? event.updatedAt.toISOString() : event.updatedAt
+  };
+
   return (
     <div className="w-full max-w-6xl px-6 py-6">
       {/* Header with back button */}
@@ -62,7 +75,7 @@ export default async function EditEventPage({ params }: { params: { id: string }
       <div className="border-t border-[#262626] pt-8">
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="flex-1">
-            <CreateEventForm event={event} mode="edit" />
+            <CreateEventForm event={eventForForm} mode="edit" />
           </div>
           
           {/* Tips sidebar - helpful for users without cluttering the UI */}

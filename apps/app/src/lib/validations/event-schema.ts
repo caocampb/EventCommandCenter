@@ -5,10 +5,17 @@ import { EventStatus } from "@/types/events";
 const dateStringSchema = z.string().refine(
   (val) => {
     try {
+      // Debug log to see what values are being validated
+      console.log("Validating date string:", val);
+      
       // This validates if the string can be parsed as a date
       // and will work with datetime-local format YYYY-MM-DDThh:mm
-      return !isNaN(new Date(val).getTime());
-    } catch {
+      const parsed = new Date(val);
+      const isValid = !isNaN(parsed.getTime());
+      console.log(`Date parsing result: ${isValid ? 'valid' : 'invalid'}`);
+      return isValid;
+    } catch (err) {
+      console.error("Date validation error:", err);
       return false;
     }
   },
@@ -27,7 +34,8 @@ export const eventSchema = z.object({
   attendeeCount: z.number().int().positive("Attendee count must be a positive number"),
   description: z.string().optional(),
   type: z.string().optional(),
-  parentEventId: z.string().uuid().optional(),
+  // Allow parentEventId to be null, undefined, or a valid UUID string
+  parentEventId: z.union([z.string().uuid(), z.null(), z.undefined()]),
 }).refine(
   data => new Date(data.startDate) < new Date(data.endDate),
   {
