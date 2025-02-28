@@ -20,7 +20,24 @@ function formatDateForAPI(dateString: string): string {
   return date.toISOString();
 }
 
-export function CreateEventForm() {
+export function CreateEventForm({
+  event,
+  mode = 'create'
+}: {
+  event?: {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    status: string;
+    attendeeCount: number;
+    description?: string;
+    type?: string;
+    parentEventId?: string;
+  };
+  mode?: 'create' | 'edit';
+}) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,13 +51,15 @@ export function CreateEventForm() {
   const form = useForm<EventFormValues>({
     resolver: zodResolver(createEventSchema),
     defaultValues: {
-      name: "",
-      startDate: formatDateForInput(now),
-      endDate: formatDateForInput(tomorrow),
-      location: "",
-      status: "draft",
-      attendeeCount: 0,
-      description: "",
+      name: event?.name || "",
+      startDate: event?.startDate ? formatDateForInput(new Date(event.startDate)) : formatDateForInput(now),
+      endDate: event?.endDate ? formatDateForInput(new Date(event.endDate)) : formatDateForInput(tomorrow),
+      location: event?.location || "",
+      status: (event?.status || "draft") as EventFormValues["status"],
+      attendeeCount: event?.attendeeCount || 0,
+      description: event?.description || "",
+      type: event?.type || "",
+      parentEventId: event?.parentEventId,
     },
   });
 
@@ -76,13 +95,27 @@ export function CreateEventForm() {
         endDate: formatDateForAPI(values.endDate),
       };
 
-      const response = await fetch("/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(apiValues),
-      });
+      let response;
+      
+      if (mode === 'create') {
+        // Create new event
+        response = await fetch("/api/events", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(apiValues),
+        });
+      } else {
+        // Update existing event
+        response = await fetch(`/api/events/${event!.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(apiValues),
+        });
+      }
 
       if (!response.ok) {
         await handleApiError(response);
@@ -238,9 +271,11 @@ export function CreateEventForm() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Creating...
+                {mode === 'create' ? 'Creating...' : 'Updating...'}
               </span>
-            ) : "Create Event"}
+            ) : (
+              mode === 'create' ? 'Create Event' : 'Update Event'
+            )}
           </button>
         </div>
       </form>
