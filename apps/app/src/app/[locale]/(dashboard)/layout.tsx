@@ -49,9 +49,9 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
         rel="stylesheet" 
       />
       
-      <div className="flex h-screen bg-black" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="flex h-screen bg-[#0F0F0F]" style={{ fontFamily: "'Inter', sans-serif" }}>
         {/* Sidebar - simplified for MVP */}
-        <div className="w-56 border-r border-[#262626] py-4 flex flex-col">
+        <div className="w-56 border-r border-[#1F1F1F] py-4 flex flex-col bg-[#141414] shadow-sm">
           {/* Logo area */}
           <div className="px-3 mb-6">
             <div className="text-lg font-semibold tracking-tight text-white pl-3">
@@ -95,13 +95,13 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
           <div className="flex-grow"></div>
           
           {/* Sign-out button */}
-          <div className="px-3 mt-auto border-t border-[#262626] pt-3">
+          <div className="px-3 mt-auto border-t border-[#1F1F1F] pt-3">
             <AuthButton />
           </div>
         </div>
         
         {/* Main content */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto bg-gradient-to-b from-[#0F0F0F] to-[#111111]">
           <main className="min-h-screen">{children}</main>
         </div>
       </div>

@@ -32,7 +32,7 @@ function StatusBadge({ status }: { status: string }) {
       case 'cancelled':
         return 'bg-red-500/10 text-red-500 border-red-500/20';
       default: // draft
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+        return 'bg-gray-600/15 text-gray-300 border-gray-500/30';
     }
   };
 
@@ -151,7 +151,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
       {/* Main content - simplified for MVP */}
       <div className="space-y-8">
         {/* Essential information panel */}
-        <div className="bg-[#141414] border border-[#262626] rounded-md p-5">
+        <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <SectionHeader title="Event Details" />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
@@ -206,7 +206,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
         </div>
         
         {/* Future features - marked clearly */}
-        <div className="bg-[#141414] border border-[#262626] rounded-md p-5">
+        <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <div className="flex justify-between items-center mb-3">
             <SectionHeader title="Timeline" />
             <ComingSoonBadge />
@@ -216,7 +216,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
             In the future, you'll be able to create detailed timeline blocks for your event here.
           </p>
           
-          <div className="mt-4 border-t border-[#262626] pt-4">
+          <div className="mt-4 border-t border-[#1F1F1F] pt-4">
             <div className="flex justify-between items-center mb-3">
               <SectionHeader title="Vendors" />
               <ComingSoonBadge />

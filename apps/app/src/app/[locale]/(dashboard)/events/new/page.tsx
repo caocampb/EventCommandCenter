@@ -29,7 +29,7 @@ export default async function CreateEventPage() {
         </p>
       </div>
     
-      <div className="border-t border-[#262626] pt-8">
+      <div className="border-t border-[#1F1F1F] pt-8">
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="flex-1">
             <CreateEventForm />
@@ -37,7 +37,7 @@ export default async function CreateEventPage() {
           
           {/* Quick tips - helpful for users without cluttering the UI */}
           <div className="w-full lg:w-72 space-y-5">
-            <div className="bg-[#141414] border border-[#262626] rounded-md p-5">
+            <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
               <h3 className="text-[13px] font-medium uppercase tracking-wider text-gray-400 mb-3">
                 Quick Tips
               </h3>

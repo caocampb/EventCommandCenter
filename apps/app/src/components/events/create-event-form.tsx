@@ -209,7 +209,7 @@ export function CreateEventForm({
             id="name"
             type="text"
             {...form.register("name")}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
             placeholder="Enter event name"
             autoFocus
           />
@@ -228,7 +228,7 @@ export function CreateEventForm({
               id="startDate"
               type="datetime-local"
               {...form.register("startDate")}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
             />
             {form.formState.errors.startDate && (
               <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.startDate.message}</p>
@@ -243,7 +243,7 @@ export function CreateEventForm({
               id="endDate"
               type="datetime-local"
               {...form.register("endDate")}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
             />
             {form.formState.errors.endDate && (
               <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.endDate.message}</p>
@@ -260,7 +260,7 @@ export function CreateEventForm({
             id="location"
             type="text"
             {...form.register("location")}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
             placeholder="Enter event location"
           />
           {form.formState.errors.location && (
@@ -270,7 +270,7 @@ export function CreateEventForm({
 
         {/* Event details section with heading */}
         <div className="pt-4 pb-2">
-          <div className="border-t border-[#262626] mb-6"></div>
+          <div className="border-t border-[#1F1F1F] mb-6"></div>
           <h3 className="text-[13px] font-medium uppercase tracking-wider text-gray-400 mb-6">
             Event Details
           </h3>
@@ -284,7 +284,7 @@ export function CreateEventForm({
               id="attendeeCount"
               type="number"
               {...form.register("attendeeCount", { valueAsNumber: true })}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
               placeholder="0"
               min="1"
             />
@@ -301,18 +301,18 @@ export function CreateEventForm({
             <textarea
               id="description"
               {...form.register("description")}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
               placeholder="Enter event description"
             />
           </div>
         </div>
 
         {/* Submit button with improved connection to form */}
-        <div className="flex justify-end border-t border-[#262626] pt-6 mt-2">
+        <div className="flex justify-end border-t border-[#1F1F1F] pt-6 mt-2">
           <button
             type="submit"
             disabled={isLoading}
-            className="px-5 py-2.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-all duration-120 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
+            className="px-5 py-2.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_3px_12px_rgba(94,106,210,0.2)]"
             onClick={() => {
               // Extra debugging - log when button is clicked directly
               console.log("Update button clicked - form will validate and submit");
@@ -335,7 +335,7 @@ export function CreateEventForm({
           <button
             type="button"
             disabled={isLoading}
-            className="ml-2 px-3 py-2 bg-gray-700 text-white rounded-md text-[13px]"
+            className="ml-2 px-3 py-2 bg-[#1E1E1E] hover:bg-[#262626] text-white rounded-md text-[13px] border border-[#333333] shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
             onClick={async () => {
               console.log("DEBUG: Manual update triggered, bypassing validation");
               
