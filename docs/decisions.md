@@ -91,6 +91,44 @@ Implications: Expected effects of this decision (optional)
 - Environment variables (GOOGLE_CLIENT_ID, GOOGLE_SECRET) need to be maintained
 - Future users would need to be added to test users list until app verification
 
+### 2024-05-29: Simplified RLS policies for MVP development
+
+**Context**: Needed to balance security with development speed for the MVP phase.
+
+**Decision**: Removed restrictive Row-Level Security (RLS) policies and implemented completely open policies for the MVP development.
+
+**Reasoning**:
+- MVP is intended for a small, trusted team of users
+- Overly restrictive RLS policies were slowing down development
+- For a small internal team, the authentication layer provides sufficient security
+- Complex permission models add unnecessary complexity at this stage
+- Development speed is prioritized over granular access control for MVP
+
+**Implications**:
+- Dramatically faster development of core event management features
+- All authenticated users can perform all operations on events
+- Simplified debugging and testing process
+- MUST implement proper security policies before production deployment
+- Will revisit security model before scaling to larger organizations or public release
+
+### 2024-06-01: Client-side authentication component
+
+**Context**: Needed a reliable way to handle authentication state and sign-out functionality in the UI.
+
+**Decision**: Created a dedicated `AuthButton` client component that handles authentication state and sign-out.
+
+**Reasoning**:
+- Cleanly separates authentication UI concerns from layout structure
+- Reactive to authentication state changes through Supabase's onAuthStateChange
+- Works with middleware pattern for server-side auth checks
+- Provides clear, consistent sign-out experience
+
+**Implications**:
+- Simplified dashboard layout with cleaner separation of concerns
+- Consistent auth state representation across the application
+- When authentication is needed it can be handled without duplicating code
+- Works within the security ecosystem of the midday-ai/v1 starter kit
+
 ## When to Add Entries
 
 Add entries to this log when you:

@@ -74,16 +74,40 @@ Google OAuth is used as the primary authentication method for the Event Command 
    GOOGLE_SECRET=your-client-secret-here
    ```
 
-5. Restart Supabase:
+5. Update Supabase Configuration:
+   - Ensure the Google OAuth provider is enabled in `apps/api/supabase/config.toml`:
+   ```toml
+   [auth.external.google]
+   enabled = true
+   client_id = "env(GOOGLE_CLIENT_ID)"
+   secret = "env(GOOGLE_SECRET)"
+   redirect_uri = "http://localhost:54321/auth/v1/callback"
+   ```
+
+6. Restart Supabase:
    ```bash
    cd apps/api
    bun run supabase stop
    bun run supabase start
    ```
 
-6. Test Authentication:
+7. Test Authentication:
    - Start your application with `bun dev`
    - Navigate to the login page and verify "Sign in with Google" works
+   - If testing with specific users, add them to the "Test Users" list in Google Cloud OAuth consent screen settings
+
+8. Understanding the Authentication Flow:
+   - The application uses middleware (`apps/app/src/middleware.ts`) to check authentication
+   - Protected routes automatically redirect to login
+   - The `AuthButton` component (`apps/app/src/components/auth/auth-button.tsx`) handles sign-out functionality
+   - After authentication, users are redirected to the events page
+
+9. **Important Note on Security for MVP**: 
+   - The current implementation uses simplified Row-Level Security (RLS) policies
+   - For MVP development, all authenticated users can perform all operations on events
+   - This approach prioritizes development speed and simplicity
+   - These open policies MUST be replaced with proper security policies before production deployment
+   - See migration file `apps/api/supabase/migrations/20240529000001_fix_rls_policies_for_mvp.sql` for details
 
 ### 6. Set Up Additional Services
 
