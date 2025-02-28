@@ -110,7 +110,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
       {/* Header with back button */}
       <div className="mb-8">
         <Link 
-          href="/events" 
+          href="/en/events" 
           className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors duration-120"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
@@ -139,13 +139,13 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
             <Link 
-              href={`/events/${event.id}/edit`}
+              href={`/en/events/${event.id}/edit`}
               className="px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded border border-transparent hover:border-[#8D95F2] transition-colors duration-120"
             >
               Edit Event
             </Link>
             <Link 
-              href={`/events/${event.id}/timeline`}
+              href={`/en/events/${event.id}/timeline`}
               className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
             >
               <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

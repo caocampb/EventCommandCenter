@@ -11,56 +11,63 @@ import {
   roundToTimeInterval,
   TimePrecision 
 } from '../../lib/validations/timeline-block-schema';
+import { TimelineBlock } from '../../types/timeline';
 import { formatDateTimeForInput, localToUTCString } from '../../utils/timezone-utils';
 
-interface AddTimelineBlockFormProps {
+interface EditTimelineBlockFormProps {
   eventId: string;
+  blockId: string;
+  block: TimelineBlock;
 }
 
-export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
+export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineBlockFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [precision, setPrecision] = useState<TimePrecision>('30min');
   
   // Calculate default times based on precision
-  const getDefaultTimes = (precision: TimePrecision) => {
-    console.log('Generating new default times based on current time');
+  const getDefaultTimes = (precision: TimePrecision, startTime: string, endTime: string) => {
+    // Pass the original ISO strings directly to formatDateTimeForInput
+    // to preserve the original hours without timezone conversion
+    console.log('Getting default times from:', { startTime, endTime });
     
-    const now = new Date();
-    const roundedNow = roundToTimeInterval(now, precision);
-    const intervalLater = new Date(roundedNow);
-    
-    // Add interval based on precision
-    if (precision === '15min') {
-      intervalLater.setMinutes(roundedNow.getMinutes() + 15);
-    } else {
-      intervalLater.setMinutes(roundedNow.getMinutes() + 30);
+    if ((startTime.endsWith('Z') || startTime.includes('+00:00')) &&
+        (endTime.endsWith('Z') || endTime.includes('+00:00'))) {
+      // For UTC times, format directly from the ISO strings to preserve hours
+      return {
+        start: formatDateTimeForInput(startTime),
+        end: formatDateTimeForInput(endTime)
+      };
     }
     
-    const result = {
-      start: formatDateTimeForInput(roundedNow),
-      end: formatDateTimeForInput(intervalLater)
+    // Fallback to the original approach for non-UTC times
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    
+    const roundedStart = roundToTimeInterval(start, precision);
+    const roundedEnd = roundToTimeInterval(end, precision);
+    
+    return {
+      start: formatDateTimeForInput(roundedStart),
+      end: formatDateTimeForInput(roundedEnd)
     };
-    
-    console.log('Generated default times:', result);
-    
-    return result;
   };
 
-  const defaultTimes = getDefaultTimes(precision);
+  const defaultTimes = getDefaultTimes(precision, block.startTime.toString(), block.endTime.toString());
   
   // Form with zod validation
   const form = useForm<TimelineBlockFormValues>({
     resolver: zodResolver(precision === '15min' ? timelineBlockSchema15Min : timelineBlockSchema),
     defaultValues: {
       eventId: eventId,
-      title: '',
+      title: block.title,
       startTime: defaultTimes.start,
       endTime: defaultTimes.end,
-      location: '',
-      description: '',
-      status: 'pending',
+      location: block.location || '',
+      description: block.description || '',
+      status: (block.status as "pending" | "in-progress" | "complete" | "cancelled") || "pending",
     },
   });
 
@@ -124,6 +131,25 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
         browserLocale: navigator.language
       });
       
+      // Delete the existing block using the specific blockId route
+      const deleteResponse = await fetch(`/api/events/${eventId}/timeline/${blockId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!deleteResponse.ok) {
+        // Improved error handling
+        let errorMessage = 'Failed to delete existing timeline block';
+        try {
+          const errorData = await deleteResponse.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorMessage = `Error ${deleteResponse.status}: ${deleteResponse.statusText || errorMessage}`;
+        }
+        throw new Error(errorMessage);
+      }
+      
+      // Then create a new block with the updated data
       const response = await fetch(`/api/events/${eventId}/timeline`, {
         method: 'POST',
         headers: {
@@ -133,8 +159,16 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
       });
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create timeline block');
+        // Improved error handling
+        let errorMessage = 'Failed to update timeline block';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorMessage = `Error ${response.status}: ${response.statusText || errorMessage}`;
+        }
+        throw new Error(errorMessage);
       }
       
       // Use setTimeout to delay navigation slightly, avoiding hydration issues
@@ -143,9 +177,47 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
         router.refresh();
       }, 0);
     } catch (err) {
+      console.error("Error updating timeline block:", err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsLoading(false);
+    }
+  }
+  
+  // Handle block deletion
+  async function deleteBlock() {
+    setIsDeleting(true);
+    setError(null);
+    
+    try {
+      // Use the specific blockId route 
+      const response = await fetch(`/api/events/${eventId}/timeline/${blockId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        // Improved error handling
+        let errorMessage = 'Failed to delete timeline block';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorMessage = `Error ${response.status}: ${response.statusText || errorMessage}`;
+        }
+        throw new Error(errorMessage);
+      }
+      
+      // Use setTimeout to delay navigation slightly, avoiding hydration issues
+      setTimeout(() => {
+        router.push(`/en/events/${eventId}/timeline`);
+        router.refresh();
+      }, 0);
+    } catch (err) {
+      console.error("Error deleting timeline block:", err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsDeleting(false);
     }
   }
   
@@ -301,8 +373,35 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
           />
         </div>
         
-        {/* Submit button */}
-        <div className="flex justify-end border-t border-[#1F1F1F] pt-6 mt-2">
+        {/* Action buttons */}
+        <div className="flex justify-between items-center border-t border-[#1F1F1F] pt-6 mt-2">
+          {/* Delete button */}
+          <button
+            type="button"
+            onClick={deleteBlock}
+            disabled={isDeleting}
+            className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-md transition-colors duration-120 border border-red-500/20 text-[14px] font-medium flex items-center gap-1.5"
+          >
+            {isDeleting ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-4 w-4 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Deleting...
+              </span>
+            ) : (
+              <>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" 
+                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Delete Block
+              </>
+            )}
+          </button>
+          
+          {/* Save button */}
           <button
             type="submit"
             disabled={isLoading}
@@ -314,9 +413,9 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Creating...
+                Saving...
               </span>
-            ) : 'Add Timeline Block'}
+            ) : 'Save Changes'}
           </button>
         </div>
       </form>

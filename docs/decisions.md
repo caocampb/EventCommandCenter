@@ -147,6 +147,42 @@ Implications: Expected effects of this decision (optional)
 - More maintainable pattern for future interactive elements
 - Enables consistent hover behavior across the entire row
 
+### 2024-06-12: Proportional Scaling for Timeline Visualization
+
+**Context**: Timeline needed to display blocks of different durations accurately while ensuring content readability, particularly for short 15-minute blocks.
+
+**Decision**: Implemented a proportional scaling system for the timeline with an increased `HOUR_HEIGHT` (from 80px to 128px) while maintaining true proportional representation of time blocks.
+
+**Reasoning**:
+- Precise time representation is essential for a timeline interface
+- 15-minute blocks needed to be both proportionally accurate and contain readable content
+- Larger scale provides better visual distinction between different block durations
+- Maintains design integrity while improving usability of short blocks
+
+**Implications**:
+- Taller timeline provides adequate space for all content regardless of block duration
+- Consistent proportional relationship (15min = 32px, 30min = 64px, 1hr = 128px)
+- Future implementation may need filtering or pagination for multi-day views
+- Simplified codebase by avoiding special case handling for different duration blocks
+
+### 2024-06-14: Simple but Effective Status Styling for Timeline Blocks
+
+**Context**: Timeline blocks needed to clearly indicate their status (pending, in-progress, complete, cancelled) while maintaining a clean, readable design.
+
+**Decision**: Implemented a consistent status styling system using color-coded borders and backgrounds with proper contrast ratios.
+
+**Reasoning**:
+- Status information is critical for event planning and execution
+- Color-coding provides immediate visual identification of block status
+- Subtle background colors with matching borders maintain readability of content
+- Consistent styling pattern creates a coherent visual language across the application
+
+**Implications**:
+- Users can quickly scan the timeline to identify block status
+- The design scales well to both 15-minute and longer duration blocks
+- Status styles are defined once and reused consistently
+- Future status types can be added using the same styling pattern
+
 ## When to Add Entries
 
 Add entries to this log when you:

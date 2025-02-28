@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { timelineBlockSchema } from "../../../../../lib/validations/timeline-block-schema";
+import { 
+  timelineBlockSchema, 
+  timelineBlockSchema15Min,
+  TimePrecision 
+} from "../../../../../lib/validations/timeline-block-schema";
 import { TimelineBlockDbRow } from "../../../../../types/timeline";
 
 // Supabase service role client for bypassing RLS
@@ -13,14 +17,14 @@ const serviceRoleClient = createClient(
   SUPABASE_SERVICE_KEY
 );
 
-// GET /api/events/[eventId]/timeline - Get all timeline blocks for an event
+// GET /api/events/[id]/timeline - Get all timeline blocks for an event
 export async function GET(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    console.log("GET /api/events/[eventId]/timeline - Starting request");
-    const eventId = params.eventId;
+    console.log("GET /api/events/[id]/timeline - Starting request");
+    const eventId = params.id;
     
     if (!eventId) {
       return NextResponse.json(
@@ -75,14 +79,14 @@ export async function GET(
   }
 }
 
-// POST /api/events/[eventId]/timeline - Create a new timeline block
+// POST /api/events/[id]/timeline - Create a new timeline block
 export async function POST(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    console.log("POST /api/events/[eventId]/timeline - Starting request");
-    const eventId = params.eventId;
+    console.log("POST /api/events/[id]/timeline - Starting request");
+    const eventId = params.id;
     
     if (!eventId) {
       return NextResponse.json(
@@ -99,7 +103,13 @@ export async function POST(
     // Add eventId from route parameter to the body
     body.eventId = eventId;
     
-    const validationResult = timelineBlockSchema.safeParse(body);
+    // Determine which schema to use based on precision
+    const precision = body.precision as TimePrecision;
+    const schema = precision === '15min' ? timelineBlockSchema15Min : timelineBlockSchema;
+    
+    console.log(`Using ${precision} precision for validation`);
+    
+    const validationResult = schema.safeParse(body);
     
     if (!validationResult.success) {
       console.error("Validation error:", validationResult.error.format());
@@ -165,4 +175,7 @@ export async function POST(
       { status: 500 }
     );
   }
-} 
+}
+
+// DELETE operation has been moved to [blockId]/route.ts
+// Remove the DELETE function from this file to avoid conflicts 

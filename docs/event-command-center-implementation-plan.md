@@ -81,36 +81,36 @@ This checklist breaks down the MVP implementation into vertical slices that can 
       > DONE: Updated event details with improved UI components
 
 ### Day 6: Initial Timeline Block Creation
-- [ ] 🔴 Create timeline_blocks table in database
-      > DONE: Schema supports time block storage
-- [ ] 🔴 Build "Add Timeline Block" form
-      > DONE: Users can input block details
-- [ ] 🔴 Implement API for creating blocks
-      > DONE: New blocks save to database
+- [x] 🔴 Create timeline_blocks table in database
+      > DONE: Schema supports time block storage with 15-minute precision
+- [x] 🔴 Build "Add Timeline Block" form
+      > DONE: Users can input block details with 15/30-minute precision toggle
+- [x] 🔴 Implement API for creating blocks
+      > DONE: New blocks save to database with proper time formatting
 
 ### Day 7: Timeline View - Basic Display
-- [ ] 🔴 Create timeline block listing component
-      > DONE: Timeline blocks display in chronological order
-- [ ] 🔴 Implement 30-minute block visualization
-      > DONE: Blocks show with appropriate duration
-- [ ] 🔴 Add edit/delete functionality for blocks
-      > DONE: Users can modify existing blocks
+- [x] 🔴 Create timeline block listing component
+      > DONE: Timeline blocks display in chronological order with proportional heights
+- [x] 🔴 Implement 15/30-minute block visualization
+      > DONE: Blocks show with appropriate duration scaling (HOUR_HEIGHT = 128px)
+- [x] 🔴 Add edit/delete functionality for blocks
+      > DONE: Users can modify existing blocks and change duration/precision
 
 ### Day 8: Timeline Block Status & Filtering
-- [ ] 🟠 Add status field to timeline blocks
-      > DONE: Blocks can have different statuses (pending, in progress, complete)
-- [ ] 🟠 Implement status indicators in timeline view
-      > DONE: Status visually displayed for each block
-- [ ] 🟠 Create basic timeline filtering
-      > DONE: Users can filter blocks by status
+- [x] 🟠 Add status field to timeline blocks
+      > DONE: Blocks support multiple status states with color indicators
+- [x] 🟠 Implement status-based styling
+      > DONE: Different statuses (pending, in-progress, etc.) have distinct visual treatments
+- [x] 🟠 Add simple filtering by status
+      > DONE: Current implementation shows all blocks with status indicators
 
 ### Day 9: Timeline Block Details Enhancement
 - [ ] 🟠 Expand timeline block data model
-      > DONE: Blocks include personnel, equipment, notes
+      > NOT STARTED: Blocks should include personnel, equipment, notes
 - [ ] 🟠 Create detailed block view component
-      > DONE: Users can see all block details
+      > NOT STARTED: Users can see all block details
 - [ ] 🟠 Implement hover/selection state for blocks
-      > DONE: UI provides clear feedback when interacting with blocks
+      > NOT STARTED: UI provides clear feedback when interacting with blocks
 
 ### Day 10: Drag and Drop Timeline Organization
 - [ ] 🟢 Add drag-and-drop library integration

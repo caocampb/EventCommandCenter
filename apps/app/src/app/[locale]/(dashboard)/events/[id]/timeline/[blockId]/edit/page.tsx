@@ -3,14 +3,15 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { Event } from "../../../../../../../types/events";
-import { AddTimelineBlockForm } from "../../../../../../../components/timeline/add-timeline-block-form";
+import { Event } from "../../../../../../../../types/events";
+import { TimelineBlock } from "../../../../../../../../types/timeline";
+import { EditTimelineBlockForm } from "../../../../../../../../components/timeline/edit-timeline-block-form";
 
 export const metadata = {
-  title: "Add Timeline Block",
+  title: "Edit Timeline Block",
 };
 
-export default async function AddTimelineBlockPage({ params }: { params: { id: string } }) {
+export default async function EditTimelineBlockPage({ params }: { params: { id: string, blockId: string } }) {
   const supabase = createServerComponentClient({ cookies });
   
   // Fetch event data to ensure it exists and to display event info
@@ -39,6 +40,32 @@ export default async function AddTimelineBlockPage({ params }: { params: { id: s
     createdAt: eventData.created_at,
     updatedAt: eventData.updated_at,
   };
+  
+  // Fetch the timeline block data
+  const { data: blockData, error: blockError } = await supabase
+    .from("timeline_blocks")
+    .select("*")
+    .eq("id", params.blockId)
+    .eq("event_id", params.id)
+    .single();
+  
+  if (blockError || !blockData) {
+    return notFound();
+  }
+  
+  // Transform block data to match our TypeScript types
+  const block: TimelineBlock = {
+    id: blockData.id,
+    eventId: blockData.event_id,
+    title: blockData.title,
+    startTime: blockData.start_time,
+    endTime: blockData.end_time,
+    location: blockData.location,
+    description: blockData.description,
+    status: blockData.status,
+    createdAt: blockData.created_at,
+    updatedAt: blockData.updated_at,
+  };
 
   return (
     <div className="px-6 py-6">
@@ -54,16 +81,20 @@ export default async function AddTimelineBlockPage({ params }: { params: { id: s
           Back to timeline
         </Link>
         
-        <h1 className="text-xl font-semibold tracking-tight mb-2">Add Timeline Block</h1>
+        <h1 className="text-xl font-semibold tracking-tight mb-2">Edit Timeline Block</h1>
         <p className="text-gray-400 text-[15px]">
-          Add a new timeline block to {event.name}
+          Edit timeline block for {event.name}
         </p>
       </div>
       
       <div className="border-t border-[#1F1F1F] pt-8">
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="flex-1">
-            <AddTimelineBlockForm eventId={event.id} />
+            <EditTimelineBlockForm 
+              eventId={event.id} 
+              blockId={params.blockId}
+              block={block}
+            />
           </div>
           
           {/* Tips sidebar */}
@@ -75,15 +106,15 @@ export default async function AddTimelineBlockPage({ params }: { params: { id: s
               <ul className="space-y-3 text-[13px] text-gray-400">
                 <li className="flex gap-2.5 items-start">
                   <span className="text-[#5E6AD2] text-xs mt-0.5">●</span>
-                  <span>Timeline blocks must be aligned to 30-minute intervals</span>
+                  <span>Timeline blocks must be aligned to 30-minute intervals by default</span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-[#5E6AD2] text-xs mt-0.5">●</span>
-                  <span>Add a specific location if different from the event location</span>
+                  <span>Switch to 15-minute precision for more granular scheduling</span>
                 </li>
                 <li className="flex gap-2.5 items-start">
                   <span className="text-[#5E6AD2] text-xs mt-0.5">●</span>
-                  <span>Use the description field for detailed instructions</span>
+                  <span>Use the delete button to remove this block completely</span>
                 </li>
               </ul>
             </div>
