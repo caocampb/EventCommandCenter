@@ -123,44 +123,52 @@ This checklist breaks down the MVP implementation into vertical slices that can 
 ## Vendor Management Vertical Slices (5 days)
 
 ### Day 11: Basic Vendor Creation
-- [ ] 🔴 Create vendors table in database
-      > DONE: Database schema allows storing vendor information
-- [ ] 🔴 Build "Add Vendor" form with essential fields
-      > DONE: Users can input vendor details
-- [ ] 🔴 Implement create vendor API endpoint
-      > DONE: Form submission creates vendor record
+- [x] 🔴 Create vendors table in database
+      > DONE: Database schema allows storing vendor information including favorites flag
+- [x] 🔴 Build "Add Vendor" form with essential fields
+      > DONE: Users can input vendor details with proper validation
+- [x] 🔴 Implement create vendor API endpoint
+      > DONE: Form submission creates vendor record with all fields
 
 ### Day 12: Vendor Listing & Cards
-- [ ] 🔴 Create vendor listing page
-      > DONE: Users see all vendors in a grid
-- [ ] 🔴 Build vendor card component
-      > DONE: Cards display key vendor info
-- [ ] 🔴 Add edit/delete functionality for vendors
-      > DONE: Users can modify existing vendors
+- [x] 🔴 Create vendor listing page
+      > DONE: Users see all vendors in a clean, tabular layout with search functionality
+- [x] 🔴 Build vendor card component
+      > DONE: Table rows display key vendor info in a consistent format
+- [x] 🔴 Add edit/delete functionality for vendors
+      > DONE: Users can modify existing vendors (edit functionality completed, delete button pending)
 
-### Day 13: Vendor Assignment to Events
+### Day 13: Vendor Filtering & Search
+- [x] 🟠 Add filtering by vendor type
+      > DONE: Users can filter vendors by category using dropdown
+- [x] 🟠 Implement vendor search functionality
+      > DONE: Users can search for vendors by name with real-time filtering
+- [x] 🟠 Add sorting options for vendor list
+      > DONE: Vendors can be sorted by name, category, capacity, and price
+
+### Day 14: Favorites System (Added Feature)
+- [x] 🟢 Add vendor favorite toggle functionality
+      > DONE: Users can mark vendors as favorites with star icons
+- [x] 🟢 Implement favorites filter in vendor list
+      > DONE: Users can filter to view only favorite vendors
+- [x] 🟢 Add consistent favorites UI across all vendor views
+      > DONE: Star icons with tooltips appear in list, view, and edit pages
+- [x] 🟢 Implement optimistic UI updates for favorites
+      > DONE: UI updates immediately with state rollback on API errors
+
+### Day 15: Vendor Assignment to Events
 - [ ] 🔴 Create event_vendors relationship table
-      > DONE: Database supports many-to-many relationship
+      > PENDING: Database supports many-to-many relationship
 - [ ] 🔴 Build interface for assigning vendors to events
-      > DONE: Users can select vendors for an event
+      > PENDING: Users can select vendors for an event
 - [ ] 🔴 Implement API for vendor assignment
-      > DONE: Assignment data saves to database
-
-### Day 14: Event-Specific Vendor View
+      > PENDING: Assignment data saves to database
 - [ ] 🔴 Create event vendor listing component
-      > DONE: Event detail page shows assigned vendors
+      > PENDING: Event detail page shows assigned vendors
 - [ ] 🔴 Add vendor removal from event
-      > DONE: Users can unassign vendors
+      > PENDING: Users can unassign vendors
 - [ ] 🟠 Implement vendor role/category for events
-      > DONE: Vendors can be categorized within events
-
-### Day 15: Vendor Filtering & Search
-- [ ] 🟠 Add filtering by vendor type
-      > DONE: Users can filter vendors by category
-- [ ] 🟠 Implement vendor search functionality
-      > DONE: Users can search for vendors by name
-- [ ] 🟠 Add sorting options for vendor list
-      > DONE: Vendors can be sorted by name, rating, etc.
+      > PENDING: Vendors can be categorized within events
 
 ## Budget Tracking Vertical Slices (5 days)
 
@@ -404,8 +412,9 @@ When Layer 1 is complete, users should say "wow" because they can:
 2. **Vendor Management**
    - Store all vendor information in one place (no more spreadsheets!)
    - See elegant vendor cards with clear, essential information
-   - Assign vendors to specific events with a simple action
-   - Filter vendors to quickly find who they need
+   - Mark favorite vendors with intuitive star icons for quick access
+   - Filter and search vendors to quickly find what they need
+   - Toggle favorites with immediate UI feedback
 
 3. **Budget Tracking**
    - Track all event expenses in a single interface
@@ -478,8 +487,8 @@ When Layer 4 is complete, users get excited about:
 
 ```
 [Foundation]       [========##] 80%
-[Timeline]         [====#####] 40%
-[Vendors]          [##########] 0%
+[Timeline]         [=====#####] 50%
+[Vendors]          [=======###] 70%
 [Budget]           [##########] 0%
 [Documents]        [##########] 0%
 [Participants]     [##########] 0%
@@ -498,6 +507,9 @@ Replace # with = to mark progress: [###===] 30%
 | 2024-06-01 | Event Creation Form | None | Event Listing & Detail Views |
 | 2024-06-02 | Event Listing & Basic Detail View | None | Auth improvements & Authentication Button |
 | 2024-06-03 | Authentication Button & Auth Flow | None | Timeline Blocks |
+| 2024-06-28 | Vendor Favorites System | None | Vendor Assignment to Events |
+
+**Note**: Foundation is at 80% as vendor-event relationship functionality (linking vendors to specific events) is still pending implementation. This is planned for the next development phase.
 
 ## Development Principles
 

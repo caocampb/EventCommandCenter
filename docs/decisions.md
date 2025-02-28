@@ -183,6 +183,36 @@ Implications: Expected effects of this decision (optional)
 - Status styles are defined once and reused consistently
 - Future status types can be added using the same styling pattern
 
+### 2024-06-28: Vendor Management Implementation with Favorites System
+
+**Context**: Needed to implement a comprehensive vendor management system that allows users to track, filter, and favorite vendors for events.
+
+**Decision**: Implemented a vendor management module with the following key components:
+1. Main list view with filtering, search, and sort capabilities
+2. Detailed vendor view and edit pages
+3. Favorites system with star icons across all views
+4. Optimistic UI updates for immediate feedback
+
+**Reasoning**:
+- The star-based favorites system follows Linear's design principles of clean iconography and immediate visual feedback
+- Optimistic UI updates ensure that users see immediate responses to their actions, enhancing perceived performance
+- Consistent UI elements (star icons, tooltips) across all views provide a cohesive experience
+- Direct manipulation of state with error rollback provides both speed and data integrity
+- Filter dropdowns with clear visual indicators improve discoverability and ease of use
+
+**Implications**:
+- The favorites implementation allows users to quickly mark and filter preferred vendors
+- Optimistic UI patterns established here can be replicated across other features
+- The consistent star iconography sets a pattern for other "favorite" or "bookmark" features
+- The tooltip pattern improves discoverability without cluttering the UI 
+
+**Technical Implementation**:
+- List view uses client-side filtering with immediate state updates
+- Favorites toggle API calls include error handling with state rollback
+- Tooltips use a consistent group-hover pattern that can be reused
+- Star icons maintain consistent styling and placement across all views
+- Filter controls follow a unified pattern that can be extended to other modules
+
 ## When to Add Entries
 
 Add entries to this log when you:
