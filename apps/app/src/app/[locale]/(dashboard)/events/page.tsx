@@ -86,7 +86,7 @@ export default async function EventsPage() {
         <h1 className="text-xl font-semibold tracking-tight">Events</h1>
         <Link
           href="/events/new"
-          className="inline-flex items-center px-4 py-2 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded-md transition duration-150 border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
+          className="inline-flex items-center px-4 py-2 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded-md transition-all duration-120 border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -103,41 +103,48 @@ export default async function EventsPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {events.map((event) => (
-            <Link href={`/events/${event.id}`} key={event.id}>
-              <div className="group border border-[#262626] rounded-md bg-[#141414] hover:bg-[#1A1A1A] transition-all duration-150 overflow-hidden">
-                <div className="px-5 py-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <h2 className="text-[15px] font-medium text-gray-100 group-hover:text-white transition-colors duration-150">{event.name}</h2>
-                    <StatusBadge status={event.status} />
-                  </div>
-                  
-                  <p className="text-[13px] text-gray-400 mb-4 font-medium tracking-tight">
+        // Linear-style table view
+        <div className="border border-[#262626] rounded-md overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[#262626]">
+                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Event</th>
+                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Date</th>
+                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Location</th>
+                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#262626]">
+              {events.map((event) => (
+                <tr 
+                  key={event.id} 
+                  className="hover:bg-[#1E1E1E] transition-colors duration-120 text-[14px]"
+                >
+                  <td className="px-5 py-3.5">
+                    <Link href={`/events/${event.id}`} className="block">
+                      <div className="font-medium text-gray-100 hover:text-white transition-colors duration-120">
+                        {event.name}
+                      </div>
+                      {event.description && (
+                        <div className="text-gray-400 text-[13px] mt-0.5 line-clamp-1">
+                          {event.description}
+                        </div>
+                      )}
+                    </Link>
+                  </td>
+                  <td className="px-5 py-3.5 text-[13px] font-medium text-gray-400 whitespace-nowrap">
                     {formatDate(event.startDate.toString())}
-                    {event.endDate && 
-                      event.startDate !== event.endDate && 
-                      ` - ${formatDate(event.endDate.toString())}`}
-                  </p>
-                  
-                  <div className="flex flex-col gap-1.5">
-                    <div className="text-[13px] text-gray-300">
-                      {event.location}
-                    </div>
-                    
-                    {event.description && (
-                      <p className="text-[13px] text-gray-400 mt-1 line-clamp-1">
-                        {event.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Linear-style subtle highlight indicator on hover */}
-                <div className="h-0.5 w-full bg-[#5E6AD2] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-150 origin-left"></div>
-              </div>
-            </Link>
-          ))}
+                  </td>
+                  <td className="px-5 py-3.5 text-[13px] text-gray-300">
+                    {event.location}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <StatusBadge status={event.status} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

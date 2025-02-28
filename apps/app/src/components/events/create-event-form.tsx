@@ -127,7 +127,7 @@ export function CreateEventForm() {
             id="name"
             type="text"
             {...form.register("name")}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-200 text-[14px]"
+            className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
             placeholder="Enter event name"
             autoFocus
           />
@@ -146,7 +146,7 @@ export function CreateEventForm() {
               id="startDate"
               type="datetime-local"
               {...form.register("startDate")}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-200 text-[14px] font-mono"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
             />
             {form.formState.errors.startDate && (
               <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.startDate.message}</p>
@@ -161,7 +161,7 @@ export function CreateEventForm() {
               id="endDate"
               type="datetime-local"
               {...form.register("endDate")}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-200 text-[14px] font-mono"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
             />
             {form.formState.errors.endDate && (
               <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.endDate.message}</p>
@@ -178,7 +178,7 @@ export function CreateEventForm() {
             id="location"
             type="text"
             {...form.register("location")}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-200 text-[14px]"
+            className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
             placeholder="Enter event location"
           />
           {form.formState.errors.location && (
@@ -202,7 +202,7 @@ export function CreateEventForm() {
               id="attendeeCount"
               type="number"
               {...form.register("attendeeCount", { valueAsNumber: true })}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-200 text-[14px]"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
               placeholder="0"
               min="1"
             />
@@ -219,7 +219,7 @@ export function CreateEventForm() {
             <textarea
               id="description"
               {...form.register("description")}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-200 min-h-[100px] resize-y text-[14px] leading-relaxed"
+              className="w-full px-3 py-2 bg-[#141414] border border-[#262626] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
               placeholder="Enter event description"
             />
           </div>
@@ -230,7 +230,7 @@ export function CreateEventForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="px-4 py-2 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
+            className="px-5 py-2.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-all duration-120 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">

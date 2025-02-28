@@ -120,7 +120,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
       <div className="mb-8">
         <Link 
           href="/events" 
-          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors"
+          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors duration-120"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -140,12 +140,12 @@ export default async function EventDetailPage({ params }: { params: { id: string
           </div>
           
           <div className="flex gap-3">
-            <button className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors">
+            <button className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120">
               Delete
             </button>
             <Link 
               href={`/events/${event.id}/edit`}
-              className="px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded border border-transparent hover:border-[#8D95F2] transition-colors"
+              className="px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded border border-transparent hover:border-[#8D95F2] transition-colors duration-120"
             >
               Edit Event
             </Link>

@@ -24,7 +24,7 @@ function NavItem({
     <Link
       href={href}
       className={`
-        flex items-center px-3 py-2 text-sm rounded-md mb-0.5 transition-colors
+        flex items-center px-3 py-2 text-sm rounded-md mb-0.5 transition-colors duration-120
         ${active 
           ? 'bg-[#1E1E1E] text-white font-medium' 
           : 'text-gray-400 hover:text-white hover:bg-[#1E1E1E]/50'}
