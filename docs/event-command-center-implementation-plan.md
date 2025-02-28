@@ -69,8 +69,16 @@ This checklist breaks down the MVP implementation into vertical slices that can 
       > DONE: Users see all their events in a list with status badges
 - [x] 🔴 Implement event detail page
       > DONE: Users can view individual event details
-- [ ] 🔴 Add edit/delete functionality for events
-      > Edit and delete UI added but not fully implemented
+- [x] 🔴 Add edit/delete functionality for events
+      > DONE: Users can edit event details and delete events
+
+### Day 5.5: Event Interaction Improvements
+- [x] 🔴 Implement clickable table rows for better UX
+      > DONE: Created client component pattern for interactive tables
+- [x] 🔴 Improve hover states and interactive elements
+      > DONE: Enhanced row hover effects with consistent behavior
+- [x] 🔴 Refine event detail view with Linear-inspired design
+      > DONE: Updated event details with improved UI components
 
 ### Day 6: Initial Timeline Block Creation
 - [ ] 🔴 Create timeline_blocks table in database

@@ -129,6 +129,24 @@ Implications: Expected effects of this decision (optional)
 - When authentication is needed it can be handled without duplicating code
 - Works within the security ecosystem of the midday-ai/v1 starter kit
 
+### 2024-06-04: Client Component Pattern for Interactive Server-Rendered Tables
+
+**Context**: Needed to implement clickable table rows in a server component while maintaining proper HTML table structure.
+
+**Decision**: Created a dedicated client component (`ClickableTableRow`) that wraps TR elements and handles navigation.
+
+**Reasoning**: 
+- Allows server rendering of the main page content for better performance
+- Minimizes client JavaScript to only interactive elements
+- Maintains proper HTML table structure
+- Follows Next.js App Router best practices for mixing server and client components
+
+**Implications**:
+- Small increase in bundle size for the client component
+- Cleaner separation between data fetching and interactive UI
+- More maintainable pattern for future interactive elements
+- Enables consistent hover behavior across the entire row
+
 ## When to Add Entries
 
 Add entries to this log when you:

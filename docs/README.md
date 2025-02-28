@@ -43,9 +43,16 @@ As of June 2024, we have implemented:
 
 - **Event Management**
   - Event creation form with validation
-  - Event listing with status badges
-  - Event detail views
-  - Clean, Linear-inspired UI
+  - Event listing with status badges and clickable rows
+  - Event detail views with Linear-inspired design
+  - Event editing and deletion
+  - Clean, consistent UI with hover states
+
+- **Application Architecture**
+  - Server Components for data-fetching pages
+  - Client Components for interactive elements
+  - Proper separation of concerns
+  - Linear-inspired visual language
 
 - **Database**
   - Events table with core fields

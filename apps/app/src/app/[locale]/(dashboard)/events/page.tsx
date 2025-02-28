@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { Event } from "@/types/events";
+import { ClickableTableRow } from "@/components/ui/clickable-table-row";
 
 // Type for the event data returned from Supabase
 type EventDbRow = {
@@ -43,12 +44,12 @@ function StatusBadge({ status }: { status: string }) {
       case 'cancelled':
         return 'bg-red-500/10 text-red-500';
       default: // draft
-        return 'bg-gray-500/10 text-gray-400';
+        return 'bg-gray-600/15 text-gray-300';
     }
   };
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium tracking-wide ${getStatusStyles()}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium tracking-wide ${getStatusStyles()} border border-current/30`}>
       {status}
     </span>
   );
@@ -86,7 +87,7 @@ export default async function EventsPage() {
         <h1 className="text-xl font-semibold tracking-tight">Events</h1>
         <Link
           href="/events/new"
-          className="inline-flex items-center px-4 py-2 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded-md transition-all duration-120 border border-transparent hover:border-[#8D95F2] shadow-sm hover:shadow"
+          className="inline-flex items-center px-4 py-2 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded-md transition-colors duration-120 border border-transparent hover:border-[#8D95F2] shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_3px_12px_rgba(94,106,210,0.2)]"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -96,7 +97,7 @@ export default async function EventsPage() {
       </div>
 
       {events.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-56 border border-[#262626] rounded-lg bg-[#141414]">
+        <div className="flex flex-col items-center justify-center h-56 border border-[#1F1F1F] rounded-lg bg-[#141414] shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           <p className="text-gray-400 mb-2 font-medium">No events found</p>
           <p className="text-gray-500 text-sm">
             Create your first event to get started with your planning
@@ -104,50 +105,42 @@ export default async function EventsPage() {
         </div>
       ) : (
         // Linear-style table view
-        <div className="border border-[#262626] rounded-md overflow-hidden">
+        <div className="border border-[#1F1F1F] rounded-md overflow-hidden bg-[#141414] shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#262626]">
+              <tr className="border-b border-[#1F1F1F]">
                 <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Event</th>
                 <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Date</th>
                 <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Location</th>
                 <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#262626]">
+            <tbody className="divide-y divide-[#1F1F1F]">
               {events.map((event) => (
-                <tr 
-                  key={event.id} 
-                  className="hover:bg-[#1E1E1E] transition-colors duration-120 text-[14px] cursor-pointer"
+                <ClickableTableRow
+                  key={event.id}
+                  href={`/events/${event.id}`}
                 >
                   <td className="px-5 py-3.5">
-                    <Link href={`/events/${event.id}`} className="block">
-                      <div className="font-medium text-gray-100 hover:text-white transition-colors duration-120">
-                        {event.name}
+                    <div className="font-medium text-gray-100 hover:text-white transition-colors duration-120">
+                      {event.name}
+                    </div>
+                    {event.description && (
+                      <div className="text-gray-400 text-[13px] mt-0.5 line-clamp-1">
+                        {event.description}
                       </div>
-                      {event.description && (
-                        <div className="text-gray-400 text-[13px] mt-0.5 line-clamp-1">
-                          {event.description}
-                        </div>
-                      )}
-                    </Link>
+                    )}
                   </td>
                   <td className="px-5 py-3.5 text-[13px] font-medium text-gray-400 whitespace-nowrap">
-                    <Link href={`/events/${event.id}`} className="block">
-                      {formatDate(event.startDate.toString())}
-                    </Link>
+                    {formatDate(event.startDate.toString())}
                   </td>
                   <td className="px-5 py-3.5 text-[13px] text-gray-300">
-                    <Link href={`/events/${event.id}`} className="block">
-                      {event.location}
-                    </Link>
+                    {event.location}
                   </td>
                   <td className="px-5 py-3.5">
-                    <Link href={`/events/${event.id}`} className="block">
-                      <StatusBadge status={event.status} />
-                    </Link>
+                    <StatusBadge status={event.status} />
                   </td>
-                </tr>
+                </ClickableTableRow>
               ))}
             </tbody>
           </table>
