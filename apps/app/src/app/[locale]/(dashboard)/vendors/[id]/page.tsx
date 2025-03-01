@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Vendor } from '@/types/vendor';
 import { EventStatus } from '@/types/events';
+import { DocumentsSectionReadonly } from '@/components/vendors/documents-section-readonly';
 
 // Type for events assigned to this vendor
 interface EventAssignment {
@@ -461,6 +462,11 @@ export default function VendorDetailPage() {
             </div>
           </section>
         )}
+        
+        {/* Documents Section */}
+        <section className="space-y-4">
+          <DocumentsSectionReadonly vendorId={vendorId} />
+        </section>
         
         {/* Assigned Events */}
         <section className="space-y-4">

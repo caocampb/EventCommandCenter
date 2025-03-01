@@ -386,6 +386,42 @@ Implications: Expected effects of this decision (optional)
 - Maintained consistent styling with Linear's color system
 - Used clear visual feedback for active filter state
 
+### 2024-07-12: PDF Document Attachments for Vendors
+
+### Context
+Event planning involves numerous documents from vendors (contracts, menus, floor plans, etc.) that need to be easily accessible within the application. Previously, these documents would be stored externally requiring users to manually organize and access them separately from the application.
+
+### Decision
+Implement a PDF attachment system for vendor profiles with the following features:
+- Dedicated Supabase storage bucket with appropriate RLS policies
+- Database table tracking document metadata (name, size, type, upload date)
+- Upload component with validation, size limits, and progress feedback
+- Document preview directly in the browser for quick reference
+- Download option for offline access
+- Delete functionality with proper cleanup
+
+### PDF Experience Decision
+We chose to implement two distinct actions for document interaction:
+1. **Preview**: Uses the browser's built-in PDF renderer to display the document directly in the application without requiring download. This is ideal for quick reference.
+2. **Download**: Provides a direct link to the document with proper headers to trigger a download for offline access or sharing.
+
+This dual-approach balances immediate access needs with offline functionality, improving user workflow efficiency.
+
+### Reasoning
+Including vendor documents directly within the application creates a more complete planning experience, reduces context switching, and ensures all relevant information is accessible in one place. The implementation follows our design principles of progressive disclosure and minimal data entry friction.
+
+### Implications
+- Users can now access, preview, and download vendor documents without leaving the application
+- Document management is integrated into the vendor profile workflow
+- UI consistently shows document actions on hover, following the Linear-style interaction pattern
+- Storage is properly secured with appropriate access controls
+
+### Technical Implementation
+- Created `vendor_documents` table with fields for document metadata
+- Set up storage bucket with RLS policies enforcing proper access control
+- Implemented API endpoints for uploading, fetching, and deleting documents
+- Designed UI components for document management with proper error handling
+
 ## When to Add Entries
 
 Add entries to this log when you:

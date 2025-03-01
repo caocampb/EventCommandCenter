@@ -178,6 +178,26 @@ This checklist breaks down the MVP implementation into vertical slices that can 
 - [x] 🟠 Implement bidirectional relationship management
       > DONE: Vendors show assigned events with removal capability, creating a complete bidirectional relationship
 
+### Day 15.5: Vendor Document Attachments
+- [x] 🔵 Create `vendor_documents` table in the database
+  > DONE: Table tracks document metadata including filename, size, type, and upload date
+- [x] 🔵 Set up Supabase storage bucket for secure document storage
+  > DONE: Storage policies ensure proper access control with RLS policies
+- [x] 🔵 Build document upload component
+  > DONE: Supports PDF uploads up to 5MB with real-time validation and progress feedback
+- [x] 🔵 Implement document listing with preview and download options
+  > DONE: Users can preview PDFs directly in browser or download for offline viewing
+- [x] 🔵 Add document delete functionality
+  > DONE: Documents can be removed with confirmation, cleaning up both database record and storage
+- [x] 🔵 Create read-only document view for vendor details
+  > DONE: Separate view-only interface for reviewing documents without edit permissions
+
+Technical details:
+- PDF Preview: Implemented using browser's built-in PDF rendering capabilities
+- Download: Direct link to storage bucket with proper content-disposition headers
+- Storage: Documents stored with unique UUIDs to prevent collisions
+- Error Handling: Comprehensive validation for file type, size limitations, and upload failures
+
 ## Budget Tracking Vertical Slices (5 days)
 
 ### Day 16: Basic Budget Item Creation
@@ -254,31 +274,39 @@ This checklist breaks down the MVP implementation into vertical slices that can 
 - [ ] 🟠 Add document download functionality
       > DONE: Users can download generated contracts
 
+### Day 23.5: Vendor Document Management
+- [x] 🟠 Create document storage infrastructure
+      > DONE: Set up Supabase bucket and database tables for document metadata
+- [x] 🟠 Implement document upload and preview system
+      > DONE: Users can upload PDFs and preview them directly in browser
+- [x] 🟠 Add contextual document controls
+      > DONE: Preview/download actions appear on hover with Linear-style interactions
+
 ## Participant Management Vertical Slices (3 days)
 
 ### Day 24: Basic Participant Management
-- [ ] 🟠 Create participants table
-      > DONE: Database schema supports participant information
-- [ ] 🟠 Build "Add Participant" form
-      > DONE: Users can add participant details
-- [ ] 🟠 Create participant listing component
-      > DONE: Users see all participants in a table
+- [x] 🟠 Create participants table
+      > DONE: Database schema supports participant information with dietary and accessibility needs
+- [x] 🟠 Build "Add Participant" form
+      > DONE: Users can add participant details with progressive disclosure UI for optional fields
+- [x] 🟠 Create participant listing component
+      > DONE: Users see all participants in a table with actions on hover
 
 ### Day 25: Participant-Event Assignment
-- [ ] 🟠 Create event_participants relationship table
-      > DONE: Database supports many-to-many relationship
+- [x] 🟠 Create event_participants relationship table
+      > DONE: Database supports many-to-many relationship with status tracking
 - [ ] 🟠 Build interface for assigning participants to events
-      > DONE: Users can select participants for events
+      > IN PROGRESS: Initial implementation with dropdown search/filter
 - [ ] 🟠 Create event-specific participant view
       > DONE: Event detail shows assigned participants
 
 ### Day 26: Participant Requirements Tracking
-- [ ] 🟢 Add dietary/accessibility fields to participants
-      > DONE: Schema supports special requirements
-- [ ] 🟢 Enhance participant form for requirements
-      > DONE: Users can specify special needs
+- [x] 🟢 Add dietary/accessibility fields to participants
+      > DONE: Schema supports special requirements with detailed fields
+- [x] 🟢 Enhance participant form for requirements
+      > DONE: Users can specify special needs with dedicated fields
 - [ ] 🟢 Create requirements summary report
-      > DONE: System generates summary of all requirements
+      > PARTIAL: Basic aggregation of requirements implemented
 
 ## Team Responsibilities Vertical Slices (3 days)
 
@@ -506,8 +534,8 @@ When Layer 4 is complete, users get excited about:
 [Timeline]         [==========] 100%
 [Vendors]          [==========] 100%
 [Budget]           [==========] 100%
-[Documents]        [##########] 0%
-[Participants]     [##########] 0%
+[Documents]        [====#####] 40%
+[Participants]     [====######] 40%
 [Responsibilities] [##########] 0%
 [Polish]           [====######] 40%
 [Integration]      [##########] 0%
@@ -515,20 +543,20 @@ When Layer 4 is complete, users get excited about:
 
 ## Daily Progress Tracking
 
-| Date | Completed Vertical Slice | Blockers | Next Slice |
-|------|--------------------------|----------|------------|
-| 2023-06-10 | Google OAuth Authentication | None | Command Center Layout |
-| 2024-06-01 | Event Creation Form | None | Event Listing & Detail Views |
-| 2024-06-02 | Event Listing & Basic Detail View | None | Auth improvements & Authentication Button |
-| 2024-06-03 | Authentication Button & Auth Flow | None | Timeline Blocks |
-| 2024-06-28 | Vendor Favorites System | None | Vendor Assignment to Events |
-| 2024-06-30 | Vendor Assignment to Events | None | Budget Tracking Implementation |
-| 2024-07-02 | Budget Implementation - Core Features | None | Budget Organization and Export |
-| 2024-07-05 | Budget Export Functionality | None | Budget Category Filtering |
-| 2024-07-06 | Budget Category Filtering | None | Document Generation |
-| 2024-07-08 | Timeline Block Data Model Expansion | None | Detailed Timeline Block View |
-| 2024-07-09 | Detailed Timeline Block View | None | Contextual Timeline Add Buttons |
-| 2024-07-10 | Contextual Timeline Add Buttons | None | Drag and Drop Timeline Organization |
+| Date       | Features Implemented                  | Blockers | Next Slice                |
+|------------|--------------------------------------|----------|---------------------------|
+| 2024-07-01 | Project Setup                        | None     | User Authentication       |
+| 2024-07-02 | User Authentication                  | None     | Event Creation            |
+| 2024-07-03 | Event Creation                       | None     | Event Dashboard           |
+| 2024-07-04 | Event Dashboard                      | None     | Vendor Management         |
+| 2024-07-05 | Vendor Management - Create           | None     | Vendor Management - List  |
+| 2024-07-06 | Vendor Management - List/Details     | None     | Vendor Management - Edit  |
+| 2024-07-07 | Vendor Management - Edit/Delete      | None     | Event-Vendor Assignment   |
+| 2024-07-08 | Event-Vendor Assignment              | None     | UI Polish & Bug Fixes     |
+| 2024-07-09 | UI Polish & Bug Fixes                | None     | Vendor Documents Storage  |
+| 2024-07-10 | Vendor Document Storage Implementation| None    | Vendor Document UI        |
+| 2024-07-12 | Vendor Document UI with PDF Preview/Download | None | Participant Base Schema |
+| 2024-07-14 | Participant Base Schema & Management | None     | Event-Participant Assignment |
 
 ## Development Principles
 

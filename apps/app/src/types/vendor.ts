@@ -116,4 +116,32 @@ export interface EventVendorDbRow {
   notes: string | null;
   created_at: string;
   updated_at: string;
+}
+
+/**
+ * Vendor document type for file attachments
+ */
+export interface VendorDocument {
+  id: string;
+  vendorId: string;
+  name: string;
+  filePath: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+/**
+ * Database representation of the vendor document
+ */
+export interface VendorDocumentDbRow {
+  id: string;
+  vendor_id: string;
+  name: string;
+  file_path: string;
+  file_type: string;
+  file_size: number;
+  created_at: string;
+  updated_at: string;
 } 

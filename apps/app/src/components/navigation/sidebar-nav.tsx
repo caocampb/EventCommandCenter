@@ -39,6 +39,7 @@ export default function SidebarNav() {
   // Check if the pathname contains the section name
   const isEventsActive = pathname?.includes('/events') ?? false;
   const isVendorsActive = pathname?.includes('/vendors') ?? false;
+  const isBudgetActive = pathname?.includes('/budget') ?? false;
   
   return (
     <nav className="px-3 mb-8">
@@ -68,6 +69,17 @@ export default function SidebarNav() {
         } 
         label="Vendors"
         active={isVendorsActive}
+      />
+      
+      <NavItem 
+        href="/en/budget" 
+        icon={
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        } 
+        label="Budget"
+        active={isBudgetActive}
       />
       
       {/* Future navigation items - commented out for MVP */}

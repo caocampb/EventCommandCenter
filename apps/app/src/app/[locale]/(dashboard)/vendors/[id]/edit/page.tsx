@@ -8,6 +8,7 @@ import { vendorSchema } from '@/lib/validations/vendor-schema';
 import type { VendorFormValues } from '@/lib/validations/vendor-schema';
 import type { PriceTier, Vendor } from '@/types/vendor';
 import Link from 'next/link';
+import { DocumentsSection } from '@/components/vendors/documents-section';
 
 export default function EditVendorPage() {
   const params = useParams();
@@ -385,6 +386,11 @@ export default function EditVendorPage() {
               <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.notes.message}</p>
             )}
           </div>
+        </div>
+        
+        {/* Documents Section */}
+        <div className="space-y-6 pt-2" onClick={(e) => e.stopPropagation()}>
+          <DocumentsSection vendorId={vendorId} />
         </div>
         
         {/* Form actions */}

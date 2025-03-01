@@ -91,11 +91,49 @@ export async function PATCH(
       );
     }
     
-    // Parse and validate request body
+    // Parse request body
     const body = await request.json();
-    
     console.log("PATCH: Received event data:", JSON.stringify(body, null, 2));
     
+    // Special case for total_budget - we don't need full validation
+    if (body.total_budget !== undefined && Object.keys(body).length === 1) {
+      console.log("PATCH: Updating total_budget to:", body.total_budget);
+      
+      const { data, error } = await serviceRoleClient
+        .from("events")
+        .update({
+          total_budget: body.total_budget,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select();
+      
+      if (error) {
+        console.error("PATCH: Error updating event budget:", error);
+        return NextResponse.json(
+          { error: "Failed to update event budget: " + error.message },
+          { status: 500 }
+        );
+      }
+      
+      if (!data || data.length === 0) {
+        console.error("PATCH: No data returned after budget update");
+        return NextResponse.json(
+          { error: "Event not found" },
+          { status: 404 }
+        );
+      }
+      
+      return NextResponse.json({ 
+        data: {
+          id: data[0].id,
+          totalBudget: data[0].total_budget
+        },
+        success: true
+      });
+    }
+    
+    // For all other updates, continue with full validation
     const validationResult = eventSchema.safeParse(body);
     
     if (!validationResult.success) {
