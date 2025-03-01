@@ -65,6 +65,9 @@ export async function GET(
       location: block.location,
       description: block.description,
       status: block.status,
+      personnel: block.personnel,
+      equipment: block.equipment,
+      notes: block.notes,
       createdAt: block.created_at,
       updatedAt: block.updated_at,
     }));
@@ -132,6 +135,9 @@ export async function POST(
         location: validatedData.location,
         description: validatedData.description,
         status: validatedData.status,
+        personnel: validatedData.personnel,
+        equipment: validatedData.equipment,
+        notes: validatedData.notes,
       })
       .select();
     
@@ -163,6 +169,9 @@ export async function POST(
       location: data[0].location,
       description: data[0].description,
       status: data[0].status,
+      personnel: data[0].personnel,
+      equipment: data[0].equipment,
+      notes: data[0].notes,
       createdAt: data[0].created_at,
       updatedAt: data[0].updated_at,
     };

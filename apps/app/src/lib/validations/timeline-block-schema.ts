@@ -79,6 +79,10 @@ export const timelineBlockSchema = z.object({
   location: z.string().optional(),
   description: z.string().optional(),
   status: z.enum(['pending', 'in-progress', 'complete', 'cancelled'] as const).default('pending'),
+  // New fields for expanded timeline blocks
+  personnel: z.string().optional(),
+  equipment: z.string().optional(),
+  notes: z.string().optional(),
 }).refine(
   data => new Date(data.startTime) < new Date(data.endTime),
   {
@@ -96,6 +100,10 @@ export const timelineBlockSchema15Min = z.object({
   location: z.string().optional(),
   description: z.string().optional(),
   status: z.enum(['pending', 'in-progress', 'complete', 'cancelled'] as const).default('pending'),
+  // New fields for expanded timeline blocks
+  personnel: z.string().optional(),
+  equipment: z.string().optional(),
+  notes: z.string().optional(),
 }).refine(
   data => new Date(data.startTime) < new Date(data.endTime),
   {
@@ -105,4 +113,56 @@ export const timelineBlockSchema15Min = z.object({
 );
 
 // Type for our form values, derived from the schema
-export type TimelineBlockFormValues = z.infer<typeof timelineBlockSchema>; 
+export type TimelineBlockFormValues = z.infer<typeof timelineBlockSchema>;
+
+// Timeline block update validation schema (all fields optional)
+export const updateTimelineBlockSchema = z.object({
+  title: z.string().min(1, "Title is required").optional(),
+  startTime: timeValidator.optional(),
+  endTime: timeValidator.optional(),
+  location: z.string().optional(),
+  description: z.string().optional(),
+  status: z.enum(['pending', 'in-progress', 'complete', 'cancelled'] as const).optional(),
+  // New fields for expanded timeline blocks
+  personnel: z.string().optional(),
+  equipment: z.string().optional(),
+  notes: z.string().optional(),
+}).refine(
+  data => {
+    // Only validate if both times are provided
+    if (data.startTime && data.endTime) {
+      return new Date(data.startTime) < new Date(data.endTime);
+    }
+    return true;
+  },
+  {
+    message: "End time must be after start time",
+    path: ["endTime"],
+  }
+);
+
+// Timeline block update validation schema with 15-minute precision
+export const updateTimelineBlockSchema15Min = z.object({
+  title: z.string().min(1, "Title is required").optional(),
+  startTime: createTimeValidator('15min').optional(),
+  endTime: createTimeValidator('15min').optional(),
+  location: z.string().optional(),
+  description: z.string().optional(),
+  status: z.enum(['pending', 'in-progress', 'complete', 'cancelled'] as const).optional(),
+  // New fields for expanded timeline blocks
+  personnel: z.string().optional(),
+  equipment: z.string().optional(),
+  notes: z.string().optional(),
+}).refine(
+  data => {
+    // Only validate if both times are provided
+    if (data.startTime && data.endTime) {
+      return new Date(data.startTime) < new Date(data.endTime);
+    }
+    return true;
+  },
+  {
+    message: "End time must be after start time",
+    path: ["endTime"],
+  }
+); 

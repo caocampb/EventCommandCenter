@@ -11,6 +11,10 @@ export interface TimelineBlock {
   location?: string;
   description?: string;
   status: TimelineBlockStatus;
+  // New fields for expanded timeline blocks
+  personnel?: string;
+  equipment?: string;
+  notes?: string;
   createdAt: Date | string;
   updatedAt: Date | string;
 }
@@ -34,6 +38,10 @@ export type TimelineBlockDbRow = {
   location?: string;
   description?: string;
   status: string;
+  // New fields for expanded timeline blocks
+  personnel?: string;
+  equipment?: string;
+  notes?: string;
   created_at: string;
   updated_at: string;
 }; 
