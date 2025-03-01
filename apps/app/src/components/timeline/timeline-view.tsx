@@ -2,8 +2,10 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { TimelineBlock } from "../../types/timeline";
 import { formatDateForDisplay, formatTimeForDisplay } from "../../utils/timezone-utils";
+import { DetailedTimelineBlockView } from './detailed-timeline-block-view';
 
 // Keep the formatTime function for timeline calculations, but use the utility for display
 function formatTime(dateString: string) {
@@ -171,6 +173,8 @@ export function TimelineView({
   eventId: string;
 }) {
   const [viewType, setViewType] = useState<'visual' | 'list'>('visual');
+  const [selectedBlock, setSelectedBlock] = useState<TimelineBlock | null>(null);
+  const router = useRouter();
   const hasBlocks = blocks.length > 0;
   
   // Ensure dateKey is in a consistent format for comparison
@@ -245,6 +249,18 @@ export function TimelineView({
     
     return { dayStartHour: startHour, dayEndHour: endHour, isExpanded: expanded };
   }, [blocks, hasBlocks]);
+  
+  // Function to handle editing a block
+  const handleEditBlock = () => {
+    if (selectedBlock) {
+      router.push(`/en/events/${eventId}/timeline/${selectedBlock.id}/edit`);
+    }
+  };
+  
+  // Function to close the detailed view
+  const handleCloseDetailedView = () => {
+    setSelectedBlock(null);
+  };
   
   return (
     <div className="pb-2">
@@ -338,10 +354,10 @@ export function TimelineView({
                 const compactEndTime = formatTimeCompact(block.endTime.toString());
                 
                 return (
-                  <Link 
+                  <div 
                     key={block.id}
-                    href={`/en/events/${eventId}/timeline/${block.id}/edit`}
-                    className="absolute group hover:z-10"
+                    onClick={() => setSelectedBlock(block)}
+                    className="absolute group hover:z-10 cursor-pointer"
                     style={{ 
                       left: `${left}%`, 
                       width: `${width}%`,
@@ -417,7 +433,7 @@ export function TimelineView({
                         </div>
                       </div>
                     )}
-                  </Link>
+                  </div>
                 );
               })
             ) : (
@@ -533,6 +549,19 @@ export function TimelineView({
               </Link>
             </div>
           )}
+        </div>
+      )}
+      
+      {/* Detailed Timeline Block View Modal */}
+      {selectedBlock && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-2xl animate-in fade-in zoom-in-95 duration-200">
+            <DetailedTimelineBlockView 
+              block={selectedBlock} 
+              onClose={handleCloseDetailedView} 
+              onEdit={handleEditBlock} 
+            />
+          </div>
         </div>
       )}
     </div>

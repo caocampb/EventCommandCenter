@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TimelineBlock } from '../../types/timeline';
 import { formatTimeForDisplay, formatDateForDisplay } from '../../utils/timezone-utils';
+import { DetailedTimelineBlockView } from './detailed-timeline-block-view';
+import { useRouter } from 'next/navigation';
+import { cn } from '@v1/ui/cn';
 
 interface TimelineViewVerticalProps {
   blocks: TimelineBlock[];
@@ -74,6 +77,10 @@ function TimelineBlockVertical({
   eventId: string;
   startHour: number;
 }) {
+  const [showDetailedView, setShowDetailedView] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const router = useRouter();
+  
   // Format time for display
   const displayStartTime = formatTimeForDisplay(block.startTime.toString());
   const displayEndTime = formatTimeForDisplay(block.endTime.toString());
@@ -164,78 +171,117 @@ function TimelineBlockVertical({
   
   const styles = getStyles();
   
+  // Add a slight delay to hover state to prevent flickering (Linear-style)
+  const handleMouseEnter = () => {
+    const timer = setTimeout(() => setIsHovering(true), 50);
+    return () => clearTimeout(timer);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+  };
+  
   return (
-    <Link
-      href={`/en/events/${eventId}/timeline/${block.id}/edit`}
-      className="absolute left-0 right-0 group hover:z-20"
-      style={{ 
-        top: `${top}px`, 
-        height: `${height}px`,
-        zIndex: 10
-      }}
-    >
-      <div className={`h-full ${styles.bg} border ${styles.border} px-3 flex flex-col shadow-sm hover:shadow transition-all duration-150`}>
-        {isShortBlock ? (
-          // Compact layout for short blocks (≤30 min)
-          <div className="flex justify-between items-center h-full">
-            <div className="flex items-center gap-1.5 max-w-[50%]">
-              <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
-              <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
-              <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30">
-                {block.status}
-              </span>
-            </div>
-          </div>
-        ) : isMediumBlock ? (
-          // Medium layout for blocks between 30min and 1 hour
-          <div className="flex flex-col h-full justify-between py-1">
-            <div className="flex justify-between items-start">
+    <>
+      <div
+        className="absolute left-0 right-0 group hover:z-20 cursor-pointer"
+        style={{ 
+          top: `${top}px`, 
+          height: `${height}px`,
+          zIndex: isHovering ? 20 : 10
+        }}
+        onClick={() => setShowDetailedView(true)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className={`h-full ${styles.bg} border ${styles.border} px-3 flex flex-col shadow-sm 
+          hover:shadow-md transition-all duration-150 ease-out 
+          group-hover:translate-y-[-1px] group-hover:border-opacity-90
+          relative ${isHovering ? 'ring-1 ring-[#5E6AD2]/20' : ''}`}>
+          {/* Hover indicator - Linear style subtle accent bar */}
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#5E6AD2] scale-y-0 group-hover:scale-y-100 transition-transform duration-100 ease-in-out origin-center"></div>
+         
+          {/* Linear-style subtle click affordance - appears on hover */}
+          <div className="absolute inset-0 bg-[#5E6AD2]/[0.02] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150"></div>
+        
+          {isShortBlock ? (
+            // Compact layout for short blocks (≤30 min)
+            <div className="flex justify-between items-center h-full">
               <div className="flex items-center gap-1.5 max-w-[50%]">
                 <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
                 <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
               </div>
-              <div className="flex flex-col items-end">
+              <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
-                <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30 mt-0.5">
+                <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30">
                   {block.status}
                 </span>
               </div>
             </div>
-          </div>
-        ) : (
-          // Standard layout for longer blocks
-          <>
-            <div className="flex items-start justify-between gap-2 mt-1">
-              <div className="flex items-center gap-1.5 max-w-[50%]">
-                <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
-                <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[10px] font-mono text-gray-500">{timeDisplay}</span>
-                <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30 mt-0.5">
-                  {block.status}
-                </span>
+          ) : isMediumBlock ? (
+            // Medium layout for blocks between 30min and 1 hour
+            <div className="flex flex-col h-full justify-between py-1">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-1.5 max-w-[50%]">
+                  <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
+                  <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
+                  <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30 mt-0.5">
+                    {block.status}
+                  </span>
+                </div>
               </div>
             </div>
-            
-            {block.location && (
-              <div className="flex flex-col text-[11px] mt-auto mb-1">
-                <span className="text-gray-400 mb-0.5 flex items-center">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1 opacity-70">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <span className="truncate">{block.location}</span>
-                </span>
+          ) : (
+            // Standard layout for longer blocks
+            <>
+              <div className="flex items-start justify-between gap-2 mt-1">
+                <div className="flex items-center gap-1.5 max-w-[50%]">
+                  <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
+                  <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[10px] font-mono text-gray-500">{timeDisplay}</span>
+                  <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30 mt-0.5">
+                    {block.status}
+                  </span>
+                </div>
               </div>
-            )}
-          </>
-        )}
+              
+              {block.location && (
+                <div className="flex flex-col text-[11px] mt-auto mb-1">
+                  <span className="text-gray-400 mb-0.5 flex items-center">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1 opacity-70">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span className="truncate">{block.location}</span>
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </Link>
+      
+      {/* Modal for detailed view */}
+      {showDetailedView && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg">
+            <DetailedTimelineBlockView 
+              block={block}
+              onClose={() => setShowDetailedView(false)}
+              onEdit={() => {
+                setShowDetailedView(false);
+                router.push(`/en/events/${eventId}/timeline/${block.id}/edit`);
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -243,12 +289,30 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
   // Default time range for the timeline (8am to 8pm by default)
   const [startHour, setStartHour] = useState(DEFAULT_START_HOUR);
   const [endHour, setEndHour] = useState(DEFAULT_END_HOUR);
+  const [isDayHovered, setIsDayHovered] = useState(false);
+  const router = useRouter();
   
   // Format date for display
   const formattedDate = formatDateForDisplay(
     dateKey.includes('T') ? dateKey : `${dateKey}T00:00:00`
   );
   
+  // Handler for day header hover
+  const handleDayHeaderMouseEnter = () => {
+    const timer = setTimeout(() => setIsDayHovered(true), 50); // Linear-style delay
+    return () => clearTimeout(timer);
+  };
+
+  const handleDayHeaderMouseLeave = () => {
+    setIsDayHovered(false);
+  };
+  
+  // Navigate to add page with date pre-filled
+  const handleAddClick = () => {
+    // Using the dateKey for the add page, which will pre-fill the date
+    router.push(`/en/events/${eventId}/timeline/add?date=${dateKey}`);
+  };
+
   // Auto-adjust time range based on blocks
   useEffect(() => {
     if (blocks.length === 0) {
@@ -305,14 +369,33 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
   if (blocks.length === 0) {
     return (
       <div className="space-y-4">
-        <div className="text-[14px] font-medium pt-2">
-          {formattedDate}
+        <div 
+          className="text-[14px] font-medium pt-2 flex justify-between items-center group relative"
+          onMouseEnter={handleDayHeaderMouseEnter}
+          onMouseLeave={handleDayHeaderMouseLeave}
+        >
+          <span>{formattedDate}</span>
+          
+          {/* Linear-style add button - only visible on hover */}
+          <button
+            onClick={handleAddClick}
+            className={cn(
+              "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150", 
+              "text-gray-400 hover:text-gray-200",
+              isDayHovered ? "opacity-100" : "opacity-0"
+            )}
+            aria-label={`Add block to ${formattedDate}`}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
         </div>
         
         <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-6 text-center">
           <p className="text-gray-400 mb-4">No timeline blocks scheduled for this day</p>
           <Link
-            href={`/en/events/${eventId}/timeline/add`}
+            href={`/en/events/${eventId}/timeline/add?date=${dateKey}`}
             className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-gray-400 hover:text-white font-medium rounded border border-[#333333] inline-flex items-center"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1.5">
@@ -346,9 +429,28 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
 
   return (
     <div className="space-y-4">
-      {/* Day header */}
-      <div className="text-[14px] font-medium pt-2">
-        {formattedDate}
+      {/* Day header with add button */}
+      <div 
+        className="text-[14px] font-medium pt-2 flex justify-between items-center group"
+        onMouseEnter={handleDayHeaderMouseEnter}
+        onMouseLeave={handleDayHeaderMouseLeave}
+      >
+        <span>{formattedDate}</span>
+        
+        {/* Linear-style add button - only visible on hover */}
+        <button
+          onClick={handleAddClick}
+          className={cn(
+            "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150", 
+            "text-gray-400 hover:text-gray-200 hover:bg-[#1E1E1E]",
+            isDayHovered ? "opacity-100" : "opacity-0"
+          )}
+          aria-label={`Add block to ${formattedDate}`}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
       </div>
       
       {/* Timeline grid */}

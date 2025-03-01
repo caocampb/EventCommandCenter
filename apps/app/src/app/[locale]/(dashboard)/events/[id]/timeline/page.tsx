@@ -82,6 +82,9 @@ export default async function TimelinePage({ params }: { params: { id: string } 
     location: block.location || '',
     description: block.description || '',
     status: block.status as any, // Type assertion since we know the values
+    personnel: block.personnel ?? '',
+    equipment: block.equipment ?? '',
+    notes: block.notes ?? '',
     createdAt: block.created_at,
     updatedAt: block.updated_at,
   })) : [];
@@ -122,6 +125,10 @@ export default async function TimelinePage({ params }: { params: { id: string } 
       
       // Only add blocks that fall within the event's date range
       if (eventDateRange.includes(blockDateStr)) {
+        // Ensure the array exists before pushing (fixes TypeScript error)
+        if (!blocksByDate[blockDateStr]) {
+          blocksByDate[blockDateStr] = [];
+        }
         blocksByDate[blockDateStr].push(block);
       } else {
         console.log(`Block with date ${blockDateStr} is outside event range`, block);
@@ -136,23 +143,40 @@ export default async function TimelinePage({ params }: { params: { id: string } 
   return (
     <div className="px-6 py-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-xl font-semibold mb-1">Timeline</h1>
-          <p className="text-gray-400 text-[15px]">
-            Timeline for {event.name}
-          </p>
-        </div>
+      <div className="mb-6">
         <Link 
-          href={`/en/events/${params.id}/timeline/add`}
-          className="px-3 py-2 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-white font-medium rounded-md transition-colors duration-120 border border-[#333333] hover:border-[#444444] inline-flex items-center shadow-sm"
+          href={`/en/events/${params.id}`} 
+          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-3 transition-colors duration-120"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
+            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          Add Timeline Block
+          Back to event
         </Link>
+        
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-semibold mb-1">Timeline</h1>
+            <p className="text-gray-400 text-[15px]">
+              Timeline for {event.name}
+            </p>
+          </div>
+          <div className="flex gap-3">
+            {timelineBlocks.length > 0 && (
+              <div className="client-only-export-button" id="export-button-container" data-event-name={event.name} data-event-location={event.location || ''} data-event-date={event.startDate} data-event-end-date={event.endDate} data-blocks={JSON.stringify(Object.values(blocksByDate).flat())}></div>
+            )}
+            <Link 
+              href={`/en/events/${params.id}/timeline/add`}
+              className="px-3 py-2 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-white font-medium rounded-md transition-colors duration-120 border border-[#333333] hover:border-[#444444] inline-flex items-center shadow-sm"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Add Timeline Block
+            </Link>
+          </div>
+        </div>
       </div>
       
       {/* Ghost Block Cleanup UI - only shown if ghost blocks detected */}
@@ -192,4 +216,4 @@ export default async function TimelinePage({ params }: { params: { id: string } 
       </div>
     </div>
   );
-} 
+}

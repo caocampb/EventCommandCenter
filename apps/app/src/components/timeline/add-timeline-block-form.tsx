@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { 
@@ -19,15 +19,43 @@ interface AddTimelineBlockFormProps {
 
 export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [precision, setPrecision] = useState<TimePrecision>('30min');
   
-  // Calculate default times based on precision
-  const getDefaultTimes = (precision: TimePrecision) => {
-    console.log('Generating new default times based on current time');
+  // Get date parameter from URL if present
+  const dateParam = searchParams.get('date');
+  
+  // Calculate default times based on precision and date parameter
+  const getDefaultTimes = (precision: TimePrecision, dateOverride?: string) => {
+    console.log('Generating new default times based on current time or date parameter', { dateOverride });
     
+    // Start with current date and time
     const now = new Date();
+    
+    // If date parameter exists, use it instead of current date
+    if (dateOverride) {
+      try {
+        // Create a date object from YYYY-MM-DD format
+        // Add time component (T00:00:00) to ensure proper parsing
+        const dateObj = new Date(`${dateOverride}T00:00:00`);
+        
+        // Only proceed if we have a valid date
+        if (!isNaN(dateObj.getTime())) {
+          // Copy just the date part (year, month, day)
+          now.setFullYear(dateObj.getFullYear());
+          now.setMonth(dateObj.getMonth());
+          now.setDate(dateObj.getDate());
+          
+          // Start at 9:00 AM for predefined dates instead of current time
+          now.setHours(9, 0, 0, 0);
+        }
+      } catch (e) {
+        console.error("Error parsing date parameter:", e);
+      }
+    }
+    
     const roundedNow = roundToTimeInterval(now, precision);
     const intervalLater = new Date(roundedNow);
     
@@ -48,7 +76,7 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
     return result;
   };
 
-  const defaultTimes = getDefaultTimes(precision);
+  const defaultTimes = getDefaultTimes(precision, dateParam || undefined);
   
   // Form with zod validation
   const form = useForm<TimelineBlockFormValues>({
@@ -60,7 +88,10 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
       endTime: defaultTimes.end,
       location: '',
       description: '',
-      status: 'pending',
+      status: 'pending' as const,
+      personnel: '',
+      equipment: '',
+      notes: '',
     },
   });
 
@@ -271,6 +302,34 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
           />
         </div>
         
+        {/* Personnel field */}
+        <div className="space-y-2">
+          <label htmlFor="personnel" className="text-[13px] font-medium text-gray-400">
+            Personnel <span className="text-gray-600">(Optional)</span>
+          </label>
+          <input
+            id="personnel"
+            type="text"
+            {...form.register('personnel')}
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            placeholder="Enter personnel responsible for this block"
+          />
+        </div>
+        
+        {/* Equipment field */}
+        <div className="space-y-2">
+          <label htmlFor="equipment" className="text-[13px] font-medium text-gray-400">
+            Equipment <span className="text-gray-600">(Optional)</span>
+          </label>
+          <input
+            id="equipment"
+            type="text"
+            {...form.register('equipment')}
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            placeholder="Enter equipment needed for this block"
+          />
+        </div>
+        
         {/* Status field */}
         <div className="space-y-2">
           <label htmlFor="status" className="text-[13px] font-medium text-gray-400">
@@ -298,6 +357,19 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
             {...form.register('description')}
             className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
             placeholder="Enter additional details, instructions, or notes"
+          />
+        </div>
+        
+        {/* Notes field */}
+        <div className="space-y-2">
+          <label htmlFor="notes" className="text-[13px] font-medium text-gray-400">
+            Notes <span className="text-gray-600">(Optional)</span>
+          </label>
+          <textarea
+            id="notes"
+            {...form.register('notes')}
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
+            placeholder="Enter any additional notes for this block"
           />
         </div>
         

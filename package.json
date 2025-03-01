@@ -25,5 +25,10 @@
     "turbo": "2.1.1",
     "typescript": "^5.5.4"
   },
-  "packageManager": "bun@1.1.26"
+  "packageManager": "bun@1.1.26",
+  "dependencies": {
+    "@react-pdf/renderer": "^4.2.2",
+    "@types/file-saver": "^2.0.7",
+    "file-saver": "^2.0.5"
+  }
 }

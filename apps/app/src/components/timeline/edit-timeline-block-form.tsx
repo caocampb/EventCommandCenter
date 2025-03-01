@@ -68,6 +68,9 @@ export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineB
       location: block.location || '',
       description: block.description || '',
       status: (block.status as "pending" | "in-progress" | "complete" | "cancelled") || "pending",
+      personnel: block.personnel || '',
+      equipment: block.equipment || '',
+      notes: block.notes || '',
     },
   });
 
@@ -343,6 +346,34 @@ export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineB
           />
         </div>
         
+        {/* Personnel field */}
+        <div className="space-y-2">
+          <label htmlFor="personnel" className="text-[13px] font-medium text-gray-400">
+            Personnel <span className="text-gray-600">(Optional)</span>
+          </label>
+          <input
+            id="personnel"
+            type="text"
+            {...form.register('personnel')}
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            placeholder="Enter personnel responsible for this block"
+          />
+        </div>
+        
+        {/* Equipment field */}
+        <div className="space-y-2">
+          <label htmlFor="equipment" className="text-[13px] font-medium text-gray-400">
+            Equipment <span className="text-gray-600">(Optional)</span>
+          </label>
+          <input
+            id="equipment"
+            type="text"
+            {...form.register('equipment')}
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            placeholder="Enter equipment needed for this block"
+          />
+        </div>
+        
         {/* Status field */}
         <div className="space-y-2">
           <label htmlFor="status" className="text-[13px] font-medium text-gray-400">
@@ -370,6 +401,19 @@ export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineB
             {...form.register('description')}
             className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
             placeholder="Enter additional details, instructions, or notes"
+          />
+        </div>
+        
+        {/* Notes field */}
+        <div className="space-y-2">
+          <label htmlFor="notes" className="text-[13px] font-medium text-gray-400">
+            Notes <span className="text-gray-600">(Optional)</span>
+          </label>
+          <textarea
+            id="notes"
+            {...form.register('notes')}
+            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
+            placeholder="Enter any additional notes for this block"
           />
         </div>
         

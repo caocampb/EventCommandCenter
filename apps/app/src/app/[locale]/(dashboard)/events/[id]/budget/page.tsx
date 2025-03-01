@@ -62,6 +62,15 @@ export default function EventBudgetPage() {
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement>(null);
 
+  // Add a user activity tracker to prevent refreshes during edits
+  const [lastUserActivity, setLastUserActivity] = useState<number>(Date.now());
+  const USER_INACTIVE_THRESHOLD = 30000; // 30 seconds of inactivity before we consider refreshes
+
+  // Track user activity
+  const trackUserActivity = useCallback(() => {
+    setLastUserActivity(Date.now());
+  }, []);
+
   // Close export menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -138,21 +147,31 @@ export default function EventBudgetPage() {
     fetchEventVendors();
   }, [fetchBudgetData, fetchEventVendors]);
   
-  // Set up periodic refresh (every 60 seconds)
+  // Set up periodic refresh (every 60 seconds) with smarter handling
   useEffect(() => {
     const intervalId = setInterval(() => {
-      // Only refresh if not actively loading and not in the middle of adding an item
-      if (!isLoading && !isAddingItem && !editingItemId) {
+      // Only refresh if:
+      // 1. Not actively loading data
+      // 2. Not in the middle of adding an item
+      // 3. Not editing an existing item
+      // 4. User has been inactive for at least 30 seconds
+      const now = Date.now();
+      const userIsInactive = (now - lastUserActivity) > USER_INACTIVE_THRESHOLD;
+      
+      if (!isLoading && !isAddingItem && !editingItemId && userIsInactive) {
+        console.log("Auto-refreshing budget data after inactivity");
         fetchBudgetData();
-        fetchEventVendors(); // Also refresh vendors
+        fetchEventVendors();
       }
     }, 60000); // 60 seconds
     
     return () => clearInterval(intervalId);
-  }, [fetchBudgetData, fetchEventVendors, isLoading, isAddingItem, editingItemId]);
+  }, [fetchBudgetData, fetchEventVendors, isLoading, isAddingItem, editingItemId, lastUserActivity]);
   
-  // Handle saving actual amount edits
+  // Handle saving actual amount edits - with tracked activity
   const updateActualAmount = useCallback(async (item: BudgetItem, newActualAmount: number) => {
+    trackUserActivity();
+    
     // Don't update if the value hasn't changed
     if (newActualAmount === item.actualAmount) {
       return;
@@ -203,18 +222,20 @@ export default function EventBudgetPage() {
         throw new Error(`Failed to update budget item: ${response.status}`);
       }
       
-      // Refresh in background for data consistency
-      fetchBudgetData();
+      // Don't refresh in the background after success - trust the optimistic update
+      // This prevents the double-update issue
       
     } catch (err) {
       console.error('Error updating actual amount:', err);
       alert('Failed to update amount. Please try again.');
-      fetchBudgetData(); // Revert to server state on error
+      fetchBudgetData(); // Only refresh on error to reset state
     }
-  }, [eventId, fetchBudgetData]);
+  }, [eventId, fetchBudgetData, trackUserActivity]);
   
-  // Save edit handler
+  // Save edit handler - with tracked activity
   const handleSaveEdit = useCallback((item: BudgetItem) => {
+    trackUserActivity();
+    
     if (editingItemId === item.id) {
       const newValue = parseFloat(editValue);
       if (!isNaN(newValue) && newValue >= 0) {
@@ -222,10 +243,12 @@ export default function EventBudgetPage() {
       }
       setEditingItemId(null);
     }
-  }, [editingItemId, editValue, updateActualAmount]);
+  }, [editingItemId, editValue, updateActualAmount, trackUserActivity]);
   
-  // Add a new budget item
+  // Add a new budget item - with tracked activity
   const handleAddItem = useCallback(async () => {
+    trackUserActivity();
+    
     try {
       if (!newItem.description || !newItem.category) {
         alert('Description and category are required');
@@ -241,9 +264,12 @@ export default function EventBudgetPage() {
         vendorId: newItem.vendorId // Include vendor ID if selected
       };
       
+      // Generate a temporary ID for optimistic update
+      const tempId = `temp-${Date.now()}`;
+      
       // Optimistic UI update
       const optimisticItem: BudgetItem = {
-        id: `temp-${Date.now()}`,
+        id: tempId,
         eventId: eventId,
         ...newBudgetItem,
         createdAt: new Date().toISOString(),
@@ -297,20 +323,33 @@ export default function EventBudgetPage() {
         throw new Error(`Failed to create budget item: ${response.status}`);
       }
       
-      // After successful API call, refresh data to ensure accuracy
-      // This happens in the background without blocking the UI
-      fetchBudgetData();
+      // Get the real ID from the response to update our local state
+      const responseData = await response.json();
+      const newItemWithRealId = responseData.data;
+      
+      if (newItemWithRealId && newItemWithRealId.id) {
+        // Replace our temporary ID with the real one
+        setBudgetItems(prev => 
+          prev.map(item => 
+            item.id === tempId ? { ...item, id: newItemWithRealId.id } : item
+          )
+        );
+      }
+      
+      // Don't fetch after success - trust our optimistic update
       
     } catch (err) {
       console.error('Error adding budget item:', err);
       alert('Failed to add budget item. Please try again.');
-      // Refresh data to revert optimistic updates
+      // Refresh data to revert optimistic updates only on error
       fetchBudgetData();
     }
-  }, [eventId, newItem, totals, fetchBudgetData]);
+  }, [eventId, newItem, totals, fetchBudgetData, trackUserActivity]);
   
-  // Toggle paid status for a budget item
+  // Toggle paid status for a budget item - with tracked activity
   const togglePaidStatus = useCallback(async (item: BudgetItem) => {
+    trackUserActivity();
+    
     try {
       // Optimistic update for UI responsiveness
       setBudgetItems(prev => 
@@ -336,17 +375,18 @@ export default function EventBudgetPage() {
         throw new Error(`Failed to update budget item: ${response.status}`);
       }
       
-      // After successful API call, refresh data to ensure accuracy
-      // Only update totals as isPaid doesn't affect totals
+      // Don't refresh after success - trust our optimistic update
       
     } catch (err) {
       console.error('Error updating budget item:', err);
       alert('Failed to update budget item. Please try again.');
     }
-  }, [eventId]);
+  }, [eventId, trackUserActivity]);
   
-  // Delete a budget item
+  // Delete a budget item - with tracked activity
   const handleDeleteItem = useCallback(async (item: BudgetItem) => {
+    trackUserActivity();
+    
     if (!confirm('Are you sure you want to delete this budget item?')) {
       return;
     }
@@ -393,20 +433,37 @@ export default function EventBudgetPage() {
       if (!response.ok) {
         // Revert optimistic updates on error
         setBudgetItems(prev => [...prev, originalItem]);
-        // Refresh data to restore correct totals
+        // Refresh data to restore correct totals on error
         fetchBudgetData();
         throw new Error(`Failed to delete budget item: ${response.status}`);
       }
       
-      // After successful deletion, refresh data to ensure accuracy
-      // This happens in the background without blocking the UI
-      fetchBudgetData();
+      // Don't refresh after success - trust our optimistic update
       
     } catch (err) {
       console.error('Error deleting budget item:', err);
       alert('Failed to delete budget item. Please try again.');
     }
-  }, [eventId, fetchBudgetData]);
+  }, [eventId, fetchBudgetData, trackUserActivity]);
+  
+  // Track user activity on input focus, clicks, etc.
+  useEffect(() => {
+    const activityEvents = ['mousedown', 'keydown', 'touchstart', 'focus'];
+    
+    const handleActivity = () => trackUserActivity();
+    
+    // Add event listeners to track user activity
+    activityEvents.forEach(event => {
+      document.addEventListener(event, handleActivity);
+    });
+    
+    // Clean up event listeners
+    return () => {
+      activityEvents.forEach(event => {
+        document.removeEventListener(event, handleActivity);
+      });
+    };
+  }, [trackUserActivity]);
   
   // Format currency
   const formatCurrency = (amount: number) => {

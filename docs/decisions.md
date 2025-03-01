@@ -183,6 +183,73 @@ Implications: Expected effects of this decision (optional)
 - Status styles are defined once and reused consistently
 - Future status types can be added using the same styling pattern
 
+### 2024-07-08: Modal-Based Detailed Timeline Block View
+
+**Context**: Users needed a way to view comprehensive timeline block details without navigating away from the timeline view.
+
+**Decision**: Implemented a modal-based detailed view pattern for timeline blocks, accessible by clicking on any block, with options to close or edit. Enhanced with Linear-style hover interactions and visual feedback.
+
+**Reasoning**:
+- Direct navigation to edit page disrupted the workflow and context
+- Modal approach maintains context while providing detailed information
+- Two-step pattern (view details → optionally edit) follows Linear's progressive disclosure principle
+- Enhanced hover states with 50ms delays prevent flickering and provide clear feedback
+- Left-side accent bar and subtle elevation on hover match Linear's interaction patterns
+- Consistent with the way other modern interfaces (like Linear, Notion) handle detailed views
+
+**Implications**:
+- Users maintain timeline context while viewing block details
+- Provides a complete view of all block data including new fields (personnel, equipment, notes)
+- Navigation to edit page becomes an explicit choice rather than default action
+- Hover states provide clear affordance about interactivity without documentation
+- Subtle visual cues like the left accent bar and elevation create a more polished feel
+- Pattern can be reused for other detailed views throughout the application
+- Creates a more discoverable and intuitive user experience
+
+### 2024-07-09: Contextual Add Buttons for Timeline
+
+**Context**: Users needed a consistent and context-aware way to add timeline blocks to specific dates.
+
+**Decision**: Implemented Linear-style contextual add buttons that appear on hover in day headers, with pre-filled date parameters.
+
+**Reasoning**:
+- Progressive disclosure (buttons only appear on hover) reduces visual clutter
+- Context-aware design pre-fills the date based on where the user initiates the action
+- Consistent placement in day headers creates a predictable pattern
+- 50ms delay on hover state prevents flickering during normal mouse movement
+- Subtle styling with minimal visual weight maintains clean interface
+- Direct association between the date header and add action creates clear causality
+
+**Implications**:
+- Users can add blocks to specific days without manually selecting dates
+- Interface maintains minimal visual noise while providing clear affordances
+- Consistent pattern can be extended to other areas of the application
+- The minimal 50ms delay creates a more polished feel without noticeable lag
+- Empty state add button and contextual day header button work together as a coherent system
+- Reduces cognitive load by handling date context automatically
+
+### 2024-07-10: Consistent Navigation with Contextual Back Links
+
+**Context**: Users needed clear navigation paths in hierarchical views while maintaining a clean interface.
+
+**Decision**: Implemented Linear-style back links that appear only in appropriate contexts, following a consistent visual pattern.
+
+**Reasoning**:
+- Back links are only shown when there's a clear parent-child relationship (e.g., Event → Timeline)
+- Consistent styling using subtle gray text that brightens on hover
+- Arrow icon provides clear directional guidance without needing explanation
+- Positioned at the top of the page to establish context before content
+- Explicit destination naming ("Back to event") rather than generic "Back" label
+- Maintains hierarchical awareness without requiring breadcrumbs
+
+**Implications**:
+- Users always understand their current location in the navigation hierarchy
+- Interface remains clean with navigation elements only where truly needed
+- Creates a consistent pattern that users can rely on throughout the application
+- Reduces unnecessary back buttons in contexts served by primary navigation
+- Provides direct path to parent context from detail pages
+- Follows Linear's principle of only showing UI elements that serve a specific purpose
+
 ### 2024-06-28: Vendor Management Implementation with Favorites System
 
 **Context**: Needed to implement a comprehensive vendor management system that allows users to track, filter, and favorite vendors for events.
