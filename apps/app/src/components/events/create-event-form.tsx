@@ -20,6 +20,42 @@ function formatDateForAPI(dateString: string): string {
   return date.toISOString();
 }
 
+// Get status-specific styling in Linear fashion
+function getStatusStyles(status: string) {
+  switch (status) {
+    case 'draft':
+      return {
+        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'confirmed':
+      return {
+        active: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'in-progress':
+      return {
+        active: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'completed':
+      return {
+        active: 'bg-green-500/10 text-green-400 border border-green-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'cancelled':
+      return {
+        active: 'bg-red-500/10 text-red-400 border border-red-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    default:
+      return {
+        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+  }
+}
+
 export function CreateEventForm({
   event,
   mode = 'create'
@@ -266,6 +302,44 @@ export function CreateEventForm({
           {form.formState.errors.location && (
             <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.location.message}</p>
           )}
+        </div>
+
+        {/* Status field - Linear-inspired implementation */}
+        <div className="space-y-2">
+          <label className="text-[13px] font-medium text-gray-400">
+            Status
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {(['draft', 'confirmed', 'in-progress', 'completed', 'cancelled'] as const).map((status) => (
+              <button
+                key={status}
+                type="button"
+                onClick={() => form.setValue('status', status)}
+                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150 ${
+                  form.watch('status') === status
+                    ? getStatusStyles(status).active
+                    : getStatusStyles(status).inactive
+                }`}
+              >
+                {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
+          <div className="mt-2 text-[12px] text-gray-500 flex items-center">
+            <svg className="w-3.5 h-3.5 mr-1.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg>
+            {form.watch('status') === 'draft' 
+              ? 'Draft events are only visible to event organizers'
+              : form.watch('status') === 'confirmed' 
+                ? 'Confirmed events are ready for scheduling and vendor assignments'
+                : form.watch('status') === 'in-progress'
+                  ? 'In Progress indicates the event is currently happening'
+                  : form.watch('status') === 'completed'
+                    ? 'Completed events are finished and ready for review'
+                    : 'Cancelled events are no longer taking place'}
+          </div>
         </div>
 
         {/* Event details section with heading */}

@@ -23,22 +23,30 @@ function formatDate(dateString: string) {
 function StatusBadge({ status }: { status: string }) {
   const getStatusStyles = () => {
     switch (status) {
+      case 'draft':
+        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
       case 'confirmed':
-        return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
       case 'in-progress':
-        return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+        return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
       case 'completed':
-        return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+        return 'bg-green-500/10 text-green-400 border-green-500/20';
       case 'cancelled':
-        return 'bg-red-500/10 text-red-500 border-red-500/20';
-      default: // draft
-        return 'bg-gray-600/15 text-gray-300 border-gray-500/30';
+        return 'bg-red-500/10 text-red-400 border-red-500/20';
+      default:
+        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
     }
   };
 
+  // Format status text - handle special cases like "in-progress"
+  const getStatusText = () => {
+    if (status === 'in-progress') return 'In Progress';
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide border ${getStatusStyles()}`}>
-      {status}
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium tracking-wide border ${getStatusStyles()}`}>
+      {getStatusText()}
     </span>
   );
 }

@@ -23,6 +23,12 @@ export const updateSession = async (
           }
         },
       },
+      cookieOptions: {
+        name: "sb-auth", // Use a consistent, simple name
+        path: "/",
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      }
     },
   );
 
