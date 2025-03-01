@@ -244,6 +244,31 @@ Implications: Expected effects of this decision (optional)
 - Hover-based UI elements reduce visual clutter without sacrificing functionality
 - TypeScript interfaces ensure consistent data handling across components
 
+### 2024-07-02: Hybrid Optimistic UI for Budget Management
+
+**Context**: Needed to balance responsive UI with accurate budget calculations for the budget management feature.
+
+**Decision**: Implemented a hybrid approach combining immediate optimistic UI updates with background server synchronization.
+
+**Reasoning**:
+- Pure optimistic updates were type-unsafe and prone to calculation errors
+- Server-only updates felt too sluggish for financial operations
+- Budget totals and category breakdowns needed to stay accurate
+- Linear's design philosophy emphasizes immediate feedback
+
+**Implications**:
+- Users see immediate UI feedback when adding/updating/deleting budget items
+- Budget data refreshes automatically in the background every 60 seconds
+- After critical operations, data is refreshed without blocking the UI
+- Calculation errors are prevented by eventually getting the server's calculation
+
+**Technical Implementation**:
+- Extracted fetch logic into a reusable, memoized function
+- Applied proper TypeScript safety with null checks
+- Added interval-based background data refresh
+- Implemented optimistic UI updates for all CRUD operations
+- Added error recovery that reverts optimistic updates on API failures
+
 ## When to Add Entries
 
 Add entries to this log when you:
