@@ -269,6 +269,56 @@ Implications: Expected effects of this decision (optional)
 - Implemented optimistic UI updates for all CRUD operations
 - Added error recovery that reverts optimistic updates on API failures
 
+### 2024-07-05: Budget Export Functionality with Format-Specific Optimizations
+
+**Context**: Event planners need to share budget data with stakeholders and use budget information in external tools like spreadsheets.
+
+**Decision**: Implemented a comprehensive export system with specific optimizations for different target formats (CSV, Google Sheets, Airtable) and a clean print view.
+
+**Reasoning**:
+- Event planners regularly need to share budget information with clients and team members
+- Different tools require different formatting for optimal import
+- The Linear design philosophy emphasizes subtle UI that appears only when needed
+- Print view is essential for meetings and hardcopy documentation
+
+**Implications**:
+- Users can seamlessly move budget data into their preferred external tools
+- The export dropdown maintains a clean interface while providing multiple options
+- Format-specific optimizations make external tool integration frictionless
+- Print view provides professional documentation for client presentations
+
+**Technical Implementation**:
+- Created a dropdown UI pattern that follows Linear's subtle design approach
+- Implemented specific export functions for each target platform
+- Added number formatting and formula generation for spreadsheet exports
+- Created a dedicated print view with professional styling and auto-print functionality
+- Used typed callbacks with error handling for all export functions
+
+### 2024-07-06: Category Filtering for Budget Management
+
+**Context**: As budget items grow, users need to focus on specific categories without being overwhelmed by the full list.
+
+**Decision**: Implemented a Linear-inspired category filtering system with pill-shaped toggles that maintain state visually.
+
+**Reasoning**:
+- Category filtering allows focusing on relevant budget sections
+- Linear's approach emphasizes subtle visual indicators for state
+- Toggle pattern provides immediate feedback and clear current state
+- Keeping filters visible maintains context while browsing
+
+**Implications**:
+- Users can quickly focus on specific budget categories
+- The filtering UI is consistent with Linear's minimal aesthetic
+- Filter patterns established here can be extended to other list views
+- The pill-based filter UI sets a pattern for similar filtering needs
+
+**Technical Implementation**:
+- Used pill-shaped toggle buttons with subtle active/inactive states
+- Implemented memoized filtering functions for performance
+- Added clear filters button that only appears when needed
+- Maintained consistent styling with Linear's color system
+- Used clear visual feedback for active filter state
+
 ## When to Add Entries
 
 Add entries to this log when you:
