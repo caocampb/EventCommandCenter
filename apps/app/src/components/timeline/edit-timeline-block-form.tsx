@@ -14,6 +14,37 @@ import {
 import { TimelineBlock } from '../../types/timeline';
 import { formatDateTimeForInput, localToUTCString } from '../../utils/timezone-utils';
 
+// Get status-specific styling in Linear fashion
+function getStatusStyles(status: string) {
+  switch (status) {
+    case 'pending':
+      return {
+        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'in-progress':
+      return {
+        active: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'complete':
+      return {
+        active: 'bg-green-500/10 text-green-400 border border-green-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    case 'cancelled':
+      return {
+        active: 'bg-red-500/10 text-red-400 border border-red-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+    default:
+      return {
+        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
+        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+      };
+  }
+}
+
 interface EditTimelineBlockFormProps {
   eventId: string;
   blockId: string;
@@ -376,19 +407,38 @@ export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineB
         
         {/* Status field */}
         <div className="space-y-2">
-          <label htmlFor="status" className="text-[13px] font-medium text-gray-400">
+          <label className="text-[13px] font-medium text-gray-400">
             Status
           </label>
-          <select
-            id="status"
-            {...form.register('status')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px]"
-          >
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="complete">Complete</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
+          <div className="flex flex-wrap gap-2">
+            {(['pending', 'in-progress', 'complete', 'cancelled'] as const).map((status) => (
+              <button
+                key={status}
+                type="button"
+                onClick={() => form.setValue('status', status)}
+                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150 ${
+                  form.watch('status') === status
+                    ? getStatusStyles(status).active
+                    : getStatusStyles(status).inactive
+                }`}
+              >
+                {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
+          <div className="mt-2 text-[12px] text-gray-500 flex items-center">
+            <svg className="w-3.5 h-3.5 mr-1.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg>
+            {form.watch('status') === 'pending' 
+              ? 'Block is scheduled but not started'
+              : form.watch('status') === 'in-progress' 
+                ? 'Block is currently in progress'
+                : form.watch('status') === 'complete'
+                  ? 'Block has been completed'
+                  : 'Block has been cancelled'}
+          </div>
         </div>
         
         {/* Description field */}
