@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { TimelineBlock } from "../../types/timeline";
 import { formatDateForDisplay, formatTimeForDisplay } from "../../utils/timezone-utils";
 import { DetailedTimelineBlockView } from './detailed-timeline-block-view';
+import { StatusPill } from '@/components/ui/StatusPill';
+import { colors } from '@/styles/colors';
 
 // Keep the formatTime function for timeline calculations, but use the utility for display
 function formatTime(dateString: string) {
@@ -34,28 +36,21 @@ function getHour(dateString: string): number {
   return new Date(dateString).getHours();
 }
 
-// Status badge component - reused from other views with Linear styling
-function StatusBadge({ status }: { status: string }) {
-  const getStatusStyles = () => {
-    switch (status) {
-      case 'confirmed':
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/15';
-      case 'in-progress':
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/15';
-      case 'complete':
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/15';
-      case 'cancelled':
-        return 'bg-red-500/10 text-red-400 border-red-500/15';
-      default: // pending
-        return 'bg-gray-600/10 text-gray-400 border-gray-500/15';
-    }
-  };
-
-  return (
-    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium tracking-wide border ${getStatusStyles()}`}>
-      {status}
-    </span>
-  );
+// Mapping helper to convert timeline status to our StatusPill types
+function mapStatusToType(status: string): 'confirmed' | 'draft' | 'cancelled' | 'pending' {
+  switch (status) {
+    case 'confirmed':
+      return 'confirmed';
+    case 'tentative':
+    case 'in-progress':
+      return 'pending';
+    case 'complete':
+      return 'confirmed';
+    case 'cancelled':
+      return 'cancelled';
+    default:
+      return 'draft';
+  }
 }
 
 // Helper to calculate position and width percentages for timeline blocks
@@ -117,46 +112,46 @@ function getStatusStyles(status: string) {
   switch (status) {
     case 'complete':
       return {
-        background: 'bg-[#1A184A]',
-        border: 'border-purple-600/20',
-        hover: 'hover:bg-[#201C54] hover:border-purple-500/30',
-        text: 'text-purple-300',
+        background: `bg-[#1A184A]`,
+        border: `border-[${colors.status.confirmed.text}]/20`,
+        hover: `hover:bg-[#201C54] hover:border-[${colors.status.confirmed.text}]/30`,
+        text: `text-[${colors.status.confirmed.text}]`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(94,68,210,0.2)]'
       };
     case 'in-progress':
       return {
-        background: 'bg-[#0E253A]',
-        border: 'border-blue-600/20',
-        hover: 'hover:bg-[#132C45] hover:border-blue-500/30',
-        text: 'text-blue-300',
+        background: `bg-[#130F30]`,
+        border: `border-[${colors.status.inProgress.text}]/20`,
+        hover: `hover:bg-[#17123A] hover:border-[${colors.status.inProgress.text}]/30`,
+        text: `text-[${colors.status.inProgress.text}]`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
-        hoverShadow: 'hover:shadow-[0_2px_8px_rgba(58,130,246,0.2)]'
+        hoverShadow: 'hover:shadow-[0_2px_8px_rgba(125,111,255,0.2)]'
       };
     case 'confirmed':
       return {
-        background: 'bg-[#0E2920]',
-        border: 'border-emerald-600/20',
-        hover: 'hover:bg-[#123328] hover:border-emerald-500/30',
-        text: 'text-emerald-300',
+        background: `bg-[#0E2920]`,
+        border: `border-[${colors.status.confirmed.text}]/20`,
+        hover: `hover:bg-[#123328] hover:border-[${colors.status.confirmed.text}]/30`,
+        text: `text-[${colors.status.confirmed.text}]`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(16,185,129,0.2)]'
       };
     case 'cancelled':
       return {
-        background: 'bg-[#2C1616]',
-        border: 'border-red-600/20',
-        hover: 'hover:bg-[#351A1A] hover:border-red-500/30',
-        text: 'text-red-300',
+        background: `bg-[#2C1616]`,
+        border: `border-[${colors.status.cancelled.text}]/20`,
+        hover: `hover:bg-[#351A1A] hover:border-[${colors.status.cancelled.text}]/30`,
+        text: `text-[${colors.status.cancelled.text}]`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(239,68,68,0.2)]'
       };
     default: // pending
       return {
-        background: 'bg-[#1C1C1C]',
-        border: 'border-gray-600/20',
-        hover: 'hover:bg-[#222222] hover:border-gray-500/30',
-        text: 'text-gray-300',
+        background: `bg-[#1C1C1C]`,
+        border: `border-[${colors.status.draft.text}]/20`,
+        hover: `hover:bg-[#222222] hover:border-[${colors.status.draft.text}]/30`,
+        text: `text-[${colors.text.secondary}]`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(255,255,255,0.05)]'
       };
@@ -416,7 +411,7 @@ export function TimelineView({
                         <div className="flex items-start justify-between mb-0.5">
                           <h3 className="text-[12px] font-medium truncate mr-1">{block.title}</h3>
                           {width > 22 && (
-                            <StatusBadge status={block.status} />
+                            <StatusPill status={mapStatusToType(block.status as string)} />
                           )}
                         </div>
                         
@@ -492,7 +487,7 @@ export function TimelineView({
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <h3 className="text-[14px] font-medium text-white truncate">{block.title}</h3>
-                        <StatusBadge status={block.status} />
+                        <StatusPill status={mapStatusToType(block.status as string)} />
                       </div>
                       
                       {/* Edit button - always positioned consistently */}

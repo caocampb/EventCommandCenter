@@ -1,13 +1,14 @@
 import { formatTimeForDisplay } from "@/utils/timezone-utils";
 import { cn } from "@v1/ui/cn";
+import { colors } from "@/styles/colors";
 
 // Define the status styles mapping
 const statusStyles = {
-  pending: "bg-yellow-500/10 border border-yellow-500/20 text-yellow-500",
-  "in-progress": "bg-blue-500/10 border border-blue-500/20 text-blue-500",
-  complete: "bg-green-500/10 border border-green-500/20 text-green-500",
-  cancelled: "bg-red-500/10 border border-red-500/20 text-red-500",
-  draft: "bg-gray-500/10 border border-gray-500/20 text-gray-500"
+  pending: `bg-[${colors.status.pending.bg}] border border-[${colors.status.pending.text}]/20 text-[${colors.status.pending.text}]`,
+  "in-progress": `bg-[${colors.status.inProgress.bg}] border border-[${colors.status.inProgress.text}]/20 text-[${colors.status.inProgress.text}]`,
+  complete: `bg-[${colors.status.confirmed.bg}] border border-[${colors.status.confirmed.text}]/20 text-[${colors.status.confirmed.text}]`,
+  cancelled: `bg-[${colors.status.cancelled.bg}] border border-[${colors.status.cancelled.text}]/20 text-[${colors.status.cancelled.text}]`,
+  draft: `bg-[${colors.status.draft.bg}] border border-[${colors.status.draft.text}]/20 text-[${colors.status.draft.text}]`
 };
 
 // Simple interface for the block type

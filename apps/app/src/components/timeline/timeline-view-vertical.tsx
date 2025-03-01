@@ -7,6 +7,7 @@ import { formatTimeForDisplay, formatDateForDisplay } from '../../utils/timezone
 import { DetailedTimelineBlockView } from './detailed-timeline-block-view';
 import { useRouter } from 'next/navigation';
 import { cn } from '@v1/ui/cn';
+import { colors } from '@/styles/colors';
 
 interface TimelineViewVerticalProps {
   blocks: TimelineBlock[];
@@ -21,6 +22,40 @@ const MIN_BLOCK_HEIGHT = 32; // Exactly 15 minutes worth of height (1/4 of HOUR_
 // Default time range
 const DEFAULT_START_HOUR = 8; // 8am
 const DEFAULT_END_HOUR = 20;  // 8pm
+
+// Define status tag styles map
+const statusTagStyles = {
+  complete: {
+    bg: colors.status.confirmed.bg,
+    text: colors.status.confirmed.text,
+    border: `${colors.status.confirmed.text}20` // 20 is hex for 12% opacity
+  },
+  'in-progress': {
+    bg: colors.status.inProgress.bg,
+    text: colors.status.inProgress.text,
+    border: `${colors.status.inProgress.text}20`
+  },
+  confirmed: {
+    bg: colors.status.confirmed.bg,
+    text: colors.status.confirmed.text,
+    border: `${colors.status.confirmed.text}20`
+  },
+  cancelled: {
+    bg: colors.status.cancelled.bg,
+    text: colors.status.cancelled.text,
+    border: `${colors.status.cancelled.text}20`
+  },
+  pending: {
+    bg: colors.status.pending.bg,
+    text: colors.status.pending.text,
+    border: `${colors.status.pending.text}20`
+  },
+  draft: {
+    bg: colors.status.draft.bg,
+    text: colors.status.draft.text,
+    border: `${colors.status.draft.text}20`
+  }
+};
 
 /**
  * Extracts hours from a timestamp string, consistently handling
@@ -81,6 +116,25 @@ function TimelineBlockVertical({
   const [isHovering, setIsHovering] = useState(false);
   const router = useRouter();
   
+  // Add keyboard handler for Escape key
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showDetailedView) {
+        setShowDetailedView(false);
+      }
+    };
+
+    // Add event listener when modal is shown
+    if (showDetailedView) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    // Clean up event listener when component unmounts or modal closes
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showDetailedView]);
+  
   // Format time for display
   const displayStartTime = formatTimeForDisplay(block.startTime.toString());
   const displayEndTime = formatTimeForDisplay(block.endTime.toString());
@@ -138,33 +192,33 @@ function TimelineBlockVertical({
     switch (block.status as string) {
       case 'complete':
         return {
-          bg: 'bg-[#1A184A]',
-          border: 'border-purple-600/20',
-          indicator: 'bg-purple-500'
+          bg: `bg-[${colors.status.confirmed.bg}]`,
+          border: `border-[${colors.status.confirmed.text}]/20`,
+          indicator: `bg-[${colors.status.confirmed.text}]`
         };
       case 'in-progress':
         return {
-          bg: 'bg-[#0E253A]',
-          border: 'border-blue-600/20',
-          indicator: 'bg-blue-500'
+          bg: `bg-[${colors.status.inProgress.bg}]`,
+          border: `border-[${colors.status.inProgress.text}]/20`,
+          indicator: `bg-[${colors.status.inProgress.text}]`
         };
       case 'confirmed':
         return {
-          bg: 'bg-[#0E2920]',
-          border: 'border-emerald-600/20',
-          indicator: 'bg-emerald-500'
+          bg: `bg-[${colors.status.confirmed.bg}]`,
+          border: `border-[${colors.status.confirmed.text}]/20`,
+          indicator: `bg-[${colors.status.confirmed.text}]`
         };
       case 'cancelled':
         return {
-          bg: 'bg-[#2C1616]',
-          border: 'border-red-600/20',
-          indicator: 'bg-red-500'
+          bg: `bg-[${colors.status.cancelled.bg}]`,
+          border: `border-[${colors.status.cancelled.text}]/20`,
+          indicator: `bg-[${colors.status.cancelled.text}]`
         };
       default: // pending
         return {
-          bg: 'bg-[#1C1C1C]',
-          border: 'border-gray-600/20',
-          indicator: 'bg-gray-500'
+          bg: `bg-[${colors.status.pending.bg}]`,
+          border: `border-[${colors.status.pending.text}]/20`,
+          indicator: `bg-[${colors.status.pending.text}]`
         };
     }
   };
@@ -173,7 +227,7 @@ function TimelineBlockVertical({
   
   // Add a slight delay to hover state to prevent flickering (Linear-style)
   const handleMouseEnter = () => {
-    const timer = setTimeout(() => setIsHovering(true), 50);
+    const timer = setTimeout(() => setIsHovering(true), 30);
     return () => clearTimeout(timer);
   };
 
@@ -195,14 +249,14 @@ function TimelineBlockVertical({
         onMouseLeave={handleMouseLeave}
       >
         <div className={`h-full ${styles.bg} border ${styles.border} px-3 flex flex-col shadow-sm 
-          hover:shadow-md transition-all duration-150 ease-out 
-          group-hover:translate-y-[-1px] group-hover:border-opacity-90
+          hover:shadow-md transition-all duration-75 ease-out 
+          group-hover:translate-y-[-1px] group-hover:scale-[1.005] group-hover:border-opacity-90
           relative ${isHovering ? 'ring-1 ring-[#5E6AD2]/20' : ''}`}>
           {/* Hover indicator - Linear style subtle accent bar */}
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#5E6AD2] scale-y-0 group-hover:scale-y-100 transition-transform duration-100 ease-in-out origin-center"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#5E6AD2] scale-y-0 group-hover:scale-y-100 transition-transform duration-75 ease-in-out origin-center"></div>
          
           {/* Linear-style subtle click affordance - appears on hover */}
-          <div className="absolute inset-0 bg-[#5E6AD2]/[0.02] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150"></div>
+          <div className="absolute inset-0 bg-[#5E6AD2]/[0.02] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75"></div>
         
           {isShortBlock ? (
             // Compact layout for short blocks (≤30 min)
@@ -213,7 +267,14 @@ function TimelineBlockVertical({
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
-                <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30">
+                <span 
+                  className="text-[10px] font-medium px-1.5 py-0.5 rounded border"
+                  style={{
+                    backgroundColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.bg || statusTagStyles.pending.bg,
+                    color: statusTagStyles[block.status as keyof typeof statusTagStyles]?.text || statusTagStyles.pending.text,
+                    borderColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.border || statusTagStyles.pending.border
+                  }}
+                >
                   {block.status}
                 </span>
               </div>
@@ -228,7 +289,14 @@ function TimelineBlockVertical({
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
-                  <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30 mt-0.5">
+                  <span 
+                    className="text-[10px] font-medium px-1.5 py-0.5 rounded border mt-0.5"
+                    style={{
+                      backgroundColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.bg || statusTagStyles.pending.bg,
+                      color: statusTagStyles[block.status as keyof typeof statusTagStyles]?.text || statusTagStyles.pending.text,
+                      borderColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.border || statusTagStyles.pending.border
+                    }}
+                  >
                     {block.status}
                   </span>
                 </div>
@@ -244,7 +312,14 @@ function TimelineBlockVertical({
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-[10px] font-mono text-gray-500">{timeDisplay}</span>
-                  <span className="text-[10px] font-medium text-gray-400 bg-gray-800/50 px-1.5 py-0.5 rounded border border-gray-700/30 mt-0.5">
+                  <span 
+                    className="text-[10px] font-medium px-1.5 py-0.5 rounded border mt-0.5"
+                    style={{
+                      backgroundColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.bg || statusTagStyles.pending.bg,
+                      color: statusTagStyles[block.status as keyof typeof statusTagStyles]?.text || statusTagStyles.pending.text,
+                      borderColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.border || statusTagStyles.pending.border
+                    }}
+                  >
                     {block.status}
                   </span>
                 </div>
@@ -268,8 +343,14 @@ function TimelineBlockVertical({
       
       {/* Modal for detailed view */}
       {showDetailedView && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg">
+        <div 
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowDetailedView(false)}
+        >
+          <div 
+            className="w-full max-w-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
             <DetailedTimelineBlockView 
               block={block}
               onClose={() => setShowDetailedView(false)}
@@ -299,7 +380,7 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
   
   // Handler for day header hover
   const handleDayHeaderMouseEnter = () => {
-    const timer = setTimeout(() => setIsDayHovered(true), 50); // Linear-style delay
+    const timer = setTimeout(() => setIsDayHovered(true), 30); // Linear-style delay
     return () => clearTimeout(timer);
   };
 

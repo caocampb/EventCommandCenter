@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { createEventSchema, EventFormValues } from "@/lib/validations/event-schema";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { useSearchParams } from 'next/navigation';
+import { z } from 'zod';
+import { colors } from '@/styles/colors';
 
 // Format date to ISO string - handles browser timezone differences consistently
 function formatDateForInput(date: Date): string {
@@ -25,33 +28,33 @@ function getStatusStyles(status: string) {
   switch (status) {
     case 'draft':
       return {
-        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.draft.bg}] text-[${colors.status.draft.text}] border border-[${colors.status.draft.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'confirmed':
       return {
-        active: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.confirmed.bg}] text-[${colors.status.confirmed.text}] border border-[${colors.status.confirmed.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'in-progress':
       return {
-        active: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.pending.bg}] text-[${colors.status.pending.text}] border border-[${colors.status.pending.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'completed':
       return {
-        active: 'bg-green-500/10 text-green-400 border border-green-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.confirmed.bg}] text-[${colors.status.confirmed.text}] border border-[${colors.status.confirmed.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'cancelled':
       return {
-        active: 'bg-red-500/10 text-red-400 border border-red-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.cancelled.bg}] text-[${colors.status.cancelled.text}] border border-[${colors.status.cancelled.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     default:
       return {
-        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.draft.bg}] text-[${colors.status.draft.text}] border border-[${colors.status.draft.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
   }
 }

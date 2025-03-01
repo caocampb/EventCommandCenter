@@ -13,34 +13,35 @@ import {
 } from '../../lib/validations/timeline-block-schema';
 import { TimelineBlock } from '../../types/timeline';
 import { formatDateTimeForInput, localToUTCString } from '../../utils/timezone-utils';
+import { colors } from '@/styles/colors';
 
 // Get status-specific styling in Linear fashion
 function getStatusStyles(status: string) {
   switch (status) {
     case 'pending':
       return {
-        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.pending.bg}] text-[${colors.status.pending.text}] border border-[${colors.status.pending.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'in-progress':
       return {
-        active: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.inProgress.bg}] text-[${colors.status.inProgress.text}] border border-[${colors.status.inProgress.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'complete':
       return {
-        active: 'bg-green-500/10 text-green-400 border border-green-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.confirmed.bg}] text-[${colors.status.confirmed.text}] border border-[${colors.status.confirmed.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     case 'cancelled':
       return {
-        active: 'bg-red-500/10 text-red-400 border border-red-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.cancelled.bg}] text-[${colors.status.cancelled.text}] border border-[${colors.status.cancelled.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
     default:
       return {
-        active: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
-        inactive: 'bg-transparent border border-[#1F1F1F] text-gray-500 hover:text-gray-400 hover:border-[#2A2A2A]'
+        active: `bg-[${colors.status.draft.bg}] text-[${colors.status.draft.text}] border border-[${colors.status.draft.text}]/20`,
+        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
       };
   }
 }
@@ -416,11 +417,38 @@ export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineB
                 key={status}
                 type="button"
                 onClick={() => form.setValue('status', status)}
-                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150 ${
-                  form.watch('status') === status
-                    ? getStatusStyles(status).active
-                    : getStatusStyles(status).inactive
-                }`}
+                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150`}
+                style={{
+                  backgroundColor: form.watch('status') === status 
+                    ? (status === 'complete' 
+                        ? colors.status.confirmed.bg 
+                        : status === 'cancelled'
+                          ? colors.status.cancelled.bg
+                          : status === 'in-progress'
+                            ? colors.status.inProgress.bg
+                            : colors.status.pending.bg)
+                    : 'transparent',
+                  color: form.watch('status') === status 
+                    ? (status === 'complete' 
+                        ? colors.status.confirmed.text 
+                        : status === 'cancelled'
+                          ? colors.status.cancelled.text
+                          : status === 'in-progress'
+                            ? colors.status.inProgress.text
+                            : colors.status.pending.text)
+                    : colors.text.tertiary,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: form.watch('status') === status 
+                    ? (status === 'complete' 
+                        ? `${colors.status.confirmed.text}20` 
+                        : status === 'cancelled'
+                          ? `${colors.status.cancelled.text}20`
+                          : status === 'in-progress'
+                            ? `${colors.status.inProgress.text}20`
+                            : `${colors.status.pending.text}20`)
+                    : colors.border.subtle
+                }}
               >
                 {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
               </button>

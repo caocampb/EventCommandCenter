@@ -5,14 +5,40 @@ import { useRouter } from 'next/navigation';
 import { TimelineBlock, TimelineBlockStatus } from '../../types/timeline';
 import { formatTimeForDisplay } from '@/utils/timezone-utils';
 import { cn } from '@v1/ui/cn';
+import { colors } from '@/styles/colors';
 
-// Define the status styles mapping
-const statusStyles = {
-  pending: "bg-yellow-500/10 border border-yellow-500/20 text-yellow-500",
-  "in-progress": "bg-blue-500/10 border border-blue-500/20 text-blue-500",
-  complete: "bg-green-500/10 border border-green-500/20 text-green-500",
-  cancelled: "bg-red-500/10 border border-red-500/20 text-red-500",
-  draft: "bg-gray-500/10 border border-gray-500/20 text-gray-500"
+// Define the status styles mapping using direct object references
+const statusTagStyles = {
+  pending: {
+    bg: colors.status.pending.bg,
+    text: colors.status.pending.text,
+    border: `${colors.status.pending.text}20` // 20 is hex for 12% opacity
+  },
+  "in-progress": {
+    bg: colors.status.inProgress.bg,
+    text: colors.status.inProgress.text,
+    border: `${colors.status.inProgress.text}20`
+  },
+  complete: {
+    bg: colors.status.confirmed.bg,
+    text: colors.status.confirmed.text,
+    border: `${colors.status.confirmed.text}20`
+  },
+  confirmed: {
+    bg: colors.status.confirmed.bg,
+    text: colors.status.confirmed.text,
+    border: `${colors.status.confirmed.text}20`
+  },
+  cancelled: {
+    bg: colors.status.cancelled.bg,
+    text: colors.status.cancelled.text,
+    border: `${colors.status.cancelled.text}20`
+  },
+  draft: {
+    bg: colors.status.draft.bg,
+    text: colors.status.draft.text,
+    border: `${colors.status.draft.text}20`
+  }
 };
 
 interface DetailedTimelineBlockViewProps {
@@ -40,10 +66,20 @@ export function DetailedTimelineBlockView({
   return (
     <div className="w-full rounded-lg bg-[#111111] border border-[#222222] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       {/* Header with status indicator */}
-      <div className={cn("px-4 py-3 border-b border-[#222222] flex items-center justify-between", 
-        statusStyles[block.status as TimelineBlockStatus])}>
+      <div className="px-4 py-3 border-b border-[#222222] flex items-center justify-between"
+        style={{
+          backgroundColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.bg || statusTagStyles.pending.bg,
+        }}
+      >
         <h3 className="text-[15px] font-medium">{block.title}</h3>
-        <span className="text-xs px-2 py-1 rounded-full bg-black/20 capitalize">
+        <span 
+          className="text-xs px-2 py-1 rounded-full capitalize"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            color: statusTagStyles[block.status as keyof typeof statusTagStyles]?.text || statusTagStyles.pending.text,
+            borderColor: statusTagStyles[block.status as keyof typeof statusTagStyles]?.border || statusTagStyles.pending.border
+          }}
+        >
           {block.status.replace('-', ' ')}
         </span>
       </div>

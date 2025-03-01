@@ -6,6 +6,8 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { Event } from "@/types/events";
 import React from 'react';
+import { StatusPill } from "@/components/ui/StatusPill";
+import { colors } from "@/styles/colors";
 
 // Format date to display in a clean way
 function formatDate(dateString: string) {
@@ -19,44 +21,36 @@ function formatDate(dateString: string) {
   });
 }
 
-// Status badge component
-function StatusBadge({ status }: { status: string }) {
-  const getStatusStyles = () => {
-    switch (status) {
-      case 'draft':
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-      case 'confirmed':
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'in-progress':
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
-      case 'completed':
-        return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'cancelled':
-        return 'bg-red-500/10 text-red-400 border-red-500/20';
-      default:
-        return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
-    }
-  };
-
-  // Format status text - handle special cases like "in-progress"
-  const getStatusText = () => {
-    if (status === 'in-progress') return 'In Progress';
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium tracking-wide border ${getStatusStyles()}`}>
-      {getStatusText()}
-    </span>
-  );
+// Mapping helper to convert app status to our StatusPill types
+function mapStatusToType(status: string): 'confirmed' | 'draft' | 'cancelled' | 'pending' {
+  switch (status) {
+    case 'confirmed':
+      return 'confirmed';
+    case 'draft':
+      return 'draft';
+    case 'in-progress':
+      return 'pending';
+    case 'completed':
+      return 'confirmed';
+    case 'cancelled':
+      return 'cancelled';
+    default:
+      return 'draft';
+  }
 }
 
 // Section header component
 function SectionHeader({ title }: { title: string }) {
   return (
-    <h3 className="text-[13px] font-medium uppercase tracking-wider text-gray-400 mb-3">
+    <h2 
+      className="font-medium text-[15px] mb-3 pb-2" 
+      style={{ 
+        color: colors.text.primary,
+        borderBottom: `1px solid ${colors.border.subtle}`
+      }}
+    >
       {title}
-    </h3>
+    </h2>
   );
 }
 
@@ -64,8 +58,8 @@ function SectionHeader({ title }: { title: string }) {
 function InfoItem({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <div className="text-[13px] text-gray-400 mb-1">{label}</div>
-      <div className="text-[14px]">{value}</div>
+      <div className="text-[13px] mb-1" style={{ color: colors.text.tertiary }}>{label}</div>
+      <div className="text-[14px]" style={{ color: colors.text.primary }}>{value}</div>
     </div>
   );
 }
@@ -105,12 +99,13 @@ export default function EventDetailClient({ event }: EventDetailProps) {
   }, [event.id, router]);
 
   return (
-    <div className="px-6 py-6">
+    <div className="px-6 py-6" style={{ backgroundColor: colors.background.page }}>
       {/* Header with back button */}
       <div className="mb-8">
         <Link 
           href="/en/events" 
-          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors duration-120"
+          className="inline-flex items-center text-sm hover:text-white mb-4 transition-colors duration-120"
+          style={{ color: colors.text.tertiary }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -120,10 +115,10 @@ export default function EventDetailClient({ event }: EventDetailProps) {
         
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight mb-2">{event.name}</h1>
+            <h1 className="text-xl font-semibold tracking-tight mb-2" style={{ color: colors.text.primary }}>{event.name}</h1>
             <div className="flex items-center gap-3">
-              <StatusBadge status={event.status} />
-              <span className="text-[13px] text-gray-400">
+              <StatusPill status={mapStatusToType(event.status)} />
+              <span className="text-[13px]" style={{ color: colors.text.tertiary }}>
                 Created {new Date(event.createdAt).toLocaleDateString()}
               </span>
             </div>
@@ -133,20 +128,60 @@ export default function EventDetailClient({ event }: EventDetailProps) {
             <button 
               onClick={handleDelete}
               disabled={isDeleting}
-              className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ 
+                backgroundColor: colors.background.card, 
+                borderColor: colors.border.subtle, 
+                color: colors.text.secondary
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = colors.background.hover;
+                e.currentTarget.style.color = '#ED6B6B'; // Soft red color for delete hover
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = colors.background.card;
+                e.currentTarget.style.color = colors.text.secondary;
+              }}
             >
               {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
             <Link 
               href={`/en/events/${event.id}/edit`}
-              className="px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded border border-transparent hover:border-[#8D95F2] transition-colors duration-120"
+              className="px-3 py-1.5 text-white text-sm font-medium rounded border transition-colors duration-120"
+              style={{ 
+                backgroundColor: colors.primary.default, 
+                borderColor: 'transparent',
+                borderWidth: '1px',
+                color: 'white'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary.hover;
+                e.currentTarget.style.borderColor = '#8D95F2'; // Lighter border on hover
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary.default;
+                e.currentTarget.style.borderColor = 'transparent';
+              }}
             >
               Edit Event
             </Link>
             <div className="flex gap-3">
               <Link 
                 href={`/en/events/${event.id}/timeline`}
-                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
+                style={{ 
+                  backgroundColor: colors.background.card, 
+                  borderColor: colors.border.subtle, 
+                  color: colors.text.secondary 
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.hover;
+                  e.currentTarget.style.color = colors.text.primary;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.card;
+                  e.currentTarget.style.color = colors.text.secondary;
+                }}
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -158,7 +193,20 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               </Link>
               <Link 
                 href={`/en/events/${event.id}/vendors`}
-                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
+                style={{ 
+                  backgroundColor: colors.background.card, 
+                  borderColor: colors.border.subtle,
+                  color: colors.text.secondary
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.hover;
+                  e.currentTarget.style.color = colors.text.primary;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.card;
+                  e.currentTarget.style.color = colors.text.secondary;
+                }}
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M17 21V19C17 16.7909 15.2091 15 13 15H5C2.79086 15 1 16.7909 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -170,7 +218,20 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               </Link>
               <Link 
                 href={`/en/events/${event.id}/budget`}
-                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
+                style={{ 
+                  backgroundColor: colors.background.card, 
+                  borderColor: colors.border.subtle,
+                  color: colors.text.secondary
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.hover;
+                  e.currentTarget.style.color = colors.text.primary;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.card;
+                  e.currentTarget.style.color = colors.text.secondary;
+                }}
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 1V23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -180,7 +241,20 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               </Link>
               <Link 
                 href={`/en/events/${event.id}/participants`}
-                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 flex items-center"
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
+                style={{ 
+                  backgroundColor: colors.background.card, 
+                  borderColor: colors.border.subtle,
+                  color: colors.text.secondary
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.hover;
+                  e.currentTarget.style.color = colors.text.primary;
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.background.card;
+                  e.currentTarget.style.color = colors.text.secondary;
+                }}
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -198,7 +272,11 @@ export default function EventDetailClient({ event }: EventDetailProps) {
       {/* Main content - simplified for MVP */}
       <div className="space-y-8">
         {/* Essential information panel */}
-        <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+        <div className="rounded-md p-5 shadow-sm" style={{ 
+          backgroundColor: colors.background.card,
+          borderColor: colors.border.subtle,
+          borderWidth: '1px'
+        }}>
           <SectionHeader title="Event Details" />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
@@ -206,7 +284,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               label="Start Date" 
               value={
                 <div className="flex items-center">
-                  <span className="font-mono text-[15px]">{formatDate(event.startDate.toString())}</span>
+                  <span className="font-mono text-[15px]" style={{ color: colors.text.primary }}>{formatDate(event.startDate.toString())}</span>
                 </div>
               } 
             />
@@ -215,7 +293,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               label="End Date" 
               value={
                 <div className="flex items-center">
-                  <span className="font-mono text-[15px]">{formatDate(event.endDate.toString())}</span>
+                  <span className="font-mono text-[15px]" style={{ color: colors.text.primary }}>{formatDate(event.endDate.toString())}</span>
                 </div>
               } 
             />
@@ -233,7 +311,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <span>{event.attendeeCount}</span>
+                <span style={{ color: colors.text.primary }}>{event.attendeeCount}</span>
               </div>
             } 
           />
@@ -243,7 +321,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               label="Description" 
               value={
                 <div className="prose prose-sm prose-invert max-w-none">
-                  <p className="whitespace-pre-line text-[14px] leading-relaxed text-gray-300">
+                  <p className="whitespace-pre-line text-[14px] leading-relaxed text-gray-300" style={{ color: colors.text.primary }}>
                     {event.description}
                   </p>
                 </div>

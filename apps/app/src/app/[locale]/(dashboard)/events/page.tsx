@@ -2,8 +2,12 @@ import { getI18n } from "@/locales/server";
 import Link from "next/link";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { Event } from "@/types/events";
+import { Event as EventType } from "@/types/events";
 import { ClickableTableRow } from "@/components/ui/clickable-table-row";
+import { StatusPill } from "@/components/ui/StatusPill";
+import { colors } from "@/styles/colors";
+import { EventRow, Event } from "../events/components/EventRow";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 
 // Type for the event data returned from Supabase
 type EventDbRow = {
@@ -31,40 +35,9 @@ function formatDate(dateString: string) {
   });
 }
 
-// Status badge component
-function StatusBadge({ status }: { status: string }) {
-  const getStatusStyles = () => {
-    switch (status) {
-      case 'draft':
-        return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
-      case 'confirmed':
-        return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
-      case 'in-progress':
-        return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
-      case 'completed':
-        return 'bg-green-500/10 text-green-400 border border-green-500/20';
-      case 'cancelled':
-        return 'bg-red-500/10 text-red-400 border border-red-500/20';
-      default:
-        return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
-    }
-  };
-
-  // Format status text - handle special cases like "in-progress"
-  const getStatusText = () => {
-    if (status === 'in-progress') return 'In Progress';
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
-  return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getStatusStyles()}`}>
-      {getStatusText()}
-    </span>
-  );
-}
-
 export default async function EventsPage() {
   const t = await getI18n();
+  const locale = "en"; // This would come from your i18n setup
   const supabase = createServerComponentClient({ cookies });
   
   // Fetch events
@@ -73,82 +46,57 @@ export default async function EventsPage() {
     .select("*")
     .order("created_at", { ascending: false });
     
-  // Transform data to match our TypeScript types
+  // Transform data to match our Event component interface
   const events = eventsData?.map((event: EventDbRow) => ({
     id: event.id,
     name: event.name,
-    startDate: event.start_date,
-    endDate: event.end_date,
-    location: event.location,
-    status: event.status,
-    attendeeCount: event.attendee_count,
     description: event.description,
-    type: event.type,
-    parentEventId: event.parent_event_id,
-    createdAt: event.created_at,
-    updatedAt: event.updated_at,
+    date: formatDate(event.start_date),
+    location: event.location,
+    status: event.status as 'draft' | 'confirmed' | 'cancelled' | 'pending',
   })) as Event[] || [];
 
   return (
-    <div className="px-6 py-6">
+    <div className="px-6 py-6" style={{ backgroundColor: colors.background.page }}>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-semibold tracking-tight">Events</h1>
-        <Link
-          href="/events/new"
-          className="inline-flex items-center px-4 py-2 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded-md transition-colors duration-120 border border-transparent hover:border-[#8D95F2] shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_3px_12px_rgba(94,106,210,0.2)]"
-        >
+        <h1 className="text-xl font-semibold tracking-tight" style={{ color: colors.text.primary }}>Events</h1>
+        <PrimaryButton href={`/${locale}/events/new`}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           Create Event
-        </Link>
+        </PrimaryButton>
       </div>
 
       {events.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-56 border border-[#1F1F1F] rounded-lg bg-[#141414] shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-          <p className="text-gray-400 mb-2 font-medium">No events found</p>
-          <p className="text-gray-500 text-sm">
+        <div className="flex flex-col items-center justify-center h-56 border rounded-lg" 
+             style={{ borderColor: colors.border.subtle, backgroundColor: colors.background.card }}>
+          <p className="mb-2 font-medium" style={{ color: colors.text.secondary }}>No events found</p>
+          <p className="text-sm" style={{ color: colors.text.tertiary }}>
             Create your first event to get started with your planning
           </p>
         </div>
       ) : (
-        // Linear-style table view
-        <div className="border border-[#1F1F1F] rounded-md overflow-hidden bg-[#141414] shadow-[0_1px_3px_rgba(0,0,0,0.1)]">
+        // Linear-style table view with our updated components
+        <div className="border rounded-md overflow-hidden shadow-sm" 
+             style={{ borderColor: colors.border.subtle, backgroundColor: colors.background.card }}>
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#1F1F1F]">
-                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Event</th>
-                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Location</th>
-                <th className="text-left px-5 py-3 text-[13px] font-medium text-gray-400 uppercase tracking-wider">Status</th>
+              <tr className="border-b" style={{ borderColor: colors.border.subtle }}>
+                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
+                    style={{ color: colors.text.tertiary }}>Event</th>
+                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
+                    style={{ color: colors.text.tertiary }}>Date</th>
+                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
+                    style={{ color: colors.text.tertiary }}>Location</th>
+                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
+                    style={{ color: colors.text.tertiary }}>Status</th>
+                <th className="w-5"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1F1F1F]">
+            <tbody>
               {events.map((event) => (
-                <ClickableTableRow
-                  key={event.id}
-                  href={`/events/${event.id}`}
-                >
-                  <td className="px-5 py-3.5">
-                    <div className="font-medium text-gray-100 hover:text-white transition-colors duration-120">
-                      {event.name}
-                    </div>
-                    {event.description && (
-                      <div className="text-gray-400 text-[13px] mt-0.5 line-clamp-1">
-                        {event.description}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-5 py-3.5 text-[13px] font-medium text-gray-400 whitespace-nowrap">
-                    {formatDate(event.startDate.toString())}
-                  </td>
-                  <td className="px-5 py-3.5 text-[13px] text-gray-300">
-                    {event.location}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <StatusBadge status={event.status} />
-                  </td>
-                </ClickableTableRow>
+                <EventRow key={event.id} event={event} locale={locale} />
               ))}
             </tbody>
           </table>

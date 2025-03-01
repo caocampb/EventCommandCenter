@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import AuthButton from '@/components/auth/auth-button';
 import SidebarNav from '@/components/navigation/sidebar-nav';
+import { colors } from '@/styles/colors';
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -21,9 +22,21 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
         rel="stylesheet" 
       />
       
-      <div className="flex h-screen bg-[#0F0F0F]" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div 
+        className="flex h-screen" 
+        style={{ 
+          fontFamily: "'Inter', sans-serif",
+          backgroundColor: colors.background.page  // Using the warmer black from colors system
+        }}
+      >
         {/* Sidebar - simplified for MVP */}
-        <div className="w-56 border-r border-[#1F1F1F] py-4 flex flex-col bg-[#141414] shadow-sm">
+        <div 
+          className="w-56 border-r py-4 flex flex-col shadow-sm"
+          style={{
+            borderColor: colors.border.subtle,
+            backgroundColor: colors.background.card // Using card background for sidebar
+          }}
+        >
           {/* Logo area */}
           <div className="px-3 mb-6">
             <div className="text-lg font-semibold tracking-tight text-white pl-3">
@@ -38,13 +51,19 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
           <div className="flex-grow"></div>
           
           {/* Sign-out button */}
-          <div className="px-3 mt-auto border-t border-[#1F1F1F] pt-3">
+          <div 
+            className="px-3 mt-auto pt-3"
+            style={{ borderTopColor: colors.border.subtle, borderTopWidth: '1px' }}
+          >
             <AuthButton />
           </div>
         </div>
         
         {/* Main content */}
-        <div className="flex-1 overflow-auto bg-gradient-to-b from-[#0F0F0F] to-[#111111]">
+        <div 
+          className="flex-1 overflow-auto"
+          style={{ backgroundColor: colors.background.page }} // Using the warmer black from colors system
+        >
           <main className="min-h-screen">{children}</main>
         </div>
       </div>

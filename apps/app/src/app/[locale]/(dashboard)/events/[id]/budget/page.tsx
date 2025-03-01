@@ -18,36 +18,36 @@ import { ExportMenu } from './components/ExportMenu';
 
 // Load state components
 function LoadingState() {
-  return (
-    <div className="w-full max-w-3xl mx-auto p-6">
-      <div className="flex items-center space-x-4">
-        <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-[#5E6AD2]"></div>
-        <p className="text-gray-400">Loading budget data...</p>
+    return (
+      <div className="w-full max-w-3xl mx-auto p-6">
+        <div className="flex items-center space-x-4">
+          <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-[#5E6AD2]"></div>
+          <p className="text-gray-400">Loading budget data...</p>
+        </div>
       </div>
-    </div>
-  );
-}
-
+    );
+  }
+  
 function ErrorState({ error, eventId }: { error: string, eventId: string }) {
-  return (
-    <div className="w-full max-w-3xl mx-auto p-6">
-      <div className="mb-6">
-        <Link 
-          href={`/en/events/${eventId}`}
-          className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors duration-150"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
-            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Back to event
-        </Link>
+    return (
+      <div className="w-full max-w-3xl mx-auto p-6">
+        <div className="mb-6">
+          <Link 
+            href={`/en/events/${eventId}`}
+            className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors duration-150"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
+              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back to event
+          </Link>
+        </div>
+        
+        <div className="bg-red-500/5 border border-red-500/20 text-red-500 px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
       </div>
-      
-      <div className="bg-red-500/5 border border-red-500/20 text-red-500 px-4 py-3 rounded-md text-sm">
-        {error}
-      </div>
-    </div>
-  );
+    );
 }
 
 export default function EventBudgetPage() {
@@ -124,9 +124,9 @@ export default function EventBudgetPage() {
           eventName={eventName}
           getVendorName={getVendorName}
           trackUserActivity={trackUserActivity}
-        />
-      </div>
-      
+              />
+            </div>
+            
       <BudgetItemsList
         items={budgetItems}
         categories={categories}
@@ -136,6 +136,6 @@ export default function EventBudgetPage() {
         onDeleteItem={budgetActions.deleteBudgetItem}
         trackUserActivity={trackUserActivity}
       />
-    </div>
+            </div>
   );
 }
