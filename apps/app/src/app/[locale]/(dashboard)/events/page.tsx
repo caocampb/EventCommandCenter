@@ -54,6 +54,7 @@ export default async function EventsPage() {
     date: formatDate(event.start_date),
     location: event.location,
     status: event.status as 'draft' | 'confirmed' | 'cancelled' | 'pending',
+    attendeeCount: event.attendee_count || 0,
   })) as Event[] || [];
 
   return (

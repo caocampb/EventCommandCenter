@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import type { BudgetItem } from '@/types/budget';
+import { colors } from '@/styles/colors';
 
 interface CategoryTotal {
   category: string;
@@ -61,7 +62,7 @@ export function BudgetSummary({
   };
   
   return (
-    <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 mb-6">
+    <div className="border border-[#1F1F1F] rounded-md p-5 mb-6" style={{ backgroundColor: colors.background.card }}>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-[15px] font-medium text-white">Budget Summary</h2>
         <button
@@ -103,7 +104,8 @@ export function BudgetSummary({
                     setTotalBudgetValue(totals.plannedTotal);
                   }
                 }}
-                className="w-28 bg-[#0F0F0F] border border-[#5E6AD2] rounded text-[15px] font-medium text-white text-right px-2 py-1"
+                className="w-28 border border-[#5E6AD2] rounded text-[15px] font-medium text-white text-right px-2 py-1"
+                style={{ backgroundColor: colors.background.input }}
                 autoFocus
               />
             ) : (

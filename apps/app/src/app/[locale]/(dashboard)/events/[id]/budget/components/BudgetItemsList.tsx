@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import type { BudgetItem } from '@/types/budget';
+import { colors } from '@/styles/colors';
 
 interface BudgetItemsListProps {
   items: BudgetItem[];
@@ -117,7 +118,7 @@ export function BudgetItemsList({
   }, [onDeleteItem, trackUserActivity]);
   
   return (
-    <div className="bg-[#141414] border border-[#1F1F1F] rounded-md overflow-hidden">
+    <div className="border border-[#1F1F1F] rounded-md overflow-hidden" style={{ backgroundColor: colors.background.card }}>
       <div className="p-5 border-b border-[#1F1F1F] flex justify-between items-center">
         <h2 className="text-[15px] font-medium text-white">Budget Items</h2>
         

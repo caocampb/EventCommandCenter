@@ -16,12 +16,15 @@ import { AddBudgetItemForm } from './components/AddBudgetItemForm';
 import { BudgetItemsList } from './components/BudgetItemsList';
 import { ExportMenu } from './components/ExportMenu';
 
+// Import colors
+import { colors } from '@/styles/colors';
+
 // Load state components
 function LoadingState() {
     return (
       <div className="w-full max-w-3xl mx-auto p-6">
         <div className="flex items-center space-x-4">
-          <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-[#5E6AD2]"></div>
+          <div className="h-5 w-5 animate-spin rounded-full border-b-2" style={{ borderColor: colors.primary.default }}></div>
           <p className="text-gray-400">Loading budget data...</p>
         </div>
       </div>

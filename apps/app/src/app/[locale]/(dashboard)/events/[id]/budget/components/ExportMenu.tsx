@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { BudgetItem } from '@/types/budget';
 import { exportAsCSV, exportForGoogleSheets, exportForAirtable, createPrintView } from '../utils/exportUtils';
+import { colors } from '@/styles/colors';
 
 interface ExportMenuProps {
   items: BudgetItem[];
@@ -75,11 +76,17 @@ export function ExportMenu({ items, totals, eventName, getVendorName, trackUserA
       </button>
       
       {showMenu && (
-        <div className="absolute top-full right-0 mt-2 w-56 bg-[#1C1C1C] border border-[#333333] rounded-md shadow-lg overflow-hidden z-10">
+        <div 
+          className="absolute top-full right-0 mt-2 w-56 rounded-md shadow-lg overflow-hidden z-10 border" 
+          style={{ 
+            backgroundColor: colors.background.hover, 
+            borderColor: colors.border.strong
+          }}
+        >
           <div className="p-1">
             <button
               onClick={handleExportCSV}
-              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 hover:bg-[#232323] rounded-md"
+              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 rounded-md hover:text-gray-300 hover:bg-black/20 transition-colors duration-150"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
                 <path d="M14 3v4a1 1 0 001 1h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -90,7 +97,7 @@ export function ExportMenu({ items, totals, eventName, getVendorName, trackUserA
             
             <button
               onClick={handleExportGoogleSheets}
-              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 hover:bg-[#232323] rounded-md"
+              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 rounded-md hover:text-gray-300 hover:bg-black/20 transition-colors duration-150"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
                 <path d="M14 3v4a1 1 0 001 1h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -101,7 +108,7 @@ export function ExportMenu({ items, totals, eventName, getVendorName, trackUserA
             
             <button
               onClick={handleExportAirtable}
-              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 hover:bg-[#232323] rounded-md"
+              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 rounded-md hover:text-gray-300 hover:bg-black/20 transition-colors duration-150"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
                 <path d="M14 3v4a1 1 0 001 1h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -110,11 +117,11 @@ export function ExportMenu({ items, totals, eventName, getVendorName, trackUserA
               Airtable Format
             </button>
             
-            <hr className="my-1 border-[#333333]" />
+            <hr className="my-1" style={{ borderColor: colors.border.strong }} />
             
             <button
               onClick={handlePrintView}
-              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 hover:bg-[#232323] rounded-md"
+              className="flex items-center w-full px-3 py-2 text-left text-[13px] text-gray-400 rounded-md hover:text-gray-300 hover:bg-black/20 transition-colors duration-150"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
                 <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

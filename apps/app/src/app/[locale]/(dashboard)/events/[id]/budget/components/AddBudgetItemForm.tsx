@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { VendorAssignment } from '../hooks/useEventVendors';
+import { colors } from '@/styles/colors';
 
 interface NewBudgetItem {
   description: string;
@@ -69,7 +70,7 @@ export function AddBudgetItemForm({
   };
   
   return (
-    <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 mb-6">
+    <div className="border border-[#1F1F1F] rounded-md p-5 mb-6" style={{ backgroundColor: colors.background.card }}>
       <h2 className="text-[15px] font-medium text-white mb-4">Add Budget Item</h2>
       
       {error && (
