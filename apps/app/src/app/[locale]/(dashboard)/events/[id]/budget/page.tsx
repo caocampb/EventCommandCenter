@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useBudgetData } from './hooks/useBudgetData';
 import { useEventVendors } from './hooks/useEventVendors';
 import { useActivityTracker } from './hooks/useActivityTracker';
+import { useParticipantsCount } from './hooks/useParticipantsCount';
 
 // Import components
 import { PageHeader } from './components/PageHeader';
@@ -59,14 +60,15 @@ export default function EventBudgetPage() {
   
   // Use our custom hooks
   const {
-    isLoading: isBudgetLoading,
-    error: budgetError,
     budgetItems,
+    isLoading,
+    error,
     eventName,
     totals,
     categories,
     totalBudgetValue,
     setTotalBudgetValue,
+    participantCount,
     actions: budgetActions
   } = useBudgetData(eventId);
   
@@ -74,6 +76,10 @@ export default function EventBudgetPage() {
     eventVendors,
     getVendorName
   } = useEventVendors(eventId);
+  
+  const {
+    loading: participantsLoading
+  } = useParticipantsCount(eventId);
   
   // Set up refresh function that calls both data fetches
   const refreshData = async () => {
@@ -87,12 +93,12 @@ export default function EventBudgetPage() {
   const [isAddingItem, setIsAddingItem] = useState(false);
   
   // Loading and error states
-  if (isBudgetLoading) {
+  if (isLoading) {
     return <LoadingState />;
   }
   
-  if (budgetError) {
-    return <ErrorState error={budgetError} eventId={eventId} />;
+  if (error) {
+    return <ErrorState error={error} eventId={eventId} />;
   }
   
   return (
@@ -106,6 +112,7 @@ export default function EventBudgetPage() {
         onAddItem={() => setIsAddingItem(true)}
         onSaveTotalBudget={budgetActions.updateTotalBudget}
         trackUserActivity={trackUserActivity}
+        participantCount={participantCount}
       />
       
       {isAddingItem && (
@@ -127,9 +134,9 @@ export default function EventBudgetPage() {
           eventName={eventName}
           getVendorName={getVendorName}
           trackUserActivity={trackUserActivity}
-              />
-            </div>
-            
+        />
+      </div>
+      
       <BudgetItemsList
         items={budgetItems}
         categories={categories}
@@ -138,7 +145,8 @@ export default function EventBudgetPage() {
         onTogglePaid={budgetActions.togglePaidStatus}
         onDeleteItem={budgetActions.deleteBudgetItem}
         trackUserActivity={trackUserActivity}
+        participantCount={participantCount}
       />
-            </div>
+    </div>
   );
 }

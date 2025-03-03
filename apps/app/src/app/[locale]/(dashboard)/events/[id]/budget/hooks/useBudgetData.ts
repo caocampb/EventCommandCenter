@@ -19,6 +19,69 @@ export function useBudgetData(eventId: string) {
   });
   const [categories, setCategories] = useState<string[]>([]);
   const [totalBudgetValue, setTotalBudgetValue] = useState<number>(0);
+  const [participantCount, setParticipantCount] = useState<number>(0);
+  
+  // Calculate totals adjusted for per-student costs
+  const calculateAdjustedTotals = useCallback((items: BudgetItem[], count: number) => {
+    // Calculate planned and actual totals
+    let plannedTotal = 0;
+    let actualTotal = 0;
+    
+    // Category totals with per-student adjustments
+    const categoryTotalsMap: Record<string, { planned: number; actual: number }> = {};
+    
+    items.forEach(item => {
+      // Determine the multiplier for per-student items
+      const multiplier = item.isPerAttendee ? Math.max(count, 1) : 1;
+      
+      // Calculate the adjusted amounts
+      const adjustedPlanned = item.plannedAmount * multiplier;
+      const adjustedActual = (item.actualAmount || 0) * multiplier;
+      
+      // Add to running totals
+      plannedTotal += adjustedPlanned;
+      actualTotal += adjustedActual;
+      
+      // Add to category totals
+      const category = item.category || 'Uncategorized';
+      if (!categoryTotalsMap[category]) {
+        categoryTotalsMap[category] = { planned: 0, actual: 0 };
+      }
+      categoryTotalsMap[category].planned += adjustedPlanned;
+      categoryTotalsMap[category].actual += adjustedActual;
+    });
+    
+    // Convert category totals map to array
+    const categoryTotals = Object.entries(categoryTotalsMap).map(([category, amounts]) => ({
+      category,
+      plannedAmount: amounts.planned,
+      actualAmount: amounts.actual
+    }));
+    
+    return {
+      plannedTotal,
+      actualTotal,
+      categoryTotals
+    };
+  }, []);
+  
+  // Fetch participant count
+  const fetchParticipantCount = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/events/${eventId}/participants`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch participants: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const count = data.data?.length || 0;
+      setParticipantCount(count);
+      return count;
+    } catch (err) {
+      console.error('Error fetching participants:', err);
+      return 0;
+    }
+  }, [eventId]);
   
   // Fetch budget data
   const fetchBudgetData = useCallback(async () => {
@@ -33,6 +96,9 @@ export function useBudgetData(eventId: string) {
       const eventData = await eventResponse.json();
       setEventName(eventData.data.name);
       
+      // Get participant count
+      const count = await fetchParticipantCount();
+      
       // Then get the budget items
       const response = await fetch(`/api/events/${eventId}/budget`);
       if (!response.ok) {
@@ -40,16 +106,16 @@ export function useBudgetData(eventId: string) {
       }
       
       const data = await response.json();
-      setBudgetItems(data.data || []);
-      setTotals({
-        plannedTotal: data.totals?.plannedTotal || 0,
-        actualTotal: data.totals?.actualTotal || 0,
-        categoryTotals: data.totals?.categories || []
-      });
+      const budgetItems = data.data || [];
+      setBudgetItems(budgetItems);
+      
+      // Calculate adjusted totals that account for per-student costs
+      const adjustedTotals = calculateAdjustedTotals(budgetItems, count);
+      setTotals(adjustedTotals);
       
       // Extract unique categories
       const uniqueCategories = Array.from(
-        new Set((data.data || []).map((item: BudgetItem) => item.category))
+        new Set(budgetItems.map((item: BudgetItem) => item.category))
       ) as string[];
       setCategories(uniqueCategories);
     } catch (err) {
@@ -58,7 +124,7 @@ export function useBudgetData(eventId: string) {
     } finally {
       setIsLoading(false);
     }
-  }, [eventId]);
+  }, [eventId, calculateAdjustedTotals, fetchParticipantCount]);
   
   // Add a new budget item
   const addBudgetItem = useCallback(async (newItem: {
@@ -66,6 +132,7 @@ export function useBudgetData(eventId: string) {
     category: string;
     plannedAmount: number;
     isPaid: boolean;
+    isPerAttendee: boolean;
     vendorId?: string;
   }) => {
     try {
@@ -79,6 +146,7 @@ export function useBudgetData(eventId: string) {
         category: newItem.category,
         plannedAmount: Number(newItem.plannedAmount),
         isPaid: newItem.isPaid,
+        isPerAttendee: newItem.isPerAttendee,
         vendorId: newItem.vendorId
       };
       
@@ -125,7 +193,10 @@ export function useBudgetData(eventId: string) {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(newBudgetItem)
+        body: JSON.stringify({
+          ...newBudgetItem,
+          eventId
+        })
       });
       
       if (!response.ok) {
@@ -137,10 +208,10 @@ export function useBudgetData(eventId: string) {
       const newItemWithRealId = responseData.data;
       
       if (newItemWithRealId && newItemWithRealId.id) {
-        // Replace our temporary ID with the real one
+        // Replace our temporary item with the real one from the API
         setBudgetItems(prev => 
           prev.map(item => 
-            item.id === tempId ? { ...item, id: newItemWithRealId.id } : item
+            item.id === tempId ? newItemWithRealId : item
           )
         );
       }
@@ -352,6 +423,7 @@ export function useBudgetData(eventId: string) {
     }
   }, [isLoading, totals.plannedTotal]);
   
+  // Return hook data and actions
   return {
     isLoading,
     error,
@@ -361,6 +433,7 @@ export function useBudgetData(eventId: string) {
     categories,
     totalBudgetValue,
     setTotalBudgetValue,
+    participantCount,
     actions: {
       fetchBudgetData,
       addBudgetItem,

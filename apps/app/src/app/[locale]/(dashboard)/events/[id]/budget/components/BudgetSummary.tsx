@@ -21,6 +21,7 @@ interface BudgetSummaryProps {
   onAddItem: () => void;
   onSaveTotalBudget: (value: number) => Promise<void>;
   trackUserActivity: () => void;
+  participantCount?: number;
 }
 
 export function BudgetSummary({ 
@@ -29,7 +30,8 @@ export function BudgetSummary({
   totals, 
   onAddItem, 
   onSaveTotalBudget,
-  trackUserActivity 
+  trackUserActivity,
+  participantCount = 0
 }: BudgetSummaryProps) {
   const [isEditingTotalBudget, setIsEditingTotalBudget] = useState(false);
   const totalBudgetInputRef = useRef<HTMLInputElement>(null);
@@ -60,6 +62,11 @@ export function BudgetSummary({
       setIsEditingTotalBudget(false);
     }
   };
+  
+  // Calculate per-student costs when applicable
+  const perStudentPlanned = participantCount > 0 
+    ? totals.plannedTotal / participantCount 
+    : 0;
   
   return (
     <div className="border border-[#1F1F1F] rounded-md p-5 mb-6" style={{ backgroundColor: colors.background.card }}>
@@ -115,6 +122,14 @@ export function BudgetSummary({
             )}
           </div>
         </div>
+        
+        {/* Show per-student cost when applicable */}
+        {participantCount > 0 && (
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-[13px] text-gray-400">Per Student ({participantCount} students)</span>
+            <span className="text-[15px] font-medium text-white">{formatCurrency(perStudentPlanned)}</span>
+          </div>
+        )}
         
         <div className="flex justify-between items-center mb-1.5">
           <span className="text-[13px] text-gray-400">Spent</span>

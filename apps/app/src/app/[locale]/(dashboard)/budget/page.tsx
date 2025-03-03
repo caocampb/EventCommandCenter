@@ -109,16 +109,49 @@ export default function BudgetPage() {
   
   // Budget status pill component for Linear-style status indicators
   const BudgetStatusPill = ({ budget, spent }: { budget: number; spent: number }) => {
-    // Calculate percentage over budget
-    const remaining = budget - spent;
-    const percentageUsed = budget > 0 ? (spent / budget) * 100 : 0;
-    const isOverBudget = remaining < 0;
+    // Special case: Any spending against a $0 budget is over budget
+    if (budget === 0 && spent > 0) {
+      // Map budget statuses to our color system
+      const statusStyles = {
+        'on-track': {
+          backgroundColor: colors.status.confirmed.bg,
+          color: colors.status.confirmed.text,
+          borderColor: `${colors.status.confirmed.text}40` // 40 = 25% opacity
+        },
+        'at-risk': {
+          backgroundColor: colors.status.pending.bg,
+          color: colors.status.pending.text,
+          borderColor: `${colors.status.pending.text}40` // 40 = 25% opacity
+        },
+        'over-budget': {
+          backgroundColor: colors.status.cancelled.bg,
+          color: colors.status.cancelled.text,
+          borderColor: `${colors.status.cancelled.text}40` // 40 = 25% opacity
+        }
+      };
+      
+      return (
+        <div className="flex justify-end">
+          <span 
+            className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
+            style={statusStyles['over-budget']}
+          >
+            Over Budget
+          </span>
+        </div>
+      );
+    }
     
-    // Determine status based on budget health
+    // Calculate percentage of budget used
+    const percentageUsed = budget > 0 ? (spent / budget) * 100 : 0;
+    
+    // Determine status based on consistent thresholds
     let status: 'on-track' | 'at-risk' | 'over-budget' = 'on-track';
-    if (isOverBudget) {
-      // Over 20% over budget is critical
-      status = percentageUsed > 120 ? 'over-budget' : 'at-risk';
+    
+    if (percentageUsed > 100) {
+      status = 'over-budget';
+    } else if (percentageUsed >= 80) {
+      status = 'at-risk';
     }
     
     // Map budget statuses to our color system
@@ -271,7 +304,7 @@ export default function BudgetPage() {
           <div className="rounded-md p-4" style={{ backgroundColor: colors.background.card, borderColor: colors.border.subtle, borderWidth: '1px', borderStyle: 'solid' }}>
             <div className="text-sm text-gray-400 mb-1">Remaining</div>
             <div className="text-xl font-medium">
-              {budgetData.totalRemaining < 0 ? (
+              {budgetData.totalRemaining < 0 || (budgetData.totalBudget === 0 && budgetData.totalSpent > 0) ? (
                 <div className="flex justify-between items-center">
                   <span className="font-mono">{`-${formatCurrency(Math.abs(budgetData.totalRemaining))}`}</span>
                   <span style={{ 
@@ -286,12 +319,28 @@ export default function BudgetPage() {
                     borderWidth: '1px',
                     borderStyle: 'solid'
                   }}>
-                    {budgetData.totalSpent > budgetData.totalBudget * 1.2 ? 'Over Budget' : 'At Risk'}
+                    Over Budget
                   </span>
                 </div>
               ) : (
                 <div>
                   <span className="font-mono">{formatCurrency(budgetData.totalRemaining)}</span>
+                  {budgetData.totalBudget > 0 && (budgetData.totalSpent / budgetData.totalBudget) >= 0.8 && (budgetData.totalSpent / budgetData.totalBudget) < 1 && (
+                    <span className="ml-2" style={{ 
+                      backgroundColor: `${colors.status.pending.bg}20`, 
+                      color: colors.status.pending.text,
+                      borderColor: `${colors.status.pending.text}40`,
+                      padding: '0 0.5rem',
+                      borderRadius: '9999px',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      whiteSpace: 'nowrap',
+                      borderWidth: '1px',
+                      borderStyle: 'solid'
+                    }}>
+                      At Risk
+                    </span>
+                  )}
                 </div>
               )}
             </div>
@@ -404,12 +453,17 @@ export default function BudgetPage() {
                 <tr className="border-b" style={{ borderColor: colors.border.subtle }}>
                   <th className="text-left px-4 py-3 text-[13px] font-medium text-gray-400">Vendor</th>
                   <th className="text-right px-4 py-3 text-[13px] font-medium text-gray-400">Total Amount</th>
-                  <th className="text-right px-4 py-3 text-[13px] font-medium text-gray-400">Events</th>
+                  <th className="text-left px-4 py-3 text-[13px] font-medium text-gray-400">Related to</th>
                 </tr>
               </thead>
               <tbody>
                 {budgetData.vendorTotals.map((vendor) => (
-                  <tr key={vendor.id} className="border-b" style={{ borderColor: colors.border.subtle }}>
+                  <tr 
+                    key={vendor.id} 
+                    className="border-b hover:bg-black/20 cursor-pointer"
+                    style={{ borderColor: colors.border.subtle }}
+                    onClick={() => router.push(`/en/vendors/${vendor.id}`)}
+                  >
                     <td className="px-4 py-3">
                       <Link 
                         href={`/en/vendors/${vendor.id}`}
@@ -422,24 +476,84 @@ export default function BudgetPage() {
                     </td>
                     <td className="px-4 py-3 text-right font-mono">{formatCurrency(vendor.total)}</td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1.5">
-                        {vendor.events.map(event => (
-                          <div 
-                            key={event.eventId}
-                            className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
-                          >
-                            <Link 
-                              href={`/en/events/${event.eventId}/budget`}
-                              className="text-xs px-2 py-0.5 rounded-full transition-colors duration-150 hover:opacity-80"
-                              style={{ 
-                                backgroundColor: colors.background.card,
-                              }}
-                              onClick={(e) => e.stopPropagation()}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {vendor.events.map(event => {
+                          // Find the corresponding event to get its budget status
+                          const eventData = budgetData.eventBudgets.find(e => e.id === event.eventId);
+                          
+                          // Special case: Any spending against a $0 budget is over budget
+                          if (eventData && eventData.totalBudget === 0 && eventData.spent > 0) {
+                            return (
+                              <div 
+                                key={event.eventId}
+                                className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
+                              >
+                                <Link 
+                                  href={`/en/events/${event.eventId}/budget`}
+                                  className="text-xs px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 inline-flex items-center gap-1.5"
+                                  style={{ 
+                                    backgroundColor: colors.background.card,
+                                    borderColor: colors.border.subtle,
+                                    borderWidth: '1px',
+                                    borderStyle: 'solid'
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <span>{event.eventName}</span>
+                                  <span 
+                                    className="block w-2 h-2 rounded-full flex-shrink-0" 
+                                    style={{ backgroundColor: colors.status.cancelled.text }}
+                                  ></span>
+                                </Link>
+                              </div>
+                            );
+                          }
+                          
+                          // Calculate percentage of budget used with consistent thresholds
+                          const percentageUsed = eventData && eventData.totalBudget > 0 
+                            ? (eventData.spent / eventData.totalBudget) * 100 
+                            : 0;
+                          
+                          // Determine status using same thresholds as BudgetStatusPill
+                          let status: 'on-track' | 'at-risk' | 'over-budget' = 'on-track';
+                          if (percentageUsed > 100) {
+                            status = 'over-budget';
+                          } else if (percentageUsed >= 80) {
+                            status = 'at-risk';
+                          }
+                          
+                          // Get status color (dot indicator)
+                          const statusColor = status === 'over-budget'
+                            ? colors.status.cancelled.text
+                            : status === 'at-risk'
+                              ? colors.status.pending.text 
+                              : colors.status.confirmed.text;
+                          
+                          return (
+                            <div 
+                              key={event.eventId}
+                              className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
                             >
-                              {event.eventName}
-                            </Link>
-                          </div>
-                        ))}
+                              <Link 
+                                href={`/en/events/${event.eventId}/budget`}
+                                className="text-xs px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 inline-flex items-center gap-1.5"
+                                style={{ 
+                                  backgroundColor: colors.background.card,
+                                  borderColor: colors.border.subtle,
+                                  borderWidth: '1px',
+                                  borderStyle: 'solid'
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <span>{event.eventName}</span>
+                                <span 
+                                  className="block w-2 h-2 rounded-full flex-shrink-0" 
+                                  style={{ backgroundColor: statusColor }}
+                                ></span>
+                              </Link>
+                            </div>
+                          );
+                        })}
                       </div>
                     </td>
                   </tr>

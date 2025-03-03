@@ -1,8 +1,11 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
 import type { BudgetItem } from '@/types/budget';
 import { colors } from '@/styles/colors';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { PencilIcon, TrashIcon } from '@heroicons/react/20/solid';
+import { formatCurrency } from '@/lib/utils';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 
 interface BudgetItemsListProps {
   items: BudgetItem[];
@@ -12,6 +15,7 @@ interface BudgetItemsListProps {
   onTogglePaid: (item: BudgetItem) => Promise<void>;
   onDeleteItem: (item: BudgetItem) => Promise<void>;
   trackUserActivity: () => void;
+  participantCount: number;
 }
 
 export function BudgetItemsList({
@@ -21,7 +25,8 @@ export function BudgetItemsList({
   onUpdateAmount,
   onTogglePaid,
   onDeleteItem,
-  trackUserActivity
+  trackUserActivity,
+  participantCount
 }: BudgetItemsListProps) {
   // State for category filters
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -31,17 +36,6 @@ export function BudgetItemsList({
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
   const editInputRef = useRef<HTMLInputElement>(null);
-  
-  // Format currency
-  const formatCurrency = (amount: number | undefined | null) => {
-    if (amount === undefined || amount === null) return '—';
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
   
   // Filter items based on active category filters
   const filteredItems = useCallback(() => {
@@ -116,6 +110,17 @@ export function BudgetItemsList({
       onDeleteItem(item);
     }
   }, [onDeleteItem, trackUserActivity]);
+  
+  // Format currency
+  const formatCurrency = (amount: number | undefined | null) => {
+    if (amount === undefined || amount === null) return '—';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
   
   return (
     <div className="border border-[#1F1F1F] rounded-md overflow-hidden" style={{ backgroundColor: colors.background.card }}>
@@ -224,16 +229,28 @@ export function BudgetItemsList({
               {filteredItems().map((item) => (
                 <tr key={item.id} className="border-t border-[#1F1F1F] hover:bg-[#0F0F0F]">
                   <td className="px-4 py-3 text-[14px] text-white">
-                    {item.description}
+                    <div className="flex flex-col">
+                      <span className="font-medium">{item.description}</span>
+                      {item.notes && <span className="text-[12px] mt-0.5 text-gray-500">{item.notes}</span>}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-[14px] text-white">
-                    {item.category}
+                    <span className="px-2 py-1 rounded-full text-[12px] font-medium bg-[#5E6AD2]/10 text-[#5E6AD2]">
+                      {item.category}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-[14px] text-white">
                     {getVendorName(item.vendorId)}
                   </td>
                   <td className="px-4 py-3 text-[14px] text-right text-white">
-                    {formatCurrency(item.plannedAmount)}
+                    <div>
+                      <span className="tabular-nums">{formatCurrency(item.plannedAmount)}</span>
+                      {item.isPerAttendee && participantCount > 0 && (
+                        <div className="text-[11px] text-gray-400 mt-1">
+                          {formatCurrency(item.plannedAmount / participantCount)} / person
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-[14px] text-right text-white">
                     {editingItemId === item.id ? (

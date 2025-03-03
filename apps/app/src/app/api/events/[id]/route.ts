@@ -133,6 +133,55 @@ export async function PATCH(
       });
     }
     
+    // Special case for status-only update - we don't need full validation
+    if (body.status !== undefined && Object.keys(body).length === 1) {
+      console.log("PATCH: Updating status to:", body.status);
+      
+      // Validate that status is one of the allowed values
+      const validStatus = ['draft', 'confirmed', 'in-progress', 'completed', 'cancelled'].includes(body.status);
+      
+      if (!validStatus) {
+        console.error("PATCH: Invalid status value:", body.status);
+        return NextResponse.json(
+          { error: "Invalid status value. Allowed values are: draft, confirmed, in-progress, completed, cancelled" },
+          { status: 400 }
+        );
+      }
+      
+      const { data, error } = await serviceRoleClient
+        .from("events")
+        .update({
+          status: body.status,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select();
+      
+      if (error) {
+        console.error("PATCH: Error updating event status:", error);
+        return NextResponse.json(
+          { error: "Failed to update event status: " + error.message },
+          { status: 500 }
+        );
+      }
+      
+      if (!data || data.length === 0) {
+        console.error("PATCH: No data returned after status update");
+        return NextResponse.json(
+          { error: "Event not found" },
+          { status: 404 }
+        );
+      }
+      
+      return NextResponse.json({ 
+        data: {
+          id: data[0].id,
+          status: data[0].status
+        },
+        success: true
+      });
+    }
+    
     // For all other updates, continue with full validation
     const validationResult = eventSchema.safeParse(body);
     

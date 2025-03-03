@@ -21,6 +21,7 @@ export const budgetItemSchema = z.object({
     .optional(),
   vendorId: z.string().uuid().optional(),
   isPaid: z.boolean().default(false),
+  isPerAttendee: z.boolean().default(false),
   notes: z.string()
     .max(500, { message: "Notes cannot exceed 500 characters" })
     .optional(),

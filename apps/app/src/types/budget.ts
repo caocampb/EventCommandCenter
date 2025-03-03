@@ -16,6 +16,7 @@ export interface BudgetItem {
   actualAmount?: number;
   vendorId?: string;
   isPaid: boolean;
+  isPerAttendee: boolean;
   notes?: string;
   createdAt: string | Date;
   updatedAt: string | Date;
@@ -34,6 +35,7 @@ export interface BudgetItemDbRow {
   actual_amount: number | null;
   vendor_id: string | null;
   is_paid: boolean;
+  is_per_attendee: boolean;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -49,5 +51,6 @@ export interface BudgetItemFormValues {
   actualAmount?: number;
   vendorId?: string;
   isPaid: boolean;
+  isPerAttendee: boolean;
   notes?: string;
 } 

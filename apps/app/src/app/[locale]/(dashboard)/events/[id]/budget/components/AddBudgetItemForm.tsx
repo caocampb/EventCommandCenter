@@ -9,6 +9,7 @@ interface NewBudgetItem {
   category: string;
   plannedAmount: number;
   isPaid: boolean;
+  isPerAttendee: boolean;
   vendorId?: string;
 }
 
@@ -31,7 +32,8 @@ export function AddBudgetItemForm({
     description: '',
     category: '',
     plannedAmount: 0,
-    isPaid: false
+    isPaid: false,
+    isPerAttendee: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +61,16 @@ export function AddBudgetItemForm({
       }
       
       const success = await onAdd(newItem);
+      
       if (success) {
+        // Reset form and close
+        setNewItem({
+          description: '',
+          category: '',
+          plannedAmount: 0,
+          isPaid: false,
+          isPerAttendee: false
+        });
         onCancel();
       }
     } catch (err) {
@@ -181,6 +192,46 @@ export function AddBudgetItemForm({
           <label htmlFor="isPaid" className="ml-2 block text-[13px] text-gray-400">
             Already paid
           </label>
+        </div>
+        
+        {/* Add Budget Type toggle */}
+        <div>
+          <label className="block text-[13px] text-gray-400 mb-1">Budget Type</label>
+          <div className="flex space-x-3">
+            <button
+              type="button"
+              onClick={() => {
+                trackUserActivity();
+                setNewItem({...newItem, isPerAttendee: false});
+              }}
+              className={`flex-1 px-3 py-2 rounded-md text-[14px] border transition-colors duration-150 ${
+                !newItem.isPerAttendee 
+                  ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]/30 text-[#5E6AD2]' 
+                  : 'bg-[#0C0C0C] border-[#1F1F1F] text-gray-400 hover:border-[#5E6AD2]/20'
+              }`}
+            >
+              Fixed Cost
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                trackUserActivity();
+                setNewItem({...newItem, isPerAttendee: true});
+              }}
+              className={`flex-1 px-3 py-2 rounded-md text-[14px] border transition-colors duration-150 ${
+                newItem.isPerAttendee
+                  ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]/30 text-[#5E6AD2]'
+                  : 'bg-[#0C0C0C] border-[#1F1F1F] text-gray-400 hover:border-[#5E6AD2]/20'
+              }`}
+            >
+              Per Student
+            </button>
+          </div>
+          <p className="mt-1 text-[12px] text-gray-500">
+            {newItem.isPerAttendee 
+              ? 'This cost applies per student attending the event.' 
+              : 'This is a fixed cost regardless of attendance.'}
+          </p>
         </div>
         
         {/* Form buttons */}

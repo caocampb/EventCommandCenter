@@ -43,8 +43,8 @@ export async function GET(
       );
     }
     
-    // Transform database rows to camelCase for frontend
-    const budgetItems = data?.map((item: BudgetItemDbRow) => ({
+    // Map database rows to our expected frontend format
+    const mappedItems = data.map((item) => ({
       id: item.id,
       eventId: item.event_id,
       description: item.description,
@@ -53,35 +53,36 @@ export async function GET(
       actualAmount: item.actual_amount,
       vendorId: item.vendor_id,
       isPaid: item.is_paid,
+      isPerAttendee: item.is_per_attendee,
       notes: item.notes,
       createdAt: item.created_at,
       updatedAt: item.updated_at
-    })) || [];
+    }));
     
     // Calculate totals
     const totals = {
-      plannedTotal: budgetItems.reduce((sum, item) => sum + item.plannedAmount, 0),
-      actualTotal: budgetItems.reduce((sum, item) => sum + (item.actualAmount || 0), 0),
+      plannedTotal: mappedItems.reduce((sum, item) => sum + item.plannedAmount, 0),
+      actualTotal: mappedItems.reduce((sum, item) => sum + (item.actualAmount || 0), 0),
       // Group by category
       categories: Object.entries(
-        budgetItems.reduce((acc: { [key: string]: { planned: number, actual: number } }, item) => {
+        mappedItems.reduce((acc: { [key: string]: { planned: number, actual: number } }, item) => {
           const category = item.category || 'Uncategorized';
           if (!acc[category]) {
             acc[category] = { planned: 0, actual: 0 };
           }
-          acc[category].planned += item.plannedAmount || 0;
+          acc[category].planned += item.plannedAmount;
           acc[category].actual += item.actualAmount || 0;
           return acc;
         }, {})
-      ).map(([category, amounts]) => ({
+      ).map(([category, totals]) => ({
         category,
-        plannedAmount: amounts.planned,
-        actualAmount: amounts.actual
+        plannedAmount: totals.planned,
+        actualAmount: totals.actual
       }))
     };
     
     return NextResponse.json({ 
-      data: budgetItems, 
+      data: mappedItems, 
       totals 
     });
   } catch (error) {
@@ -139,6 +140,7 @@ export async function POST(
         actual_amount: validatedData.actualAmount,
         vendor_id: validatedData.vendorId,
         is_paid: validatedData.isPaid,
+        is_per_attendee: validatedData.isPerAttendee,
         notes: validatedData.notes
       })
       .select();
@@ -169,6 +171,7 @@ export async function POST(
       actualAmount: item.actual_amount,
       vendorId: item.vendor_id,
       isPaid: item.is_paid,
+      isPerAttendee: item.is_per_attendee,
       notes: item.notes,
       createdAt: item.created_at,
       updatedAt: item.updated_at

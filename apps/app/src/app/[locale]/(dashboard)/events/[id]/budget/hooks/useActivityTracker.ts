@@ -3,21 +3,30 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 type RefreshFunction = () => Promise<void>;
 type DependencyList = ReadonlyArray<unknown>;
 
-// This hook tracks user activity and manages auto-refresh functionality
+// This hook tracks user activity and provides non-disruptive auto-refresh for collaboration
 export function useActivityTracker(
   refreshFn: RefreshFunction, 
   dependencies: DependencyList = [],
   options = {
-    refreshInterval: 120000, // 2 minutes
-    inactivityThreshold: 60000 // 1 minute
+    refreshInterval: 300000, // 5 minutes (increased from 2)
+    inactivityThreshold: 120000 // 2 minutes (increased from 1)
   }
 ) {
   const [lastUserActivity, setLastUserActivity] = useState<number>(Date.now());
   const userIsScrolling = useRef(false);
+  const userIsEditing = useRef(false);
   
   // Track user activity
   const trackUserActivity = useCallback(() => {
     setLastUserActivity(Date.now());
+    // When user interacts, assume they might be starting to edit something
+    userIsEditing.current = true;
+    
+    // Clear editing flag after a short period of inactivity
+    // This prevents refresh during brief pauses while actively working
+    setTimeout(() => {
+      userIsEditing.current = false;
+    }, 30000); // 30 seconds
   }, []);
   
   // Enhanced activity tracker that handles multiple user events
@@ -65,19 +74,19 @@ export function useActivityTracker(
     };
   }, [trackUserActivity]);
   
-  // Set up periodic refresh with conditional execution based on user activity
+  // Set up periodic refresh with improved conditions for collaborative use
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = Date.now();
       const userIsInactive = (now - lastUserActivity) > options.inactivityThreshold;
       
-      // Only refresh if user has been inactive for the specified time
-      // and is not actively scrolling
-      if (userIsInactive && !userIsScrolling.current) {
-        console.log("Auto-refreshing after inactivity");
+      // Only refresh if:
+      // 1. User has been inactive for the threshold time
+      // 2. User is not actively scrolling
+      // 3. User is not in the middle of editing something
+      if (userIsInactive && !userIsScrolling.current && !userIsEditing.current) {
+        console.log("Background refresh for collaboration");
         refreshFn();
-      } else {
-        console.log("Skipping auto-refresh due to user activity");
       }
     }, options.refreshInterval);
     
@@ -87,6 +96,7 @@ export function useActivityTracker(
   return { 
     trackUserActivity,
     lastUserActivity,
-    isScrolling: () => userIsScrolling.current
+    isScrolling: () => userIsScrolling.current,
+    isEditing: () => userIsEditing.current
   };
 } 

@@ -117,6 +117,7 @@ export async function PATCH(
     if (validatedData.actualAmount !== undefined) updateData.actual_amount = validatedData.actualAmount;
     if (validatedData.vendorId !== undefined) updateData.vendor_id = validatedData.vendorId;
     if (validatedData.isPaid !== undefined) updateData.is_paid = validatedData.isPaid;
+    if (validatedData.isPerAttendee !== undefined) updateData.is_per_attendee = validatedData.isPerAttendee;
     if (validatedData.notes !== undefined) updateData.notes = validatedData.notes;
     
     // Only perform update if there are fields to update
@@ -161,6 +162,7 @@ export async function PATCH(
       actualAmount: item.actual_amount,
       vendorId: item.vendor_id,
       isPaid: item.is_paid,
+      isPerAttendee: item.is_per_attendee,
       notes: item.notes,
       createdAt: item.created_at,
       updatedAt: item.updated_at
