@@ -121,10 +121,10 @@ export function DocumentUpload({ vendorId, onUploadComplete }: DocumentUploadPro
         onClick={(e) => e.stopPropagation()} // Prevent click from bubbling
       />
       <button
-        type="button" // Explicitly set type to button to prevent form submission
+        type="button"
         onClick={handleUploadClick}
         disabled={isUploading}
-        className="flex items-center px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex items-center px-3 py-1.5 bg-theme-bg-card hover:bg-theme-bg-hover text-sm font-medium rounded border border-theme-border-subtle text-theme-text-secondary transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <svg className="mr-1.5 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>

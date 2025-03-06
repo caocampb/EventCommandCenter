@@ -686,7 +686,7 @@ function VendorsPage() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                          <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
                         </svg>
                       </button>
                       <div>
@@ -718,9 +718,10 @@ function VendorsPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-theme-text-secondary">
-                    {'$'.repeat(vendor.priceTier)}
-                    <span className="text-theme-text-tertiary">{'$'.repeat(4 - vendor.priceTier)}</span>
+                  <td className="px-4 py-3">
+                    <div>
+                      <span className="text-theme-text-primary">{`$`.repeat(vendor.priceTier)}</span>
+                    </div>
                     
                     {vendor.rating && (
                       <div className="flex items-center text-xs mt-1 text-theme-text-tertiary">

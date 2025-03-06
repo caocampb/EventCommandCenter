@@ -46,8 +46,8 @@ export function DocumentsSectionReadonly({ vendorId }: DocumentsSectionReadonlyP
 
   return (
     <div className="space-y-4">
-      <div className="pb-1 mb-2 border-b border-[#1F1F1F]">
-        <h2 className="text-[15px] font-medium text-gray-400">Documents</h2>
+      <div className="pb-1 mb-2 border-b border-theme-border-subtle">
+        <h2 className="text-[15px] font-medium text-theme-text-secondary">Documents</h2>
       </div>
       
       {error && (
@@ -57,13 +57,13 @@ export function DocumentsSectionReadonly({ vendorId }: DocumentsSectionReadonlyP
       )}
       
       {isLoading ? (
-        <div className="flex items-center space-x-2 text-gray-400 py-3">
-          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-[#5E6AD2]"></div>
+        <div className="flex items-center space-x-2 text-theme-text-secondary py-3">
+          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-theme-primary"></div>
           <span className="text-sm">Loading documents...</span>
         </div>
       ) : documents.length === 0 ? (
         <div className="py-3">
-          <p className="text-[14px] text-gray-400">No documents attached to this vendor</p>
+          <p className="text-[14px] text-theme-text-secondary">No documents attached to this vendor</p>
         </div>
       ) : (
         <DocumentListReadonly 

@@ -12,6 +12,12 @@ interface GooglePlace {
   user_ratings_total?: number;
   website?: string;
   formatted_phone_number?: string;
+  photos?: { 
+    name: string;  // Changed from photo_reference to name in v1 API
+    heightPx?: number;
+    widthPx?: number;
+    authorAttributions?: any[];
+  }[];
 }
 
 // Define types for Claude enhancements
@@ -49,7 +55,8 @@ async function searchGooglePlaces(query: string): Promise<GooglePlace[]> {
       'places.rating',
       'places.userRatingCount',
       'places.websiteUri',
-      'places.nationalPhoneNumber'
+      'places.nationalPhoneNumber',
+      'places.photos'
     ].join(',');
     
     // Create request body according to Places API (New) format
@@ -116,7 +123,13 @@ async function searchGooglePlaces(query: string): Promise<GooglePlace[]> {
         rating: place.rating,
         user_ratings_total: place.userRatingCount,
         website: place.websiteUri,
-        formatted_phone_number: place.nationalPhoneNumber
+        formatted_phone_number: place.nationalPhoneNumber,
+        photos: place.photos ? place.photos.map((photo: any) => ({
+          name: photo.name,
+          heightPx: photo.heightPx,
+          widthPx: photo.widthPx,
+          authorAttributions: photo.authorAttributions
+        })) : undefined
       };
     });
   } catch (error) {

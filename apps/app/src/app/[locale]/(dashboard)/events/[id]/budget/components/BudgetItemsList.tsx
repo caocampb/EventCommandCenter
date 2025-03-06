@@ -244,7 +244,9 @@ export function BudgetItemsList({
                 <th className="px-4 py-3 text-left text-[13px] font-medium text-text-tertiary">Vendor</th>
                 <th className="px-4 py-3 text-right text-[13px] font-medium text-text-tertiary">Planned</th>
                 <th className="px-4 py-3 text-right text-[13px] font-medium text-text-tertiary">Actual</th>
+                <th className="px-4 py-3 text-center text-[13px] font-medium text-text-tertiary">Remaining</th>
                 <th className="px-4 py-3 text-center text-[13px] font-medium text-text-tertiary">Status</th>
+                <th className="px-4 py-3 text-center text-[13px] font-medium text-text-tertiary">Payment</th>
                 <th className="px-4 py-3 text-right text-[13px] font-medium text-text-tertiary">Actions</th>
               </tr>
             </thead>
@@ -297,6 +299,28 @@ export function BudgetItemsList({
                       >
                         {formatCurrency(item.actualAmount)}
                       </button>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-[14px] text-text-primary font-mono">
+                        {formatCurrency((item.plannedAmount || 0) - (item.actualAmount || 0))}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    {(item.actualAmount || 0) > (item.plannedAmount || 0) ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-over-budget-bg text-theme-status-over-budget-text border border-theme-status-over-budget-text/20">
+                        Over Budget
+                      </span>
+                    ) : (item.actualAmount || 0) > (item.plannedAmount || 0) * 0.8 ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-near-limit-bg text-theme-status-near-limit-text border border-theme-status-near-limit-text/20">
+                        At Risk
+                      </span>
+                    ) : (
+                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-under-budget-bg text-theme-status-under-budget-text border border-theme-status-under-budget-text/20">
+                        On Track
+                      </span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-center">

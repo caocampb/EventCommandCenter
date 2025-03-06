@@ -32,6 +32,11 @@ export default function VendorDiscoveryPage() {
     setHasSearched(true);
     
     try {
+      // Filter out empty context values before sending to API
+      const filteredContext = Object.fromEntries(
+        Object.entries(eventContext).filter(([_, value]) => !!value)
+      );
+      
       const response = await fetch('/api/discovery', {
         method: 'POST',
         headers: {
@@ -39,7 +44,7 @@ export default function VendorDiscoveryPage() {
         },
         body: JSON.stringify({ 
           query,
-          context: eventContext
+          context: Object.keys(filteredContext).length > 0 ? filteredContext : undefined
         }),
       });
       

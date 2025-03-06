@@ -83,6 +83,8 @@ export default function VendorDetailPage() {
         if (!data) throw new Error('Vendor not found');
         
         // Extract vendor data from the nested 'data' property
+        console.log("Vendor detail data:", data.data, "Price tier:", data.data.priceTier, "Type:", typeof data.data.priceTier);
+        
         setVendor(data.data);
       } catch (err) {
         console.error('Error loading vendor:', err);
@@ -243,9 +245,13 @@ export default function VendorDetailPage() {
   
   // Helper to display price tier
   const getPriceDisplay = (tier: number) => {
-    const symbols = Array(tier).fill('$').join('');
-    const labels = ['Budget', 'Moderate', 'Premium', 'Luxury'];
-    return `${symbols} - ${labels[tier - 1]}`;
+    return (
+      <div>
+        <div>
+          <span className="text-theme-text-primary">{`$`.repeat(tier)}</span>
+        </div>
+      </div>
+    );
   };
   
   // Handle delete vendor
@@ -299,8 +305,8 @@ export default function VendorDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-48" style={{ backgroundColor: colors.background.page }}>
-        <div className="animate-spin h-8 w-8 border-t-2 border-b-2 rounded-full" style={{ borderColor: colors.text.secondary }}></div>
+      <div className="flex items-center justify-center h-48 bg-theme-bg-page">
+        <div className="animate-spin h-8 w-8 border-t-2 border-b-2 rounded-full border-theme-text-secondary"></div>
       </div>
     );
   }
@@ -308,7 +314,7 @@ export default function VendorDetailPage() {
   // Error state
   if (error || !vendor) {
     return (
-      <div className="p-6" style={{ backgroundColor: colors.background.page }}>
+      <div className="p-6 bg-theme-bg-page">
         <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-md">
           <h3 className="font-medium mb-1">Error</h3>
           <p>{error || 'Vendor not found'}</p>
@@ -318,13 +324,12 @@ export default function VendorDetailPage() {
   }
   
   return (
-    <div className="p-6 w-full max-w-7xl mx-auto" style={{ backgroundColor: colors.background.page }}>
+    <div className="p-6 w-full max-w-7xl mx-auto bg-theme-bg-page">
       {/* Header section with breadcrumb and buttons */}
       <div className="mb-6">
         <Link 
           href="/en/vendors" 
-          className="inline-flex items-center text-sm mb-4 hover:text-white transition-colors"
-          style={{ color: colors.text.tertiary }}
+          className="inline-flex items-center text-sm mb-4 text-theme-text-tertiary hover:text-theme-text-primary transition-colors"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
             <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
@@ -334,37 +339,33 @@ export default function VendorDetailPage() {
         
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-2xl font-semibold mb-1" style={{ color: colors.text.primary }}>{vendor.name}</h1>
+            <h1 className="text-2xl font-semibold mb-1 text-theme-text-primary">{vendor.name}</h1>
             <div className="flex items-center gap-3">
-              <span className="text-sm capitalize" style={{ color: colors.text.secondary }}>{vendor.category}</span>
+              <span className="text-sm capitalize text-theme-text-secondary">{vendor.category}</span>
               {vendor.location && (
                 <>
-                  <span className="text-sm px-1" style={{ color: colors.text.tertiary }}>•</span>
-                  <span className="text-sm" style={{ color: colors.text.secondary }}>{vendor.location}</span>
+                  <span className="text-sm px-1 text-theme-text-tertiary">•</span>
+                  <span className="text-sm text-theme-text-secondary">{vendor.location}</span>
                 </>
               )}
             </div>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             <button 
               onClick={handleDelete}
               disabled={isDeleting}
-              className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm font-medium rounded border border-[#333333] transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ 
-                backgroundColor: colors.background.card, 
-                borderColor: colors.border.subtle,
-                color: colors.text.secondary
-              }}
+              className="px-3 py-1.5 bg-theme-bg-card hover:bg-theme-bg-hover text-sm font-medium rounded border border-theme-border-subtle text-theme-text-secondary transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
-            <Link 
-              href={`/en/vendors/${vendor.id}/edit`}
-              className="px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white text-sm font-medium rounded border border-transparent hover:border-[#8D95F2] transition-colors duration-120"
+            
+            <button 
+              onClick={() => router.push(`/en/vendors/${vendorId}/edit`)}
+              className="px-3 py-1.5 bg-theme-primary hover:bg-theme-primary-hover text-sm font-medium rounded border border-theme-primary hover:border-theme-primary-hover text-theme-text-primary transition-colors duration-120"
             >
               Edit Vendor
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -373,56 +374,53 @@ export default function VendorDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Info panel */}
-          <div className="rounded-md p-5 border shadow-sm" style={{ 
-            backgroundColor: colors.background.card,
-            borderColor: colors.border.subtle
-          }}>
-            <h2 className="text-[15px] font-medium mb-4" style={{ color: colors.text.primary }}>Vendor Information</h2>
+          <div className="rounded-md p-5 border shadow-sm bg-theme-bg-card border-theme-border-subtle">
+            <h2 className="text-[15px] font-medium mb-4 text-theme-text-primary">Vendor Information</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Category</h3>
-                <p className="text-[15px] text-white capitalize">{vendor.category}</p>
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Category</h3>
+                <p className="text-[15px] text-theme-text-primary capitalize">{vendor.category}</p>
               </div>
               
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Price Tier</h3>
-                <p className="text-[15px] text-white">
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Price Tier</h3>
+                <p className="text-[15px] text-theme-text-primary">
                   {getPriceDisplay(vendor.priceTier)}
                 </p>
               </div>
               
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Capacity</h3>
-                <p className="text-[15px] text-white">{vendor.capacity || '—'}</p>
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Capacity</h3>
+                <p className="text-[15px] text-theme-text-primary">{vendor.capacity || '—'}</p>
               </div>
             </div>
           </div>
           
           {/* Contact Information */}
           <section className="space-y-6">
-            <div className="pb-1 mb-2 border-b border-[#1F1F1F]">
-              <h2 className="text-[15px] font-medium text-gray-400">Contact Information</h2>
+            <div className="pb-1 mb-2 border-b border-theme-border-subtle">
+              <h2 className="text-[15px] font-medium text-theme-text-secondary">Contact Information</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Contact Name</h3>
-                <p className="text-[15px] text-white">{vendor.contactName || '—'}</p>
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Contact Name</h3>
+                <p className="text-[15px] text-theme-text-primary">{vendor.contactName || '—'}</p>
               </div>
               
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Contact Phone</h3>
-                <p className="text-[15px] text-white">{vendor.contactPhone || '—'}</p>
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Contact Phone</h3>
+                <p className="text-[15px] text-theme-text-primary">{vendor.contactPhone || '—'}</p>
               </div>
               
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Contact Email</h3>
-                <p className="text-[15px] text-white">
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Contact Email</h3>
+                <p className="text-[15px] text-theme-text-primary">
                   {vendor.contactEmail ? (
                     <a 
                       href={`mailto:${vendor.contactEmail}`} 
-                      className="text-[#5E6AD2] hover:underline"
+                      className="text-theme-primary hover:underline"
                     >
                       {vendor.contactEmail}
                     </a>
@@ -431,14 +429,14 @@ export default function VendorDetailPage() {
               </div>
               
               <div>
-                <h3 className="text-[13px] font-medium text-gray-400 mb-1">Website</h3>
-                <p className="text-[15px] text-white">
+                <h3 className="text-[13px] font-medium text-theme-text-tertiary mb-1">Website</h3>
+                <p className="text-[15px] text-theme-text-primary">
                   {vendor.website ? (
                     <a 
                       href={vendor.website} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-[#5E6AD2] hover:underline inline-flex items-center"
+                      className="text-theme-primary hover:underline inline-flex items-center"
                     >
                       {vendor.website.replace(/^https?:\/\//, '')}
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="ml-1 opacity-70">
@@ -454,12 +452,12 @@ export default function VendorDetailPage() {
           {/* Notes */}
           {vendor.notes && (
             <section className="space-y-4">
-              <div className="pb-1 mb-2 border-b border-[#1F1F1F]">
-                <h2 className="text-[15px] font-medium text-gray-400">Notes</h2>
+              <div className="pb-1 mb-2 border-b border-theme-border-subtle">
+                <h2 className="text-[15px] font-medium text-theme-text-secondary">Notes</h2>
               </div>
               
-              <div className="bg-[#121212] border border-[#1F1F1F] p-4 rounded-md">
-                <p className="text-[14px] text-gray-300 whitespace-pre-wrap">{vendor.notes}</p>
+              <div className="bg-theme-bg-input border border-theme-border-subtle p-4 rounded-md">
+                <p className="text-[14px] text-theme-text-primary whitespace-pre-wrap">{vendor.notes}</p>
               </div>
             </section>
           )}
@@ -471,29 +469,29 @@ export default function VendorDetailPage() {
           
           {/* Assigned Events */}
           <section className="space-y-4">
-            <div className="pb-1 mb-2 border-b border-[#1F1F1F] flex justify-between items-center">
-              <h2 className="text-[15px] font-medium text-gray-400">Assigned Events</h2>
+            <div className="pb-1 mb-2 border-b border-theme-border-subtle flex justify-between items-center">
+              <h2 className="text-[15px] font-medium text-theme-text-secondary">Assigned Events</h2>
               {!eventsLoading && assignedEvents.length > 0 && (
-                <span className="text-[13px] text-gray-500">{assignedEvents.length} event{assignedEvents.length !== 1 ? 's' : ''}</span>
+                <span className="text-[13px] text-theme-text-tertiary">{assignedEvents.length} event{assignedEvents.length !== 1 ? 's' : ''}</span>
               )}
             </div>
             
             {eventsLoading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-[#5E6AD2]"></div>
-                <span className="ml-3 text-sm text-gray-400">Loading events...</span>
+                <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-theme-primary"></div>
+                <span className="ml-3 text-sm text-theme-text-secondary">Loading events...</span>
               </div>
             ) : assignedEvents.length === 0 ? (
-              <div className="bg-[#121212] border border-[#1F1F1F] rounded-md p-6 text-center">
-                <p className="text-[14px] text-gray-400">This vendor is not assigned to any events yet</p>
-                <p className="text-[13px] text-gray-500 mt-1">Assign this vendor to events from the event detail page</p>
+              <div className="bg-theme-bg-input border border-theme-border-subtle rounded-md p-6 text-center">
+                <p className="text-[14px] text-theme-text-secondary">This vendor is not assigned to any events yet</p>
+                <p className="text-[13px] text-theme-text-tertiary mt-1">Assign this vendor to events from the event detail page</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {assignedEvents.map((assignment) => (
                   <div 
                     key={assignment.id}
-                    className="relative bg-[#121212] border border-[#1F1F1F] rounded-md p-4 hover:bg-[#161616] transition-colors duration-150 group"
+                    className="relative bg-theme-bg-input border border-theme-border-subtle rounded-md p-4 hover:bg-theme-bg-hover transition-colors duration-150 group"
                   >
                     <Link 
                       href={`/en/events/${assignment.event.id}`}
@@ -501,18 +499,18 @@ export default function VendorDetailPage() {
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="text-[15px] font-medium text-white group-hover:text-[#5E6AD2] transition-colors duration-150">{assignment.event.name}</h3>
+                          <h3 className="text-[15px] font-medium text-theme-text-primary group-hover:text-theme-primary transition-colors duration-150">{assignment.event.name}</h3>
                           <div className="flex items-center mt-2 space-x-3">
                             <EventStatusBadge status={assignment.event.status} />
-                            <span className="text-[13px] text-gray-400 flex items-center">
-                              <svg className="w-3.5 h-3.5 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <span className="text-[13px] text-theme-text-secondary flex items-center">
+                              <svg className="w-3.5 h-3.5 mr-1.5 text-theme-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                               {formatDate(assignment.event.startDate)}
                             </span>
                             {assignment.event.location && (
-                              <span className="text-[13px] text-gray-400 flex items-center">
-                                <svg className="w-3.5 h-3.5 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <span className="text-[13px] text-theme-text-secondary flex items-center">
+                                <svg className="w-3.5 h-3.5 mr-1.5 text-theme-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
@@ -522,16 +520,16 @@ export default function VendorDetailPage() {
                           </div>
                         </div>
                         <div className="mt-1">
-                          <svg className="w-5 h-5 text-gray-500 group-hover:text-[#5E6AD2] transition-colors duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-5 h-5 text-theme-text-tertiary group-hover:text-theme-primary transition-colors duration-150" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 5l7 7-7 7" />
                           </svg>
                         </div>
                       </div>
                       
                       {assignment.role && (
-                        <div className="mt-3 pt-3 border-t border-[#1A1A1A]">
-                          <span className="text-[13px] text-gray-400">
-                            <span className="text-gray-500">Role:</span> {assignment.role}
+                        <div className="mt-3 pt-3 border-t border-theme-border-subtle">
+                          <span className="text-[13px] text-theme-text-tertiary">
+                            <span className="text-theme-text-secondary">Role:</span> {assignment.role}
                           </span>
                         </div>
                       )}
@@ -546,7 +544,7 @@ export default function VendorDetailPage() {
                           removeEventAssignment(assignment.id, assignment.event.id);
                         }
                       }}
-                      className="absolute top-3 right-3 p-1 rounded text-gray-500 opacity-0 group-hover:opacity-100 hover:bg-[#1A1A1A] hover:text-red-400 transition-all duration-150"
+                      className="absolute top-3 right-3 p-1 rounded text-theme-text-tertiary opacity-0 group-hover:opacity-100 hover:bg-theme-border-subtle hover:text-theme-primary transition-all duration-150"
                       aria-label="Remove assignment"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -563,7 +561,7 @@ export default function VendorDetailPage() {
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 disabled={isAssigning}
-                className="w-full py-2 px-3 bg-[#121212] border border-[#1F1F1F] rounded-md text-[13px] text-gray-400 hover:bg-[#161616] transition-colors duration-150 flex items-center justify-center"
+                className="w-full py-2 px-3 bg-theme-bg-input border border-theme-border-subtle rounded-md text-[13px] text-theme-text-tertiary hover:bg-theme-bg-hover transition-colors duration-150 flex items-center justify-center"
               >
                 <svg className="w-3.5 h-3.5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M12 4v16m-8-8h16" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -572,14 +570,14 @@ export default function VendorDetailPage() {
               </button>
               
               {dropdownOpen && (
-                <div className="absolute left-0 right-0 mt-1 bg-[#141414] border border-[#1F1F1F] rounded-md shadow-lg overflow-hidden z-10">
+                <div className="absolute left-0 right-0 mt-1 bg-theme-bg-input border border-theme-border-subtle rounded-md shadow-lg overflow-hidden z-10">
                   <div className="p-2">
                     <input
                       type="text"
                       placeholder="Search events..."
                       value={assignmentQuery}
                       onChange={(e) => setAssignmentQuery(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0C0C0C] border border-[#1F1F1F] rounded-md text-[13px] focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors"
+                      className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md text-[13px] focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors"
                       autoFocus
                     />
                   </div>
@@ -587,11 +585,11 @@ export default function VendorDetailPage() {
                   <div className="max-h-48 overflow-y-auto">
                     {isLoadingEvents ? (
                       <div className="p-4 text-center">
-                        <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent text-gray-500 align-[-0.125em]"></div>
-                        <span className="ml-2 text-[13px] text-gray-500">Loading events...</span>
+                        <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-e-transparent text-theme-text-tertiary align-[-0.125em]"></div>
+                        <span className="ml-2 text-[13px] text-theme-text-tertiary">Loading events...</span>
                       </div>
                     ) : filteredEvents.length === 0 ? (
-                      <div className="p-4 text-center text-[13px] text-gray-500">
+                      <div className="p-4 text-center text-[13px] text-theme-text-tertiary">
                         {assignmentQuery.trim() === '' ? 'No events available' : 'No matching events found'}
                       </div>
                     ) : (
@@ -601,10 +599,10 @@ export default function VendorDetailPage() {
                             key={event.id}
                             onClick={() => assignToEvent(event.id, event.name, event.startDate)}
                             disabled={isAssigning}
-                            className="w-full text-left px-3 py-2 text-[13px] text-gray-300 hover:bg-[#1A1A1A] transition-colors duration-150 flex items-center justify-between"
+                            className="w-full text-left px-3 py-2 text-[13px] text-theme-text-primary hover:bg-theme-bg-hover transition-colors duration-150 flex items-center justify-between"
                           >
                             <span>{event.name}</span>
-                            <span className="text-gray-500 text-[12px]">{formatDate(event.startDate)}</span>
+                            <span className="text-theme-text-tertiary text-[12px]">{formatDate(event.startDate)}</span>
                           </button>
                         ))}
                       </div>

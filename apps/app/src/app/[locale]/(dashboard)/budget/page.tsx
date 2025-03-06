@@ -110,30 +110,10 @@ export default function BudgetPage() {
   const BudgetStatusPill = ({ budget, spent }: { budget: number; spent: number }) => {
     // Special case: Any spending against a $0 budget is over budget
     if (budget === 0 && spent > 0) {
-      // Map budget statuses to our theme system
-      const statusStyles = {
-        'on-track': {
-          backgroundColor: 'var(--status-success-bg)',
-          color: 'var(--status-success-text)',
-          borderColor: 'var(--status-success-border)'
-        },
-        'at-risk': {
-          backgroundColor: 'var(--status-warning-bg)',
-          color: 'var(--status-warning-text)',
-          borderColor: 'var(--status-warning-border)'
-        },
-        'over-budget': {
-          backgroundColor: 'var(--status-error-bg)',
-          color: 'var(--status-error-text)',
-          borderColor: 'var(--status-error-border)'
-        }
-      };
-      
       return (
         <div className="flex justify-end">
           <span 
-            className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-            style={statusStyles['over-budget']}
+            className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-over-budget-bg text-theme-status-over-budget-text border border-theme-status-over-budget-text/20"
           >
             Over Budget
           </span>
@@ -153,30 +133,16 @@ export default function BudgetPage() {
       status = 'at-risk';
     }
     
-    // Map budget statuses to our theme system
-    const statusStyles = {
-      'on-track': {
-        backgroundColor: 'var(--status-success-bg)',
-        color: 'var(--status-success-text)',
-        borderColor: 'var(--status-success-border)'
-      },
-      'at-risk': {
-        backgroundColor: 'var(--status-warning-bg)',
-        color: 'var(--status-warning-text)',
-        borderColor: 'var(--status-warning-border)'
-      },
-      'over-budget': {
-        backgroundColor: 'var(--status-error-bg)',
-        color: 'var(--status-error-text)',
-        borderColor: 'var(--status-error-border)'
-      }
-    };
-    
     return (
       <div className="flex justify-end">
         <span 
-          className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap"
-          style={statusStyles[status]}
+          className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
+            status === 'on-track' 
+              ? 'bg-theme-status-under-budget-bg text-theme-status-under-budget-text border border-theme-status-under-budget-text/20' 
+              : status === 'at-risk'
+                ? 'bg-theme-status-near-limit-bg text-theme-status-near-limit-text border border-theme-status-near-limit-text/20'
+                : 'bg-theme-status-over-budget-bg text-theme-status-over-budget-text border border-theme-status-over-budget-text/20'
+          }`}
         >
           {status === 'on-track' ? 'On Track' : status === 'at-risk' ? 'At Risk' : 'Over Budget'}
         </span>
@@ -228,14 +194,7 @@ export default function BudgetPage() {
         <div className="flex gap-3">
           <Link
             href="/en/events"
-            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded transition-colors duration-120 hover:bg-opacity-80"
-            style={{ 
-              backgroundColor: 'var(--bg-secondary)',
-              color: 'var(--text-secondary)',
-              borderColor: 'var(--border-primary)',
-              borderWidth: '1px',
-              borderStyle: 'solid'
-            }}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded transition-colors duration-120 hover:bg-opacity-80 bg-bg-secondary text-text-secondary border border-theme-border-subtle"
           >
             View Events
           </Link>
@@ -244,7 +203,7 @@ export default function BudgetPage() {
 
       {/* Budget summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="rounded-md p-4 bg-bg-secondary border border-border-primary">
+        <div className="rounded-md p-4 bg-bg-secondary border border-theme-border-subtle">
           <div className="text-sm text-text-tertiary mb-1">Total Budget</div>
           <div className="text-xl font-medium text-text-primary flex justify-between items-center">
             {isEditingTotalBudget ? (
@@ -287,15 +246,15 @@ export default function BudgetPage() {
             )}
           </div>
         </div>
-        <div className="rounded-md p-4 bg-bg-secondary border border-border-primary">
+        <div className="rounded-md p-4 bg-bg-secondary border border-theme-border-subtle">
           <div className="text-sm text-text-tertiary mb-1">Allocated</div>
           <div className="text-xl font-medium text-text-primary">{formatCurrency(budgetData.totalAllocated)}</div>
         </div>
-        <div className="rounded-md p-4 bg-bg-secondary border border-border-primary">
+        <div className="rounded-md p-4 bg-bg-secondary border border-theme-border-subtle">
           <div className="text-sm text-text-tertiary mb-1">Spent</div>
           <div className="text-xl font-medium text-text-primary">{formatCurrency(budgetData.totalSpent)}</div>
         </div>
-        <div className="rounded-md p-4 bg-bg-secondary border border-border-primary">
+        <div className="rounded-md p-4 bg-bg-secondary border border-theme-border-subtle">
           <div className="text-sm text-text-tertiary mb-1">Remaining</div>
           <div className="text-xl font-medium text-text-primary">
             {budgetData.totalRemaining < 0 || (budgetData.totalBudget === 0 && budgetData.totalSpent > 0) ? (
@@ -324,10 +283,10 @@ export default function BudgetPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[15px] font-medium text-text-tertiary">Events</h2>
         </div>
-        <div className="rounded-md overflow-hidden bg-bg-secondary border border-border-primary">
+        <div className="rounded-md overflow-hidden bg-bg-secondary border border-theme-border-subtle">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border-primary">
+              <tr className="border-b border-theme-border-subtle">
                 <th className="text-left px-4 py-3 text-[13px] font-medium text-text-tertiary">Event</th>
                 <th className="text-left px-4 py-3 text-[13px] font-medium text-text-tertiary">Date</th>
                 <th className="text-right px-4 py-3 text-[13px] font-medium text-text-tertiary">Total Budget</th>
@@ -340,8 +299,7 @@ export default function BudgetPage() {
               {budgetData.eventBudgets.map((event) => (
                 <tr 
                   key={event.id} 
-                  className="border-b hover:bg-black/20 cursor-pointer"
-                  style={{ borderColor: 'var(--border-primary)' }}
+                  className="border-b border-theme-border-subtle hover:bg-black/20 cursor-pointer"
                   onClick={() => navigateToEventBudget(event.id)}
                 >
                   <td className="px-4 py-3">
@@ -384,14 +342,14 @@ export default function BudgetPage() {
         <div className="mb-4">
           <h2 className="text-[15px] font-medium text-text-tertiary">Categories</h2>
         </div>
-        <div className="rounded-md p-4 space-y-4 bg-bg-secondary border border-border-primary">
+        <div className="rounded-md p-4 space-y-4 bg-bg-secondary border border-theme-border-subtle">
           {budgetData.categoryTotals.map((category) => (
             <div key={category.category}>
               <div className="flex justify-between mb-1">
                 <span className="text-sm font-medium text-text-primary">{category.category}</span>
                 <span className="text-sm text-text-tertiary">{formatCurrency(category.spent)} / {formatCurrency(category.budget)}</span>
               </div>
-              <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border-primary)' }}>
+              <div className="h-2 rounded-full overflow-hidden bg-theme-border-subtle">
                 <div 
                   className="h-full rounded-full"
                   style={{ 
@@ -419,10 +377,10 @@ export default function BudgetPage() {
         <div className="mb-4">
           <h2 className="text-[15px] font-medium text-text-tertiary">Vendors</h2>
         </div>
-        <div className="rounded-md overflow-hidden bg-bg-secondary border border-border-primary">
+        <div className="rounded-md overflow-hidden bg-bg-secondary border border-theme-border-subtle">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border-primary">
+              <tr className="border-b border-theme-border-subtle">
                 <th className="text-left px-4 py-3 text-[13px] font-medium text-text-tertiary">Vendor</th>
                 <th className="text-right px-4 py-3 text-[13px] font-medium text-text-tertiary">Total Amount</th>
                 <th className="text-left px-4 py-3 text-[13px] font-medium text-text-tertiary">Related to</th>
@@ -432,8 +390,7 @@ export default function BudgetPage() {
               {budgetData.vendorTotals.map((vendor) => (
                 <tr 
                   key={vendor.id} 
-                  className="border-b hover:bg-black/20 cursor-pointer"
-                  style={{ borderColor: 'var(--border-primary)' }}
+                  className="border-b border-theme-border-subtle hover:bg-black/20 cursor-pointer"
                   onClick={() => router.push(`/en/vendors/${vendor.id}`)}
                 >
                   <td className="px-4 py-3">
@@ -462,13 +419,7 @@ export default function BudgetPage() {
                             >
                               <Link 
                                 href={`/en/events/${event.eventId}/budget`}
-                                className="text-xs px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 inline-flex items-center gap-1.5"
-                                style={{ 
-                                  backgroundColor: 'var(--bg-secondary)',
-                                  borderColor: 'var(--border-primary)',
-                                  borderWidth: '1px',
-                                  borderStyle: 'solid'
-                                }}
+                                className="text-xs px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 inline-flex items-center gap-1.5 bg-bg-secondary border border-theme-border-subtle"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <span>{event.eventName}</span>
@@ -508,13 +459,7 @@ export default function BudgetPage() {
                           >
                             <Link 
                               href={`/en/events/${event.eventId}/budget`}
-                              className="text-xs px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 inline-flex items-center gap-1.5"
-                              style={{ 
-                                backgroundColor: 'var(--bg-secondary)',
-                                borderColor: 'var(--border-primary)',
-                                borderWidth: '1px',
-                                borderStyle: 'solid'
-                              }}
+                              className="text-xs px-2.5 py-1 rounded-full transition-colors duration-150 hover:opacity-80 inline-flex items-center gap-1.5 bg-bg-secondary border border-theme-border-subtle"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <span>{event.eventName}</span>

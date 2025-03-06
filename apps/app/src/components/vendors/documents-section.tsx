@@ -68,8 +68,8 @@ export function DocumentsSection({ vendorId }: DocumentsSectionProps) {
 
   return (
     <div className="space-y-6 pt-2">
-      <div className="border-b border-[#1F1F1F] pb-2 mb-2">
-        <h2 className="text-[15px] font-medium text-gray-400">Documents</h2>
+      <div className="border-b border-theme-border-subtle pb-2 mb-2">
+        <h2 className="text-[15px] font-medium text-theme-text-secondary">Documents</h2>
       </div>
       
       {uploadSuccess && (
@@ -85,8 +85,8 @@ export function DocumentsSection({ vendorId }: DocumentsSectionProps) {
       )}
       
       {isLoading ? (
-        <div className="flex items-center space-x-2 text-gray-400 py-3">
-          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-[#5E6AD2]"></div>
+        <div className="flex items-center space-x-2 text-theme-text-secondary py-3">
+          <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-theme-primary"></div>
           <span className="text-sm">Loading documents...</span>
         </div>
       ) : (

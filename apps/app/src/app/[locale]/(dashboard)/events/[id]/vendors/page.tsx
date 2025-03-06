@@ -277,11 +277,9 @@ export default function EventVendorsPage() {
                   <div className="flex items-center mt-1">
                     <span className="text-[13px] text-gray-400 capitalize">{assignment.vendor?.category}</span>
                     <span className="mx-2 text-gray-500">•</span>
-                    <span className="text-[13px] text-gray-400">
-                      {assignment.vendor?.priceTier === 1 && '$'}
-                      {assignment.vendor?.priceTier === 2 && '$$'}
-                      {assignment.vendor?.priceTier === 3 && '$$$'}
-                      {assignment.vendor?.priceTier === 4 && '$$$$'}
+                    <span className="text-[13px]">
+                      <span className="text-gray-300">{'$'.repeat(assignment.vendor?.priceTier || 0)}</span>
+                      <span className="text-gray-500">{'$'.repeat(4 - (assignment.vendor?.priceTier || 0))}</span>
                     </span>
                   </div>
                 </div>

@@ -4,6 +4,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import AuthButton from '@/components/auth/auth-button';
 import SidebarNav from '@/components/navigation/sidebar-nav';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
+import '@/styles/radix-fix.css'; // Fix for Radix UI dropdown z-index issues
 
 type DashboardLayoutProps = {
   children: ReactNode;

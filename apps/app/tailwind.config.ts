@@ -34,6 +34,14 @@ export default {
         "theme-status-in-progress-bg": "var(--status-in-progress-bg)",
         "theme-status-in-progress-text": "var(--status-in-progress-text)",
         
+        // Theme-based budget status
+        "theme-status-over-budget-bg": "var(--status-over-budget-bg)",
+        "theme-status-over-budget-text": "var(--status-over-budget-text)",
+        "theme-status-under-budget-bg": "var(--status-under-budget-bg)",
+        "theme-status-under-budget-text": "var(--status-under-budget-text)",
+        "theme-status-near-limit-bg": "var(--status-near-limit-bg)",
+        "theme-status-near-limit-text": "var(--status-near-limit-text)",
+        
         // Theme-based primary actions
         "theme-primary": "var(--primary-default)",
         "theme-primary-hover": "var(--primary-hover)",

@@ -143,12 +143,12 @@ export function BudgetSummary({
           <div 
             className={`h-2 rounded-full ${
               totals.actualTotal > totals.plannedTotal * 1.2
-                ? 'bg-error-default/80'  // Over 120% - Red
+                ? 'bg-theme-status-over-budget-text/80'  // Over 120% - Red
                 : totals.actualTotal > totals.plannedTotal
-                  ? 'bg-warning-default/80' // 100-120% - Amber
+                  ? 'bg-theme-status-near-limit-text/80' // 100-120% - Amber
                   : totals.actualTotal > totals.plannedTotal * 0.8
-                    ? 'bg-warning-default/80' // 80-100% - Amber
-                    : 'bg-success-default/80' // Under 80% - Green
+                    ? 'bg-theme-status-near-limit-text/80' // 80-100% - Amber
+                    : 'bg-theme-status-under-budget-text/80' // Under 80% - Green
             }`}
             style={{ width: `${calculateBudgetPercentage(totals.actualTotal, totals.plannedTotal)}%` }}
           ></div>
@@ -173,12 +173,12 @@ export function BudgetSummary({
                     <span 
                       className={`px-1.5 py-0.5 text-[10px] rounded-sm font-medium ${
                         category.actualAmount > category.plannedAmount * 1.2
-                          ? 'bg-error-default/10 text-error-default'  // Over 120% - Red
+                          ? 'bg-theme-status-over-budget-bg text-theme-status-over-budget-text'  // Over 120% - Red
                           : category.actualAmount > category.plannedAmount
-                            ? 'bg-warning-default/10 text-warning-default' // 100-120% - Amber
+                            ? 'bg-theme-status-near-limit-bg text-theme-status-near-limit-text' // 100-120% - Amber
                             : category.actualAmount > category.plannedAmount * 0.8
-                              ? 'bg-warning-default/10 text-warning-default' // 80-100% - Amber
-                              : 'bg-success-default/10 text-success-default' // Under 80% - Green
+                              ? 'bg-theme-status-near-limit-bg text-theme-status-near-limit-text' // 80-100% - Amber
+                              : 'bg-theme-status-under-budget-bg text-theme-status-under-budget-text' // Under 80% - Green
                       }`}
                     >
                       {category.actualAmount > category.plannedAmount * 1.2
@@ -199,12 +199,12 @@ export function BudgetSummary({
                   <div 
                     className={`h-1.5 rounded-full ${
                       category.actualAmount > category.plannedAmount * 1.2
-                        ? 'bg-error-default/80'  // Over 120% - Red
+                        ? 'bg-theme-status-over-budget-text/80'  // Over 120% - Red
                         : category.actualAmount > category.plannedAmount
-                          ? 'bg-warning-default/80' // 100-120% - Amber
+                          ? 'bg-theme-status-near-limit-text/80' // 100-120% - Amber
                           : category.actualAmount > category.plannedAmount * 0.8
-                            ? 'bg-warning-default/80' // 80-100% - Amber
-                            : 'bg-success-default/80' // Under 80% - Green
+                            ? 'bg-theme-status-near-limit-text/80' // 80-100% - Amber
+                            : 'bg-theme-status-under-budget-text/80' // Under 80% - Green
                     }`}
                     style={{ width: `${calculateBudgetPercentage(category.actualAmount, category.plannedAmount)}%` }}
                   ></div>

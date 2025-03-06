@@ -114,40 +114,45 @@ export default function EditVendorPage() {
   }
   
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
-      <div className="mb-8">
-        <Link 
+    <div className="p-6 bg-theme-bg-page max-w-4xl mx-auto">
+      {/* Page Header */}
+      <div className="mb-6">
+        <Link
           href="/en/vendors"
-          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors duration-150"
+          className="inline-flex items-center text-sm mb-4 text-theme-text-tertiary hover:text-theme-text-primary transition-colors"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
-            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
+            <path d="M19 12H5M5 12L12 19M5 12L12 5"/>
           </svg>
           Back to vendors
         </Link>
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-white">Edit Vendor</h1>
-          <label className="inline-flex items-center cursor-pointer group relative">
+        
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold text-theme-text-primary">Edit Vendor</h1>
+          
+          {/* Favorite Toggle */}
+          <label className="relative group inline-flex items-center justify-center cursor-pointer">
             <input
               type="checkbox"
+              className="sr-only"
               {...form.register('isFavorite')}
-              className="sr-only peer"
             />
-            <div className="p-1.5 rounded hover:bg-[#1E1E1E] transition-colors duration-150">
+            <div className="h-8 w-8 rounded-full flex items-center justify-center transition-colors">
               <svg 
+                xmlns="http://www.w3.org/2000/svg" 
                 width="18" 
                 height="18" 
                 viewBox="0 0 24 24" 
-                fill="none" 
+                fill={form.watch('isFavorite') ? 'currentColor' : 'none'}
                 stroke="currentColor" 
                 className={`transition-all duration-150 ${form.watch('isFavorite') 
-                  ? 'text-[#5E6AD2] fill-[#5E6AD2]' 
-                  : 'text-gray-500 group-hover:text-gray-300'}`}
+                  ? 'text-theme-primary' 
+                  : 'text-theme-text-tertiary group-hover:text-theme-text-secondary'}`}
               >
                 <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-[#222222] text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none">
+            <span className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-theme-bg-card text-theme-text-secondary text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none border border-theme-border-subtle">
               {form.watch('isFavorite') ? 'Remove from favorites' : 'Add to favorites'}
             </span>
           </label>
@@ -163,20 +168,20 @@ export default function EditVendorPage() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Essential Information Section */}
         <div className="space-y-6">
-          <div className="border-b border-[#1F1F1F] pb-2 mb-2">
-            <h2 className="text-[15px] font-medium text-white">Essential Information</h2>
+          <div className="border-b border-theme-border-subtle pb-2 mb-2">
+            <h2 className="text-[15px] font-medium text-theme-text-primary">Essential Information</h2>
           </div>
           
           {/* Name field */}
           <div className="space-y-2">
-            <label htmlFor="name" className="text-[13px] font-medium text-gray-300">
-              Vendor Name <span className="text-[#5E6AD2]">*</span>
+            <label htmlFor="name" className="text-[13px] font-medium text-theme-text-secondary">
+              Vendor Name <span className="text-theme-primary">*</span>
             </label>
             <input
               id="name"
               type="text"
               {...form.register('name')}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+              className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
               placeholder="Enter vendor name"
             />
             {form.formState.errors.name && (
@@ -186,13 +191,13 @@ export default function EditVendorPage() {
           
           {/* Category field */}
           <div className="space-y-2">
-            <label htmlFor="category" className="text-[13px] font-medium text-gray-300">
-              Category <span className="text-[#5E6AD2]">*</span>
+            <label htmlFor="category" className="text-[13px] font-medium text-theme-text-secondary">
+              Category <span className="text-theme-primary">*</span>
             </label>
             <select
               id="category"
               {...form.register('category')}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px]"
+              className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary transition-colors duration-120 text-[14px] text-theme-text-primary"
             >
               <option value="venue">Venue</option>
               <option value="catering">Catering</option>
@@ -209,15 +214,15 @@ export default function EditVendorPage() {
           
           {/* Price tier field */}
           <div className="space-y-2">
-            <label htmlFor="priceTier" className="text-[13px] font-medium text-gray-300">
-              Price Tier <span className="text-[#5E6AD2]">*</span>
+            <label htmlFor="priceTier" className="text-[13px] font-medium text-theme-text-secondary">
+              Price Tier <span className="text-theme-primary">*</span>
             </label>
             <select
               id="priceTier"
               {...form.register('priceTier', { 
                 valueAsNumber: true 
               })}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px]"
+              className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary transition-colors duration-120 text-[14px] text-theme-text-primary"
             >
               <option value="1">$ - Budget</option>
               <option value="2">$$ - Moderate</option>
@@ -232,7 +237,7 @@ export default function EditVendorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Capacity field */}
             <div className="space-y-2">
-              <label htmlFor="capacity" className="text-[13px] font-medium text-gray-400">
+              <label htmlFor="capacity" className="text-[13px] font-medium text-theme-text-tertiary">
                 Capacity
               </label>
               <input
@@ -246,7 +251,7 @@ export default function EditVendorPage() {
                     return isNaN(num) || num <= 0 ? undefined : num;
                   }
                 })}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+                className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
                 placeholder="Enter capacity"
               />
               {form.formState.errors.capacity && (
@@ -256,7 +261,7 @@ export default function EditVendorPage() {
             
             {/* Location field */}
             <div className="space-y-2">
-              <label htmlFor="location" className="text-[13px] font-medium text-gray-400">
+              <label htmlFor="location" className="text-[13px] font-medium text-theme-text-tertiary">
                 Location
               </label>
               <input
@@ -265,7 +270,7 @@ export default function EditVendorPage() {
                 {...form.register('location', {
                   setValueAs: (value) => value === "" ? undefined : value
                 })}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+                className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
                 placeholder="Enter location"
               />
               {form.formState.errors.location && (
@@ -277,14 +282,14 @@ export default function EditVendorPage() {
       
         {/* Contact Information Section */}
         <div className="space-y-6 pt-2">
-          <div className="border-b border-[#1F1F1F] pb-2 mb-2">
-            <h2 className="text-[15px] font-medium text-gray-400">Contact Information</h2>
+          <div className="border-b border-theme-border-subtle pb-2 mb-2">
+            <h2 className="text-[15px] font-medium text-theme-text-tertiary">Contact Information</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Contact Name */}
             <div className="space-y-2">
-              <label htmlFor="contactName" className="text-[13px] font-medium text-gray-400">
+              <label htmlFor="contactName" className="text-[13px] font-medium text-theme-text-tertiary">
                 Contact Name
               </label>
               <input
@@ -293,7 +298,7 @@ export default function EditVendorPage() {
                 {...form.register('contactName', {
                   setValueAs: (value) => value === "" ? undefined : value
                 })}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+                className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
                 placeholder="Enter contact name"
               />
               {form.formState.errors.contactName && (
@@ -303,7 +308,7 @@ export default function EditVendorPage() {
             
             {/* Contact Phone */}
             <div className="space-y-2">
-              <label htmlFor="contactPhone" className="text-[13px] font-medium text-gray-400">
+              <label htmlFor="contactPhone" className="text-[13px] font-medium text-theme-text-tertiary">
                 Contact Phone
               </label>
               <input
@@ -312,7 +317,7 @@ export default function EditVendorPage() {
                 {...form.register('contactPhone', {
                   setValueAs: (value) => value === "" ? undefined : value
                 })}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+                className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
                 placeholder="Enter contact phone"
               />
               {form.formState.errors.contactPhone && (
@@ -324,7 +329,7 @@ export default function EditVendorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Contact Email */}
             <div className="space-y-2">
-              <label htmlFor="contactEmail" className="text-[13px] font-medium text-gray-400">
+              <label htmlFor="contactEmail" className="text-[13px] font-medium text-theme-text-tertiary">
                 Contact Email
               </label>
               <input
@@ -333,7 +338,7 @@ export default function EditVendorPage() {
                 {...form.register('contactEmail', {
                   setValueAs: (value) => value === "" ? undefined : value
                 })}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+                className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
                 placeholder="Enter contact email"
               />
               {form.formState.errors.contactEmail && (
@@ -343,7 +348,7 @@ export default function EditVendorPage() {
             
             {/* Website */}
             <div className="space-y-2">
-              <label htmlFor="website" className="text-[13px] font-medium text-gray-400">
+              <label htmlFor="website" className="text-[13px] font-medium text-theme-text-tertiary">
                 Website
               </label>
               <input
@@ -352,7 +357,7 @@ export default function EditVendorPage() {
                 {...form.register('website', {
                   setValueAs: (value) => value === "" ? undefined : value
                 })}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+                className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
                 placeholder="https://example.com"
               />
               {form.formState.errors.website && (
@@ -364,13 +369,13 @@ export default function EditVendorPage() {
         
         {/* Additional Information Section */}
         <div className="space-y-6 pt-2">
-          <div className="border-b border-[#1F1F1F] pb-2 mb-2">
-            <h2 className="text-[15px] font-medium text-gray-400">Additional Information</h2>
+          <div className="border-b border-theme-border-subtle pb-2 mb-2">
+            <h2 className="text-[15px] font-medium text-theme-text-tertiary">Additional Information</h2>
           </div>
           
           {/* Notes */}
           <div className="space-y-2">
-            <label htmlFor="notes" className="text-[13px] font-medium text-gray-400">
+            <label htmlFor="notes" className="text-[13px] font-medium text-theme-text-tertiary">
               Notes
             </label>
             <textarea
@@ -379,7 +384,7 @@ export default function EditVendorPage() {
                 setValueAs: (value) => value === "" ? undefined : value
               })}
               rows={4}
-              className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+              className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px] text-theme-text-primary"
               placeholder="Additional notes about this vendor"
             />
             {form.formState.errors.notes && (
@@ -394,18 +399,18 @@ export default function EditVendorPage() {
         </div>
         
         {/* Form actions */}
-        <div className="flex justify-end border-t border-[#1F1F1F] pt-6 mt-8">
+        <div className="flex justify-end border-t border-theme-border-subtle pt-6 mt-8">
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 mr-4 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-gray-400 rounded-md text-[14px] transition-colors duration-120"
+            className="px-4 py-2 mr-4 bg-theme-bg-card hover:bg-theme-bg-hover text-theme-text-secondary rounded-md text-[14px] transition-colors duration-120"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-5 py-2.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_3px_12px_rgba(94,106,210,0.2)]"
+            className="px-5 py-2 mr-4 bg-theme-primary hover:bg-theme-primary-hover text-theme-text-primary rounded-md text-[14px] font-medium transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Saving...' : 'Save Changes'}
           </button>

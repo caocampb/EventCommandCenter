@@ -76,7 +76,7 @@ export function DocumentList({ vendorId, documents, onDeleteComplete }: Document
 
   if (documents.length === 0) {
     return (
-      <div className="text-sm text-gray-400 py-3">
+      <div className="text-sm text-theme-text-secondary py-3">
         No documents uploaded yet
       </div>
     );
@@ -94,7 +94,7 @@ export function DocumentList({ vendorId, documents, onDeleteComplete }: Document
         {documents.map((document) => (
           <div 
             key={document.id} 
-            className="flex items-center justify-between px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md group"
+            className="flex items-center justify-between px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md group"
           >
             <div className="flex items-center space-x-3">
               {/* PDF Icon */}
@@ -106,10 +106,10 @@ export function DocumentList({ vendorId, documents, onDeleteComplete }: Document
               </svg>
               
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate" title={document.name}>
+                <p className="text-sm font-medium text-theme-text-primary truncate" title={document.name}>
                   {document.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-theme-text-tertiary">
                   {formatFileSize(document.fileSize)} • {new Date(document.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -120,7 +120,7 @@ export function DocumentList({ vendorId, documents, onDeleteComplete }: Document
               <button
                 type="button"
                 onClick={() => handlePreview(document)}
-                className="p-1.5 rounded hover:bg-[#1E1E1E] text-gray-400 hover:text-white transition-colors duration-150"
+                className="p-1.5 rounded hover:bg-theme-bg-hover text-theme-text-tertiary hover:text-theme-text-primary transition-colors duration-150"
                 title="Preview"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -133,7 +133,7 @@ export function DocumentList({ vendorId, documents, onDeleteComplete }: Document
               <button
                 type="button"
                 onClick={() => handleDownload(document)}
-                className="p-1.5 rounded hover:bg-[#1E1E1E] text-gray-400 hover:text-white transition-colors duration-150"
+                className="p-1.5 rounded hover:bg-theme-bg-hover text-theme-text-tertiary hover:text-theme-text-primary transition-colors duration-150"
                 title="Download"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -148,7 +148,7 @@ export function DocumentList({ vendorId, documents, onDeleteComplete }: Document
                 type="button"
                 onClick={() => handleDelete(document.id)}
                 disabled={deletingId === document.id}
-                className="p-1.5 rounded hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-colors duration-150"
+                className="p-1.5 rounded hover:bg-theme-bg-hover text-theme-text-tertiary hover:text-red-500 transition-colors duration-150"
                 title="Delete"
               >
                 {deletingId === document.id ? (

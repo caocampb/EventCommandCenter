@@ -34,10 +34,23 @@
   --status-in-progress-bg: rgba(125, 111, 255, 0.08);
   --status-in-progress-text: #5F51DB;
   
+  /* Budget Status */
+  --status-over-budget-bg: rgba(237, 107, 107, 0.08);
+  --status-over-budget-text: #D95353;
+  --status-under-budget-bg: rgba(52, 199, 145, 0.08);
+  --status-under-budget-text: #0F9D6D;
+  --status-near-limit-bg: rgba(246, 189, 96, 0.08);
+  --status-near-limit-text: #E5A43B;
+  
   /* Primary action */
   --primary-default: #5E6AD2;
   --primary-hover: #4D59C3;
   --primary-active: #3D49B0;
+  
+  /* Budget status colors */
+  --error-default: #E5484D;
+  --warning-default: #F76808;
+  --success-default: #30A46C;
 }
 
 .dark {
@@ -70,8 +83,21 @@
   --status-in-progress-bg: rgba(125, 111, 255, 0.12);
   --status-in-progress-text: #7D6FFF;
   
+  /* Budget Status */
+  --status-over-budget-bg: rgba(237, 107, 107, 0.12);
+  --status-over-budget-text: #ED6B6B;
+  --status-under-budget-bg: rgba(52, 199, 145, 0.12);
+  --status-under-budget-text: #34C791;
+  --status-near-limit-bg: rgba(246, 189, 96, 0.12);
+  --status-near-limit-text: #F6BD60;
+  
   /* Primary action */
   --primary-default: #5E6AD2;
   --primary-hover: #6872E5;
   --primary-active: #4F5ABF;
+  
+  /* Budget status colors */
+  --error-default: #F2555A;
+  --warning-default: #FF8B3E;
+  --success-default: #3DD68C;
 } 
