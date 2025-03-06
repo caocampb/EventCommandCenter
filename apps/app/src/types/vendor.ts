@@ -144,4 +144,31 @@ export interface VendorDocumentDbRow {
   file_size: number;
   created_at: string;
   updated_at: string;
+}
+
+// Interface for vendors discovered through the AI discovery feature
+export interface DiscoveredVendor {
+  // Essential vendor data
+  placeId: string;
+  name: string;
+  category?: string;
+  rating?: number;
+  user_ratings_total?: number; // Total number of user ratings
+  priceLevel?: number;
+  location?: string;
+  
+  // Contact info
+  website?: string;
+  phoneNumber?: string;
+  
+  // Claude-enhanced data
+  eventSuitabilityScore?: number; // 1-10 rating for event suitability
+  description?: string;
+  
+  // Hybrid ranking data
+  hybridScore?: number; // Combined score from multiple signals
+  
+  // Source data
+  source: 'google_places';
+  sourceData: any; // Original data
 } 

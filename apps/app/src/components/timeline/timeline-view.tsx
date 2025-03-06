@@ -7,7 +7,6 @@ import { TimelineBlock } from "../../types/timeline";
 import { formatDateForDisplay, formatTimeForDisplay } from "../../utils/timezone-utils";
 import { DetailedTimelineBlockView } from './detailed-timeline-block-view';
 import { StatusPill } from '@/components/ui/StatusPill';
-import { colors } from '@/styles/colors';
 
 // Keep the formatTime function for timeline calculations, but use the utility for display
 function formatTime(dateString: string) {
@@ -107,51 +106,51 @@ function formatTimeCompact(dateString: string): string {
   return formatted.replace(' am', 'a').replace(' pm', 'p');
 }
 
-// Get status-specific styles for blocks (Linear-inspired color palette)
+// Get status-specific styles for blocks (using theme CSS variables)
 function getStatusStyles(status: string) {
   switch (status) {
     case 'complete':
       return {
-        background: `bg-[#1A184A]`,
-        border: `border-[${colors.status.confirmed.text}]/20`,
-        hover: `hover:bg-[#201C54] hover:border-[${colors.status.confirmed.text}]/30`,
-        text: `text-[${colors.status.confirmed.text}]`,
+        background: `bg-status-confirmed-bg`,
+        border: `border-status-confirmed-text/20`,
+        hover: `hover:bg-status-confirmed-bg/80 hover:border-status-confirmed-text/30`,
+        text: `text-status-confirmed-text`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(94,68,210,0.2)]'
       };
     case 'in-progress':
       return {
-        background: `bg-[#130F30]`,
-        border: `border-[${colors.status.inProgress.text}]/20`,
-        hover: `hover:bg-[#17123A] hover:border-[${colors.status.inProgress.text}]/30`,
-        text: `text-[${colors.status.inProgress.text}]`,
+        background: `bg-status-inProgress-bg`,
+        border: `border-status-inProgress-text/20`,
+        hover: `hover:bg-status-inProgress-bg/80 hover:border-status-inProgress-text/30`,
+        text: `text-status-inProgress-text`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(125,111,255,0.2)]'
       };
     case 'confirmed':
       return {
-        background: `bg-[#0E2920]`,
-        border: `border-[${colors.status.confirmed.text}]/20`,
-        hover: `hover:bg-[#123328] hover:border-[${colors.status.confirmed.text}]/30`,
-        text: `text-[${colors.status.confirmed.text}]`,
+        background: `bg-status-confirmed-bg`,
+        border: `border-status-confirmed-text/20`,
+        hover: `hover:bg-status-confirmed-bg/80 hover:border-status-confirmed-text/30`,
+        text: `text-status-confirmed-text`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(16,185,129,0.2)]'
       };
     case 'cancelled':
       return {
-        background: `bg-[#2C1616]`,
-        border: `border-[${colors.status.cancelled.text}]/20`,
-        hover: `hover:bg-[#351A1A] hover:border-[${colors.status.cancelled.text}]/30`,
-        text: `text-[${colors.status.cancelled.text}]`,
+        background: `bg-status-cancelled-bg`,
+        border: `border-status-cancelled-text/20`,
+        hover: `hover:bg-status-cancelled-bg/80 hover:border-status-cancelled-text/30`,
+        text: `text-status-cancelled-text`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(239,68,68,0.2)]'
       };
     default: // pending
       return {
-        background: `bg-[#1C1C1C]`,
-        border: `border-[${colors.status.draft.text}]/20`,
-        hover: `hover:bg-[#222222] hover:border-[${colors.status.draft.text}]/30`,
-        text: `text-[${colors.text.secondary}]`,
+        background: `bg-bg-tertiary`,
+        border: `border-status-draft-text/20`,
+        hover: `hover:bg-bg-hover hover:border-status-draft-text/30`,
+        text: `text-text-secondary`,
         shadow: 'shadow-[0_1px_2px_rgba(0,0,0,0.15)]',
         hoverShadow: 'hover:shadow-[0_2px_8px_rgba(255,255,255,0.05)]'
       };
@@ -260,18 +259,18 @@ export function TimelineView({
   return (
     <div className="pb-2">
       {/* Day header - Linear style */}
-      <div className="sticky top-0 z-10 py-2 mb-3 -mx-6 px-6 bg-gradient-to-b from-[#0F0F0F] to-[#0F0F0F]/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-10 py-2 mb-3 -mx-6 px-6 bg-gradient-to-b from-bg-page to-bg-page/95 backdrop-blur-sm">
         <div className="flex justify-between items-center">
-          <h2 className="text-[13px] font-medium text-gray-300">{formatDate(normalizedDateKey)}</h2>
+          <h2 className="text-[13px] font-medium text-text-secondary">{formatDate(normalizedDateKey)}</h2>
           
           {/* Linear-inspired view toggle */}
-          <div className="bg-[#141414] border border-[#1F1F1F] p-0.5 rounded-md flex text-sm">
+          <div className="bg-bg-secondary border border-border-primary p-0.5 rounded-md flex text-sm">
             <button
               onClick={() => setViewType('visual')}
               className={`px-2.5 py-1 rounded ${
                 viewType === 'visual' 
-                  ? 'bg-[#1E1E1E] text-white' 
-                  : 'text-gray-400 hover:text-gray-300'
+                  ? 'bg-bg-tertiary text-text-primary' 
+                  : 'text-text-tertiary hover:text-text-secondary'
               } transition-colors duration-120`}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -283,8 +282,8 @@ export function TimelineView({
               onClick={() => setViewType('list')}
               className={`px-2.5 py-1 rounded ${
                 viewType === 'list' 
-                  ? 'bg-[#1E1E1E] text-white' 
-                  : 'text-gray-400 hover:text-gray-300'
+                  ? 'bg-bg-tertiary text-text-primary' 
+                  : 'text-text-tertiary hover:text-text-secondary'
               } transition-colors duration-120`}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -302,10 +301,10 @@ export function TimelineView({
               
       {/* Visual timeline - Linear style (shown when viewType is 'visual') */}
       {viewType === 'visual' && (
-        <div className="mb-6 border border-[#1F1F1F] rounded-md bg-[#141414] p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+        <div className="mb-6 border border-border-primary rounded-md bg-bg-secondary p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
           {/* Expanded range indicator */}
           {isExpanded && (
-            <div className="mb-2 text-xs text-gray-500 flex items-center">
+            <div className="mb-2 text-xs text-text-tertiary flex items-center">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -316,10 +315,10 @@ export function TimelineView({
           )}
         
           {/* Time scale header - dynamically generated based on calculated range */}
-          <div className="flex border-b border-[#1F1F1F] pb-2 mb-4">
+          <div className="flex border-b border-border-primary pb-2 mb-4">
             {Array.from({ length: dayEndHour - dayStartHour + 1 }, (_, i) => i + dayStartHour).map((hour) => (
               <div key={hour} className="flex-1 text-center">
-                <span className="text-[10px] font-mono text-gray-500">
+                <span className="text-[10px] font-mono text-text-tertiary">
                   {hour % 12 === 0 ? '12' : hour % 12}{hour < 12 ? 'am' : 'pm'}
                 </span>
               </div>
@@ -434,10 +433,10 @@ export function TimelineView({
             ) : (
               // Empty state for visual view when date has no blocks - consistent with list view
               <div className="flex items-center justify-center h-full min-h-[80px]">
-                <p className="text-gray-400 text-sm mb-3">No timeline blocks scheduled for this day</p>
+                <p className="text-text-tertiary text-sm mb-3">No timeline blocks scheduled for this day</p>
                 <Link
                   href={`/en/events/${eventId}/timeline/add`}
-                  className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-gray-400 hover:text-white font-medium rounded transition-colors duration-120 border border-[#333333] inline-flex items-center ml-4"
+                  className="px-3 py-1.5 bg-bg-tertiary hover:bg-bg-hover text-sm text-text-tertiary hover:text-text-primary font-medium rounded transition-colors duration-120 border border-border-primary inline-flex items-center ml-4"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1.5">
                     <path d="M12 5v14M5 12h14"/>
@@ -449,7 +448,7 @@ export function TimelineView({
             
             {/* Current time indicator (Linear-style) - ONLY shown for current day */}
             {isCurrentDay && (
-              <div className="absolute top-0 bottom-0 border-l-2 border-[#5E6AD2] z-10" 
+              <div className="absolute top-0 bottom-0 border-l-2 border-primary-default z-10" 
                     style={{ 
                       left: `${(() => {
                         const now = new Date();
@@ -461,7 +460,7 @@ export function TimelineView({
                         return Math.max(0, Math.min(100, ((nowMinutes - dayStartMinutes) / totalMinutesInView) * 100));
                       })()}%`
                     }}>
-                <div className="h-2.5 w-2.5 rounded-full bg-[#5E6AD2] relative -left-[5px] -top-1"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-primary-default relative -left-[5px] -top-1"></div>
               </div>
             )}
           </div>
@@ -486,7 +485,7 @@ export function TimelineView({
                     {/* Title row with integrated status */}
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <h3 className="text-[14px] font-medium text-white truncate">{block.title}</h3>
+                        <h3 className="text-[14px] font-medium text-text-primary truncate">{block.title}</h3>
                         <StatusPill status={mapStatusToType(block.status as string)} />
                       </div>
                       
@@ -494,7 +493,7 @@ export function TimelineView({
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                         <Link 
                           href={`/en/events/${eventId}/timeline/${block.id}/edit`} 
-                          className="flex items-center justify-center w-6 h-6 rounded text-gray-400 hover:text-white hover:bg-[#2A2A2A]"
+                          className="flex items-center justify-center w-6 h-6 rounded text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary"
                         >
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -506,11 +505,11 @@ export function TimelineView({
                     
                     {/* Content row */}
                     {block.description && (
-                      <p className="text-[13px] text-gray-400 mb-2 line-clamp-2">{block.description}</p>
+                      <p className="text-[13px] text-text-tertiary mb-2 line-clamp-2">{block.description}</p>
                     )}
                     
                     {/* Metadata row */}
-                    <div className="flex items-center text-[13px] text-gray-500 gap-3">
+                    <div className="flex items-center text-[13px] text-text-tertiary gap-3">
                       <div className="font-mono">
                         {formatTime(block.startTime.toString())} – {formatTime(block.endTime.toString())}
                       </div>
@@ -531,11 +530,11 @@ export function TimelineView({
             })
           ) : (
             // Empty state for list view when date has no blocks
-            <div className="border border-[#1F1F1F] bg-[#141414] rounded-md p-4 text-center">
-              <p className="text-gray-400 text-sm mb-3">No timeline blocks scheduled for this day</p>
+            <div className="border border-border-primary bg-bg-secondary rounded-md p-4 text-center">
+              <p className="text-text-tertiary text-sm mb-3">No timeline blocks scheduled for this day</p>
               <Link
                 href={`/en/events/${eventId}/timeline/add`}
-                className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-gray-400 hover:text-white font-medium rounded transition-colors duration-120 border border-[#333333] inline-flex items-center"
+                className="px-3 py-1.5 bg-bg-tertiary hover:bg-bg-hover text-sm text-text-tertiary hover:text-text-primary font-medium rounded transition-colors duration-120 border border-border-primary inline-flex items-center"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1.5">
                   <path d="M12 5v14M5 12h14"/>

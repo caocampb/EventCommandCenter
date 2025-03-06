@@ -12,35 +12,34 @@ import {
   TimePrecision 
 } from '../../lib/validations/timeline-block-schema';
 import { formatDateTimeForInput, localToUTCString } from '../../utils/timezone-utils';
-import { colors } from '@/styles/colors';
 
 // Get status-specific styling in Linear fashion
 function getStatusStyles(status: string) {
   switch (status) {
     case 'pending':
       return {
-        active: `bg-[${colors.status.pending.bg}] text-[${colors.status.pending.text}] border border-[${colors.status.pending.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: "bg-theme-status-pending-bg text-theme-status-pending-text border border-theme-status-pending-text/20",
+        inactive: "bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong"
       };
     case 'in-progress':
       return {
-        active: `bg-[${colors.status.inProgress.bg}] text-[${colors.status.inProgress.text}] border border-[${colors.status.inProgress.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: "bg-theme-status-pending-bg text-theme-status-pending-text border border-theme-status-pending-text/20",
+        inactive: "bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong"
       };
     case 'complete':
       return {
-        active: `bg-[${colors.status.confirmed.bg}] text-[${colors.status.confirmed.text}] border border-[${colors.status.confirmed.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: "bg-theme-status-confirmed-bg text-theme-status-confirmed-text border border-theme-status-confirmed-text/20",
+        inactive: "bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong"
       };
     case 'cancelled':
       return {
-        active: `bg-[${colors.status.cancelled.bg}] text-[${colors.status.cancelled.text}] border border-[${colors.status.cancelled.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: "bg-theme-status-cancelled-bg text-theme-status-cancelled-text border border-theme-status-cancelled-text/20",
+        inactive: "bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong"
       };
     default:
       return {
-        active: `bg-[${colors.status.draft.bg}] text-[${colors.status.draft.text}] border border-[${colors.status.draft.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: "bg-theme-status-draft-bg text-theme-status-draft-text border border-theme-status-draft-text/20",
+        inactive: "bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong"
       };
   }
 }
@@ -377,33 +376,33 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
                 style={{
                   backgroundColor: form.watch('status') === status 
                     ? (status === 'complete' 
-                        ? colors.status.confirmed.bg 
-                        : status === 'cancelled'
-                          ? colors.status.cancelled.bg
-                          : status === 'in-progress'
-                            ? colors.status.inProgress.bg
-                            : colors.status.pending.bg)
+                         ? "var(--status-confirmed-bg)" 
+                          : status === 'cancelled'
+                           ? "var(--status-cancelled-bg)"
+                            : status === 'in-progress'
+                             ? "var(--status-in-progress-bg)"
+                             : "var(--status-pending-bg)")
                     : 'transparent',
                   color: form.watch('status') === status 
                     ? (status === 'complete' 
-                        ? colors.status.confirmed.text 
-                        : status === 'cancelled'
-                          ? colors.status.cancelled.text
-                          : status === 'in-progress'
-                            ? colors.status.inProgress.text
-                            : colors.status.pending.text)
-                    : colors.text.tertiary,
+                         ? "var(--status-confirmed-text)" 
+                          : status === 'cancelled'
+                           ? "var(--status-cancelled-text)"
+                            : status === 'in-progress'
+                             ? "var(--status-in-progress-text)"
+                             : "var(--status-pending-text)")
+                     : "var(--text-tertiary)",
                   borderWidth: '1px',
                   borderStyle: 'solid',
                   borderColor: form.watch('status') === status 
                     ? (status === 'complete' 
-                        ? `${colors.status.confirmed.text}20` 
-                        : status === 'cancelled'
-                          ? `${colors.status.cancelled.text}20`
-                          : status === 'in-progress'
-                            ? `${colors.status.inProgress.text}20`
-                            : `${colors.status.pending.text}20`)
-                    : colors.border.subtle
+                         ? "var(--status-confirmed-text)" 
+                          : status === 'cancelled'
+                           ? "var(--status-cancelled-text)"
+                            : status === 'in-progress'
+                             ? "var(--status-in-progress-text)"
+                             : "var(--status-pending-text)")
+                     : "var(--border-subtle)"
                 }}
               >
                 {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}

@@ -1,0 +1,77 @@
+/* 
+ * Linear-inspired theming system
+ * This defines CSS variables for both light and dark themes
+ * which will be used throughout the application via Tailwind
+ */
+
+:root {
+  /* ===== LIGHT THEME DEFAULTS ===== */
+  
+  /* Backgrounds */
+  --bg-page: #F7F7F9;
+  --bg-card: #FFFFFF;
+  --bg-hover: #F5F5F8;
+  --bg-input: #FFFFFF;
+  
+  /* Borders */
+  --border-subtle: #EBEBEF;
+  --border-strong: #D8D8E0;
+  
+  /* Text */
+  --text-primary: #111111;
+  --text-secondary: #6D6D7C;
+  --text-tertiary: #8A8A96;
+  
+  /* Status */
+  --status-confirmed-bg: rgba(52, 199, 145, 0.08);
+  --status-confirmed-text: #0F9D6D;
+  --status-draft-bg: rgba(130, 130, 150, 0.08);
+  --status-draft-text: #696996;
+  --status-cancelled-bg: rgba(237, 107, 107, 0.08);
+  --status-cancelled-text: #D95353;
+  --status-pending-bg: rgba(246, 189, 96, 0.08);
+  --status-pending-text: #E5A43B;
+  --status-in-progress-bg: rgba(125, 111, 255, 0.08);
+  --status-in-progress-text: #5F51DB;
+  
+  /* Primary action */
+  --primary-default: #5E6AD2;
+  --primary-hover: #4D59C3;
+  --primary-active: #3D49B0;
+}
+
+.dark {
+  /* ===== DARK THEME OVERRIDES ===== */
+  
+  /* Backgrounds */
+  --bg-page: #101014;
+  --bg-card: #141419;
+  --bg-hover: #1A1A21;
+  --bg-input: #0C0C10;
+  
+  /* Borders */
+  --border-subtle: #1F1F27;
+  --border-strong: #2A2A35;
+  
+  /* Text */
+  --text-primary: #FFFFFF;
+  --text-secondary: #A9A9BC;
+  --text-tertiary: #74748B;
+  
+  /* Status */
+  --status-confirmed-bg: rgba(52, 199, 145, 0.12);
+  --status-confirmed-text: #34C791;
+  --status-draft-bg: rgba(130, 130, 150, 0.15);
+  --status-draft-text: #AEAEBE;
+  --status-cancelled-bg: rgba(237, 107, 107, 0.12);
+  --status-cancelled-text: #ED6B6B;
+  --status-pending-bg: rgba(246, 189, 96, 0.12);
+  --status-pending-text: #F6BD60;
+  --status-in-progress-bg: rgba(125, 111, 255, 0.12);
+  --status-in-progress-text: #7D6FFF;
+  
+  /* Primary action */
+  --primary-default: #5E6AD2;
+  --primary-hover: #6872E5;
+  --primary-active: #4F5ABF;
+} 

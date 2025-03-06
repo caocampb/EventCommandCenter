@@ -1,14 +1,13 @@
 import { formatTimeForDisplay } from "@/utils/timezone-utils";
 import { cn } from "@v1/ui/cn";
-import { colors } from "@/styles/colors";
 
-// Define the status styles mapping
+// Define the status styles mapping using theme classes instead of hardcoded colors
 const statusStyles = {
-  pending: `bg-[${colors.status.pending.bg}] border border-[${colors.status.pending.text}]/20 text-[${colors.status.pending.text}]`,
-  "in-progress": `bg-[${colors.status.inProgress.bg}] border border-[${colors.status.inProgress.text}]/20 text-[${colors.status.inProgress.text}]`,
-  complete: `bg-[${colors.status.confirmed.bg}] border border-[${colors.status.confirmed.text}]/20 text-[${colors.status.confirmed.text}]`,
-  cancelled: `bg-[${colors.status.cancelled.bg}] border border-[${colors.status.cancelled.text}]/20 text-[${colors.status.cancelled.text}]`,
-  draft: `bg-[${colors.status.draft.bg}] border border-[${colors.status.draft.text}]/20 text-[${colors.status.draft.text}]`
+  pending: "bg-theme-status-pending-bg border border-theme-status-pending-text/20 text-theme-status-pending-text",
+  "in-progress": "bg-theme-status-pending-bg border border-theme-status-pending-text/20 text-theme-status-pending-text",
+  complete: "bg-theme-status-confirmed-bg border border-theme-status-confirmed-text/20 text-theme-status-confirmed-text",
+  cancelled: "bg-theme-status-cancelled-bg border border-theme-status-cancelled-text/20 text-theme-status-cancelled-text",
+  draft: "bg-theme-status-draft-bg border border-theme-status-draft-text/20 text-theme-status-draft-text"
 };
 
 // Simple interface for the block type
@@ -30,15 +29,10 @@ export function TimelineBlock({
   const displayEndTime = formatTimeForDisplay(block.endTime);
   const timeDisplay = `${displayStartTime} — ${displayEndTime}`;
   
-  // ... existing code ...
-  
   return (
-    // ... existing code ...
-      <div className={cn("relative rounded-md p-2", statusStyles[block.status || "draft"])}>
-        <div className="font-medium">{block.title}</div>
-        <div className="text-xs">{timeDisplay}</div>
-        {/* ... existing code ... */}
-      </div>
-    // ... existing code ...
+    <div className={cn("relative rounded-md p-2", statusStyles[block.status || "draft"])}>
+      <div className="font-medium">{block.title}</div>
+      <div className="text-xs">{timeDisplay}</div>
+    </div>
   );
 } 

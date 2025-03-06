@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import AuthButton from '@/components/auth/auth-button';
 import SidebarNav from '@/components/navigation/sidebar-nav';
-import { colors } from '@/styles/colors';
+import { ThemeToggle } from '@/components/theme/theme-toggle';
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -23,24 +23,19 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
       />
       
       <div 
-        className="flex h-screen" 
+        className="flex h-screen bg-theme-bg-page" 
         style={{ 
           fontFamily: "'Inter', sans-serif",
-          backgroundColor: colors.background.page  // Using the warmer black from colors system
         }}
       >
         {/* Sidebar - simplified for MVP */}
         <div 
-          className="w-56 border-r py-4 flex flex-col shadow-sm"
-          style={{
-            borderColor: colors.border.subtle,
-            backgroundColor: colors.background.card // Using card background for sidebar
-          }}
+          className="w-56 border-r py-4 flex flex-col shadow-sm bg-theme-bg-card border-theme-border-subtle"
         >
           {/* Logo area */}
           <div className="px-3 mb-6">
-            <div className="text-lg font-semibold tracking-tight text-white pl-3">
-              Event<span className="text-[#5E6AD2]">CC</span>
+            <div className="text-lg font-semibold tracking-tight text-theme-text-primary pl-3">
+              Event<span className="text-theme-primary">CC</span>
             </div>
           </div>
           
@@ -50,19 +45,20 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
           {/* Spacer */}
           <div className="flex-grow"></div>
           
-          {/* Sign-out button */}
+          {/* Theme and Sign-out buttons */}
           <div 
-            className="px-3 mt-auto pt-3"
-            style={{ borderTopColor: colors.border.subtle, borderTopWidth: '1px' }}
+            className="px-3 mt-auto pt-3 border-t border-theme-border-subtle"
           >
-            <AuthButton />
+            <div className="flex items-center justify-between mb-3">
+              <ThemeToggle />
+              <AuthButton />
+            </div>
           </div>
         </div>
         
         {/* Main content */}
         <div 
-          className="flex-1 overflow-auto"
-          style={{ backgroundColor: colors.background.page }} // Using the warmer black from colors system
+          className="flex-1 overflow-auto bg-theme-bg-page"
         >
           <main className="min-h-screen">{children}</main>
         </div>

@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react';
 import type { BudgetItem } from '@/types/budget';
-import { colors } from '@/styles/colors';
 
 interface CategoryTotal {
   category: string;
@@ -69,15 +68,15 @@ export function BudgetSummary({
     : 0;
   
   return (
-    <div className="border border-[#1F1F1F] rounded-md p-5 mb-6" style={{ backgroundColor: colors.background.card }}>
+    <div className="border border-border-primary rounded-md p-5 mb-6 bg-bg-secondary">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-[15px] font-medium text-white">Budget Summary</h2>
+        <h2 className="text-[15px] font-medium text-text-primary">Budget Summary</h2>
         <button
           onClick={() => {
             trackUserActivity();
             onAddItem();
           }}
-          className="text-[13px] bg-[#5E6AD2] hover:bg-[#6872E5] text-white px-3 py-1.5 rounded-md transition-colors duration-150 border border-transparent hover:border-[#8D95F2]"
+          className="text-[13px] bg-primary-default hover:bg-primary-hover text-white px-3 py-1.5 rounded-md transition-colors duration-150 border border-transparent hover:border-primary-muted"
         >
           + Add Item
         </button>
@@ -86,7 +85,7 @@ export function BudgetSummary({
       <div className="mb-6">
         {/* Total Budget - Linear style editable field */}
         <div className="flex justify-between items-center mb-1.5">
-          <span className="text-[13px] text-gray-400">Total Budget</span>
+          <span className="text-[13px] text-text-tertiary">Total Budget</span>
           
           <div 
             className="text-right"
@@ -111,12 +110,11 @@ export function BudgetSummary({
                     setTotalBudgetValue(totals.plannedTotal);
                   }
                 }}
-                className="w-28 border border-[#5E6AD2] rounded text-[15px] font-medium text-white text-right px-2 py-1"
-                style={{ backgroundColor: colors.background.input }}
+                className="w-28 border border-primary-default rounded text-[15px] font-medium text-text-primary text-right px-2 py-1 bg-bg-tertiary"
                 autoFocus
               />
             ) : (
-              <span className="text-[15px] font-medium text-white cursor-pointer hover:text-[#5E6AD2] transition-colors duration-150">
+              <span className="text-[15px] font-medium text-text-primary cursor-pointer hover:text-primary-default transition-colors duration-150">
                 {formatCurrency(totals.plannedTotal)}
               </span>
             )}
@@ -126,37 +124,37 @@ export function BudgetSummary({
         {/* Show per-student cost when applicable */}
         {participantCount > 0 && (
           <div className="flex justify-between items-center mb-1.5">
-            <span className="text-[13px] text-gray-400">Per Student ({participantCount} students)</span>
-            <span className="text-[15px] font-medium text-white">{formatCurrency(perStudentPlanned)}</span>
+            <span className="text-[13px] text-text-tertiary">Per Student ({participantCount} students)</span>
+            <span className="text-[15px] font-medium text-text-primary">{formatCurrency(perStudentPlanned)}</span>
           </div>
         )}
         
         <div className="flex justify-between items-center mb-1.5">
-          <span className="text-[13px] text-gray-400">Spent</span>
-          <span className="text-[15px] font-medium text-white">{formatCurrency(totals.actualTotal)}</span>
+          <span className="text-[13px] text-text-tertiary">Spent</span>
+          <span className="text-[15px] font-medium text-text-primary">{formatCurrency(totals.actualTotal)}</span>
         </div>
         <div className="flex justify-between items-center mb-2">
-          <span className="text-[13px] text-gray-400">Remaining</span>
-          <span className="text-[15px] font-medium text-white">{formatCurrency(totals.plannedTotal - totals.actualTotal)}</span>
+          <span className="text-[13px] text-text-tertiary">Remaining</span>
+          <span className="text-[15px] font-medium text-text-primary">{formatCurrency(totals.plannedTotal - totals.actualTotal)}</span>
         </div>
         
         {/* Progress bar */}
-        <div className="w-full bg-[#1A1A1A] h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-bg-tertiary h-2 rounded-full overflow-hidden">
           <div 
             className={`h-2 rounded-full ${
               totals.actualTotal > totals.plannedTotal * 1.2
-                ? 'bg-[#E5484D]/80'  // Over 120% - Red
+                ? 'bg-error-default/80'  // Over 120% - Red
                 : totals.actualTotal > totals.plannedTotal
-                  ? 'bg-[#E8A33C]/80' // 100-120% - Amber
+                  ? 'bg-warning-default/80' // 100-120% - Amber
                   : totals.actualTotal > totals.plannedTotal * 0.8
-                    ? 'bg-[#E8A33C]/80' // 80-100% - Amber
-                    : 'bg-[#4CC38A]/80' // Under 80% - Green
+                    ? 'bg-warning-default/80' // 80-100% - Amber
+                    : 'bg-success-default/80' // Under 80% - Green
             }`}
             style={{ width: `${calculateBudgetPercentage(totals.actualTotal, totals.plannedTotal)}%` }}
           ></div>
         </div>
         <div className="flex justify-end mt-1">
-          <span className="text-[12px] text-gray-500">
+          <span className="text-[12px] text-text-quaternary">
             {calculateBudgetPercentage(totals.actualTotal, totals.plannedTotal)}% used
           </span>
         </div>
@@ -165,22 +163,22 @@ export function BudgetSummary({
       {/* Category breakdown */}
       {totals.categoryTotals.length > 0 && (
         <div>
-          <h3 className="text-[13px] font-medium text-gray-400 mb-3">Category Breakdown</h3>
+          <h3 className="text-[13px] font-medium text-text-tertiary mb-3">Category Breakdown</h3>
           <div className="space-y-3">
             {totals.categoryTotals.map((category) => (
               <div key={category.category}>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[13px] text-gray-300">{category.category}</span>
+                  <span className="text-[13px] text-text-secondary">{category.category}</span>
                   <div className="flex items-center gap-2">
                     <span 
                       className={`px-1.5 py-0.5 text-[10px] rounded-sm font-medium ${
                         category.actualAmount > category.plannedAmount * 1.2
-                          ? 'bg-[#E5484D]/10 text-[#E5484D]'  // Over 120% - Red
+                          ? 'bg-error-default/10 text-error-default'  // Over 120% - Red
                           : category.actualAmount > category.plannedAmount
-                            ? 'bg-[#E8A33C]/10 text-[#E8A33C]' // 100-120% - Amber
+                            ? 'bg-warning-default/10 text-warning-default' // 100-120% - Amber
                             : category.actualAmount > category.plannedAmount * 0.8
-                              ? 'bg-[#E8A33C]/10 text-[#E8A33C]' // 80-100% - Amber
-                              : 'bg-[#4CC38A]/10 text-[#4CC38A]' // Under 80% - Green
+                              ? 'bg-warning-default/10 text-warning-default' // 80-100% - Amber
+                              : 'bg-success-default/10 text-success-default' // Under 80% - Green
                       }`}
                     >
                       {category.actualAmount > category.plannedAmount * 1.2
@@ -192,21 +190,21 @@ export function BudgetSummary({
                             : 'Under Budget'
                       }
                     </span>
-                    <span className="text-[13px] text-gray-300">
+                    <span className="text-[13px] text-text-secondary">
                       {formatCurrency(category.actualAmount)} / {formatCurrency(category.plannedAmount)}
                     </span>
                   </div>
                 </div>
-                <div className="w-full bg-[#1A1A1A] h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-bg-tertiary h-1.5 rounded-full overflow-hidden">
                   <div 
                     className={`h-1.5 rounded-full ${
                       category.actualAmount > category.plannedAmount * 1.2
-                        ? 'bg-[#E5484D]/80'  // Over 120% - Red
+                        ? 'bg-error-default/80'  // Over 120% - Red
                         : category.actualAmount > category.plannedAmount
-                          ? 'bg-[#E8A33C]/80' // 100-120% - Amber
+                          ? 'bg-warning-default/80' // 100-120% - Amber
                           : category.actualAmount > category.plannedAmount * 0.8
-                            ? 'bg-[#E8A33C]/80' // 80-100% - Amber
-                            : 'bg-[#4CC38A]/80' // Under 80% - Green
+                            ? 'bg-warning-default/80' // 80-100% - Amber
+                            : 'bg-success-default/80' // Under 80% - Green
                     }`}
                     style={{ width: `${calculateBudgetPercentage(category.actualAmount, category.plannedAmount)}%` }}
                   ></div>

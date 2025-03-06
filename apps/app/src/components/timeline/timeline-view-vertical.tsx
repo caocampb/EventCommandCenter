@@ -7,7 +7,6 @@ import { formatTimeForDisplay, formatDateForDisplay } from '../../utils/timezone
 import { DetailedTimelineBlockView } from './detailed-timeline-block-view';
 import { useRouter } from 'next/navigation';
 import { cn } from '@v1/ui/cn';
-import { colors } from '@/styles/colors';
 
 interface TimelineViewVerticalProps {
   blocks: TimelineBlock[];
@@ -23,37 +22,43 @@ const MIN_BLOCK_HEIGHT = 32; // Exactly 15 minutes worth of height (1/4 of HOUR_
 const DEFAULT_START_HOUR = 8; // 8am
 const DEFAULT_END_HOUR = 20;  // 8pm
 
-// Define status tag styles map
+// Define status tag styles map using CSS variables
 const statusTagStyles = {
   complete: {
-    bg: colors.status.confirmed.bg,
-    text: colors.status.confirmed.text,
-    border: `${colors.status.confirmed.text}20` // 20 is hex for 12% opacity
+    bg: 'bg-status-confirmed-bg',
+    text: 'text-status-confirmed-text',
+    border: 'border-status-confirmed-text/20', 
+    indicator: 'bg-status-confirmed-text'
   },
   'in-progress': {
-    bg: colors.status.inProgress.bg,
-    text: colors.status.inProgress.text,
-    border: `${colors.status.inProgress.text}20`
+    bg: 'bg-status-inProgress-bg',
+    text: 'text-status-inProgress-text',
+    border: 'border-status-inProgress-text/20',
+    indicator: 'bg-status-inProgress-text'
   },
   confirmed: {
-    bg: colors.status.confirmed.bg,
-    text: colors.status.confirmed.text,
-    border: `${colors.status.confirmed.text}20`
+    bg: 'bg-status-confirmed-bg',
+    text: 'text-status-confirmed-text',
+    border: 'border-status-confirmed-text/20',
+    indicator: 'bg-status-confirmed-text'
   },
   cancelled: {
-    bg: colors.status.cancelled.bg,
-    text: colors.status.cancelled.text,
-    border: `${colors.status.cancelled.text}20`
+    bg: 'bg-status-cancelled-bg',
+    text: 'text-status-cancelled-text',
+    border: 'border-status-cancelled-text/20',
+    indicator: 'bg-status-cancelled-text'
   },
   pending: {
-    bg: colors.status.pending.bg,
-    text: colors.status.pending.text,
-    border: `${colors.status.pending.text}20`
+    bg: 'bg-status-pending-bg',
+    text: 'text-status-pending-text',
+    border: 'border-status-pending-text/20',
+    indicator: 'bg-status-pending-text'
   },
   draft: {
-    bg: colors.status.draft.bg,
-    text: colors.status.draft.text,
-    border: `${colors.status.draft.text}20`
+    bg: 'bg-status-draft-bg',
+    text: 'text-status-draft-text',
+    border: 'border-status-draft-text/20',
+    indicator: 'bg-status-draft-text'
   }
 };
 
@@ -189,36 +194,37 @@ function TimelineBlockVertical({
   
   // Status styling
   const getStyles = () => {
-    switch (block.status as string) {
+    const status = block.status as string;
+    switch (status) {
       case 'complete':
         return {
-          bg: `bg-[${colors.status.confirmed.bg}]`,
-          border: `border-[${colors.status.confirmed.text}]/20`,
-          indicator: `bg-[${colors.status.confirmed.text}]`
+          bg: statusTagStyles.complete.bg,
+          border: statusTagStyles.complete.border,
+          indicator: statusTagStyles.complete.indicator
         };
       case 'in-progress':
         return {
-          bg: `bg-[${colors.status.inProgress.bg}]`,
-          border: `border-[${colors.status.inProgress.text}]/20`,
-          indicator: `bg-[${colors.status.inProgress.text}]`
+          bg: statusTagStyles["in-progress"].bg,
+          border: statusTagStyles["in-progress"].border,
+          indicator: statusTagStyles["in-progress"].indicator
         };
       case 'confirmed':
         return {
-          bg: `bg-[${colors.status.confirmed.bg}]`,
-          border: `border-[${colors.status.confirmed.text}]/20`,
-          indicator: `bg-[${colors.status.confirmed.text}]`
+          bg: statusTagStyles.confirmed.bg,
+          border: statusTagStyles.confirmed.border,
+          indicator: statusTagStyles.confirmed.indicator
         };
       case 'cancelled':
         return {
-          bg: `bg-[${colors.status.cancelled.bg}]`,
-          border: `border-[${colors.status.cancelled.text}]/20`,
-          indicator: `bg-[${colors.status.cancelled.text}]`
+          bg: statusTagStyles.cancelled.bg,
+          border: statusTagStyles.cancelled.border,
+          indicator: statusTagStyles.cancelled.indicator
         };
       default: // pending
         return {
-          bg: `bg-[${colors.status.pending.bg}]`,
-          border: `border-[${colors.status.pending.text}]/20`,
-          indicator: `bg-[${colors.status.pending.text}]`
+          bg: statusTagStyles.pending.bg,
+          border: statusTagStyles.pending.border,
+          indicator: statusTagStyles.pending.indicator
         };
     }
   };
@@ -251,22 +257,22 @@ function TimelineBlockVertical({
         <div className={`h-full ${styles.bg} border ${styles.border} px-3 flex flex-col shadow-sm 
           hover:shadow-md transition-all duration-75 ease-out 
           group-hover:translate-y-[-1px] group-hover:scale-[1.005] group-hover:border-opacity-90
-          relative ${isHovering ? 'ring-1 ring-[#5E6AD2]/20' : ''}`}>
+          relative ${isHovering ? 'ring-1 ring-primary-default/20' : ''}`}>
           {/* Hover indicator - Linear style subtle accent bar */}
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#5E6AD2] scale-y-0 group-hover:scale-y-100 transition-transform duration-75 ease-in-out origin-center"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary-default scale-y-0 group-hover:scale-y-100 transition-transform duration-75 ease-in-out origin-center"></div>
          
           {/* Linear-style subtle click affordance - appears on hover */}
-          <div className="absolute inset-0 bg-[#5E6AD2]/[0.02] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75"></div>
+          <div className="absolute inset-0 bg-primary-default/[0.02] opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-75"></div>
         
           {isShortBlock ? (
             // Compact layout for short blocks (≤30 min)
             <div className="flex justify-between items-center h-full">
               <div className="flex items-center gap-1.5 max-w-[50%]">
                 <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
-                <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
+                <h3 className="text-[13px] font-medium text-text-primary truncate">{block.title}</h3>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
+                <span className="text-[10px] font-mono text-text-tertiary">{timeDisplay}</span>
                 <span 
                   className="text-[10px] font-medium px-1.5 py-0.5 rounded border"
                   style={{
@@ -285,10 +291,10 @@ function TimelineBlockVertical({
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-1.5 max-w-[50%]">
                   <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
-                  <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
+                  <h3 className="text-[13px] font-medium text-text-primary truncate">{block.title}</h3>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-mono text-gray-400">{timeDisplay}</span>
+                  <span className="text-[10px] font-mono text-text-tertiary">{timeDisplay}</span>
                   <span 
                     className="text-[10px] font-medium px-1.5 py-0.5 rounded border mt-0.5"
                     style={{
@@ -308,10 +314,10 @@ function TimelineBlockVertical({
               <div className="flex items-start justify-between gap-2 mt-1">
                 <div className="flex items-center gap-1.5 max-w-[50%]">
                   <div className={`w-2 h-2 rounded-full ${styles.indicator}`}></div>
-                  <h3 className="text-[13px] font-medium text-white truncate">{block.title}</h3>
+                  <h3 className="text-[13px] font-medium text-text-primary truncate">{block.title}</h3>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-mono text-gray-500">{timeDisplay}</span>
+                  <span className="text-[10px] font-mono text-text-tertiary">{timeDisplay}</span>
                   <span 
                     className="text-[10px] font-medium px-1.5 py-0.5 rounded border mt-0.5"
                     style={{
@@ -327,7 +333,7 @@ function TimelineBlockVertical({
               
               {block.location && (
                 <div className="flex flex-col text-[11px] mt-auto mb-1">
-                  <span className="text-gray-400 mb-0.5 flex items-center">
+                  <span className="text-text-tertiary mb-0.5 flex items-center">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1 opacity-70">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                       <circle cx="12" cy="10" r="3" />
@@ -354,10 +360,7 @@ function TimelineBlockVertical({
             <DetailedTimelineBlockView 
               block={block}
               onClose={() => setShowDetailedView(false)}
-              onEdit={() => {
-                setShowDetailedView(false);
-                router.push(`/en/events/${eventId}/timeline/${block.id}/edit`);
-              }}
+              onEdit={() => router.push(`/en/events/${eventId}/timeline/${block.id}/edit`)}
             />
           </div>
         </div>
@@ -462,7 +465,7 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
             onClick={handleAddClick}
             className={cn(
               "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150", 
-              "text-gray-400 hover:text-gray-200",
+              "text-text-tertiary hover:text-text-secondary",
               isDayHovered ? "opacity-100" : "opacity-0"
             )}
             aria-label={`Add block to ${formattedDate}`}
@@ -473,11 +476,11 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
           </button>
         </div>
         
-        <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-6 text-center">
-          <p className="text-gray-400 mb-4">No timeline blocks scheduled for this day</p>
+        <div className="bg-bg-secondary border border-border-primary rounded-md p-6 text-center">
+          <p className="text-text-tertiary mb-4">No timeline blocks scheduled for this day</p>
           <Link
             href={`/en/events/${eventId}/timeline/add?date=${dateKey}`}
-            className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-gray-400 hover:text-white font-medium rounded border border-[#333333] inline-flex items-center"
+            className="px-3 py-1.5 bg-bg-tertiary hover:bg-bg-hover text-sm text-text-tertiary hover:text-text-primary font-medium rounded border border-border-primary inline-flex items-center"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1.5">
               <path d="M12 5v14M5 12h14"/>
@@ -523,7 +526,7 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
           onClick={handleAddClick}
           className={cn(
             "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-150", 
-            "text-gray-400 hover:text-gray-200 hover:bg-[#1E1E1E]",
+            "text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary",
             isDayHovered ? "opacity-100" : "opacity-0"
           )}
           aria-label={`Add block to ${formattedDate}`}
@@ -535,23 +538,23 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
       </div>
       
       {/* Timeline grid */}
-      <div className="bg-[#141414] border border-[#1F1F1F] rounded-md overflow-hidden">
+      <div className="bg-bg-secondary border border-border-primary rounded-md overflow-hidden">
         <div className="flex" style={{ height: `${timelineHeight}px` }}>
           {/* Time markers column */}
-          <div className="w-16 flex-shrink-0 border-r border-[#1F1F1F] bg-[#131313]">
+          <div className="w-16 flex-shrink-0 border-r border-border-primary bg-bg-page">
             {hourMarkers.map(({ hour, displayHour, isCurrent }, index) => (
               <div 
                 key={hour} 
-                className="flex items-center justify-center border-t border-[#1F1F1F]"
+                className="flex items-center justify-center border-t border-border-primary"
                 style={{ 
                   height: `${HOUR_HEIGHT}px`,
                   backgroundColor: isCurrent ? 'rgba(26, 24, 74, 0.1)' : ''
                 }}
               >
-                <span className={`text-[10px] font-mono ${isCurrent ? 'text-[#5E6AD2]' : 'text-gray-500'}`}>
+                <span className={`text-[10px] font-mono ${isCurrent ? 'text-primary-default' : 'text-text-tertiary'}`}>
                   {displayHour}
                 </span>
-                {isCurrent && <div className="w-1 h-1 rounded-full bg-[#5E6AD2] ml-1"></div>}
+                {isCurrent && <div className="w-1 h-1 rounded-full bg-primary-default ml-1"></div>}
               </div>
             ))}
           </div>
@@ -562,7 +565,7 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
             {hourMarkers.map(({ hour, isCurrent }, index) => (
               <div 
                 key={`grid-${hour}`} 
-                className={`absolute left-0 right-0 border-t ${isCurrent ? 'border-[#5E6AD2]/20' : 'border-[#1F1F1F]'}`}
+                className={`absolute left-0 right-0 border-t ${isCurrent ? 'border-primary-default/20' : 'border-border-primary'}`}
                 style={{ top: `${index * HOUR_HEIGHT}px` }}
               />
             ))}
@@ -571,7 +574,7 @@ export function TimelineViewVertical({ blocks, dateKey, eventId }: TimelineViewV
             {Array.from({ length: displayedHours }).map((_, index) => (
               <div 
                 key={`half-${index}`} 
-                className="absolute left-0 right-0 border-t border-[#1F1F1F]/30"
+                className="absolute left-0 right-0 border-t border-border-primary/30"
                 style={{ top: `${index * HOUR_HEIGHT + HOUR_HEIGHT/2}px` }}
               />
             ))}
@@ -632,8 +635,8 @@ function CurrentTimeIndicator({ startHour }: { startHour: number }) {
       style={{ top: `${position}px` }}
     >
       <div className="flex items-center">
-        <div className="h-3 w-3 rounded-full bg-[#5E6AD2] relative -left-1.5"></div>
-        <div className="flex-1 border-t border-dashed border-[#5E6AD2]"></div>
+        <div className="h-3 w-3 rounded-full bg-primary-default relative -left-1.5"></div>
+        <div className="flex-1 border-t border-dashed border-primary-default"></div>
       </div>
     </div>
   );

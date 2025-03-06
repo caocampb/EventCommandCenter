@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import { Event as EventType } from "@/types/events";
 import { ClickableTableRow } from "@/components/ui/clickable-table-row";
 import { StatusPill } from "@/components/ui/StatusPill";
-import { colors } from "@/styles/colors";
 import { EventRow, Event } from "../events/components/EventRow";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 
@@ -58,9 +57,9 @@ export default async function EventsPage() {
   })) as Event[] || [];
 
   return (
-    <div className="px-6 py-6" style={{ backgroundColor: colors.background.page }}>
+    <div className="px-6 py-6 bg-theme-bg-page">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-semibold tracking-tight" style={{ color: colors.text.primary }}>Events</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-theme-text-primary">Events</h1>
         <PrimaryButton href={`/${locale}/events/new`}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -70,28 +69,22 @@ export default async function EventsPage() {
       </div>
 
       {events.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-56 border rounded-lg" 
-             style={{ borderColor: colors.border.subtle, backgroundColor: colors.background.card }}>
-          <p className="mb-2 font-medium" style={{ color: colors.text.secondary }}>No events found</p>
-          <p className="text-sm" style={{ color: colors.text.tertiary }}>
+        <div className="flex flex-col items-center justify-center h-56 border rounded-lg border-theme-border-subtle bg-theme-bg-card">
+          <p className="mb-2 font-medium text-theme-text-secondary">No events found</p>
+          <p className="text-sm text-theme-text-tertiary">
             Create your first event to get started with your planning
           </p>
         </div>
       ) : (
         // Linear-style table view with our updated components
-        <div className="border rounded-md overflow-hidden shadow-sm" 
-             style={{ borderColor: colors.border.subtle, backgroundColor: colors.background.card }}>
-          <table className="w-full">
+        <div className="border rounded-md overflow-hidden shadow-sm border-theme-border-subtle bg-theme-bg-card">
+          <table className="w-full border-collapse">
             <thead>
-              <tr className="border-b" style={{ borderColor: colors.border.subtle }}>
-                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
-                    style={{ color: colors.text.tertiary }}>Event</th>
-                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
-                    style={{ color: colors.text.tertiary }}>Date</th>
-                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
-                    style={{ color: colors.text.tertiary }}>Location</th>
-                <th className="text-left px-4 py-3 text-[13px] font-medium uppercase tracking-wider"
-                    style={{ color: colors.text.tertiary }}>Status</th>
+              <tr className="border-b border-theme-border-subtle">
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Event</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Date</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Location</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Status</th>
                 <th className="w-5"></th>
               </tr>
             </thead>

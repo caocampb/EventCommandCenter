@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Event, EventStatus } from "@/types/events";
 import React from 'react';
 import { StatusPill } from "@/components/ui/StatusPill";
-import { colors } from "@/styles/colors";
 
 // Vendor related types
 interface Vendor {
@@ -104,11 +103,7 @@ function mapStatusToType(status: string): 'confirmed' | 'draft' | 'cancelled' | 
 function SectionHeader({ title }: { title: string }) {
   return (
     <h2 
-      className="font-medium text-[15px] mb-3 pb-2" 
-      style={{ 
-        color: colors.text.primary,
-        borderBottom: `1px solid ${colors.border.subtle}`
-      }}
+      className="font-medium text-[15px] mb-3 pb-2 text-theme-text-primary border-b border-theme-border-subtle" 
     >
       {title}
     </h2>
@@ -119,8 +114,8 @@ function SectionHeader({ title }: { title: string }) {
 function InfoItem({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <div className="text-[13px] mb-1" style={{ color: colors.text.tertiary }}>{label}</div>
-      <div className="text-[14px]" style={{ color: colors.text.primary }}>{value}</div>
+      <div className="text-[13px] mb-1 text-theme-text-tertiary">{label}</div>
+      <div className="text-[14px] text-theme-text-primary">{value}</div>
     </div>
   );
 }
@@ -128,10 +123,10 @@ function InfoItem({ label, value }: { label: string; value: React.ReactNode }) {
 // Compact Card component for related items
 function CompactCard({ title, value, children }: { title: string, value: string | number, children: React.ReactNode }) {
   return (
-    <div className="p-3 rounded-md" style={{ backgroundColor: colors.background.card }}>
+    <div className="p-3 rounded-md bg-theme-bg-card">
       <div className="flex justify-between items-center mb-2">
-        <h4 className="text-xs uppercase tracking-wider" style={{ color: colors.text.tertiary }}>{title}</h4>
-        <span className="text-xs font-medium" style={{ color: colors.primary.default }}>{value}</span>
+        <h4 className="text-xs uppercase tracking-wider text-theme-text-tertiary">{title}</h4>
+        <span className="text-xs font-medium text-theme-primary">{value}</span>
       </div>
       <div className="flex gap-1">
         {children}
@@ -367,13 +362,12 @@ export default function EventDetailClient({ event }: EventDetailProps) {
   }
 
   return (
-    <div className="px-6 py-6" style={{ backgroundColor: colors.background.page }}>
+    <div className="px-6 py-6 bg-theme-bg-page">
       {/* Header with back button */}
       <div className="mb-8">
         <Link 
           href="/en/events" 
-          className="inline-flex items-center text-sm hover:text-white mb-4 transition-colors duration-120"
-          style={{ color: colors.text.tertiary }}
+          className="inline-flex items-center text-sm hover:text-white mb-4 transition-colors duration-120 text-theme-text-tertiary"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -383,19 +377,20 @@ export default function EventDetailClient({ event }: EventDetailProps) {
         
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight mb-2" style={{ color: colors.text.primary }}>{event.name}</h1>
+            <h1 className="text-xl font-semibold tracking-tight mb-2 text-theme-text-primary">{event.name}</h1>
             <div className="flex items-center gap-3">
               {/* Status selector dropdown - Linear-style */}
               <div className="relative">
                 <button 
                   onClick={() => setIsStatusOpen(!isStatusOpen)}
                   disabled={isUpdatingStatus}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded border transition-colors duration-50"
-                  style={{ 
-                    backgroundColor: `${colors.status[mapStatusToType(event.status)].bg}`,
-                    borderColor: `${colors.status[mapStatusToType(event.status)].text}30`,
-                    color: colors.status[mapStatusToType(event.status)].text
-                  }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded border transition-colors duration-50 
+                    ${event.status === 'confirmed' ? 'bg-theme-status-confirmed-bg text-theme-status-confirmed-text border-theme-status-confirmed-text/30' : ''}
+                    ${event.status === 'draft' ? 'bg-theme-status-draft-bg text-theme-status-draft-text border-theme-status-draft-text/30' : ''}
+                    ${event.status === 'cancelled' ? 'bg-theme-status-cancelled-bg text-theme-status-cancelled-text border-theme-status-cancelled-text/30' : ''}
+                    ${event.status === 'in-progress' ? 'bg-theme-status-pending-bg text-theme-status-pending-text border-theme-status-pending-text/30' : ''}
+                    ${event.status === 'completed' ? 'bg-theme-status-confirmed-bg text-theme-status-confirmed-text border-theme-status-confirmed-text/30' : ''}
+                  `}
                 >
                   <span>{event.status.charAt(0).toUpperCase() + event.status.slice(1).replace('-', ' ')}</span>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
@@ -405,15 +400,13 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 
                 {isStatusOpen && (
                   <div 
-                    className="absolute z-10 mt-1 w-48 rounded-md shadow-lg"
-                    style={{ backgroundColor: colors.background.card, borderColor: colors.border.subtle, borderWidth: '1px' }}
+                    className="absolute z-10 mt-1 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle"
                   >
                     <div className="py-1">
                       {['draft', 'confirmed', 'in-progress', 'completed', 'cancelled'].map((status) => (
                         <button
                           key={status}
-                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-800"
-                          style={{ color: colors.text.secondary }}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-theme-bg-hover text-theme-text-secondary"
                           onClick={() => handleStatusChange(status as EventStatus)}
                         >
                           {status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ')}
@@ -424,7 +417,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 )}
               </div>
               
-              <span className="text-[13px]" style={{ color: colors.text.tertiary }}>
+              <span className="text-[13px] text-theme-text-tertiary">
                 Created {new Date(event.createdAt).toLocaleDateString()}
               </span>
             </div>
@@ -434,60 +427,20 @@ export default function EventDetailClient({ event }: EventDetailProps) {
             <button 
               onClick={handleDelete}
               disabled={isDeleting}
-              className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ 
-                backgroundColor: colors.background.card, 
-                borderColor: colors.border.subtle, 
-                color: colors.text.secondary
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = colors.background.hover;
-                e.currentTarget.style.color = '#ED6B6B'; // Soft red color for delete hover
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = colors.background.card;
-                e.currentTarget.style.color = colors.text.secondary;
-              }}
+              className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed bg-theme-bg-card border-theme-border-subtle text-theme-text-secondary hover:bg-theme-bg-hover hover:text-[#ED6B6B]"
             >
               {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
             <Link 
               href={`/en/events/${event.id}/edit`}
-              className="px-3 py-1.5 text-white text-sm font-medium rounded border transition-colors duration-120"
-              style={{ 
-                backgroundColor: colors.primary.default, 
-                borderColor: 'transparent',
-                borderWidth: '1px',
-                color: 'white'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = colors.primary.hover;
-                e.currentTarget.style.borderColor = '#8D95F2'; // Lighter border on hover
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = colors.primary.default;
-                e.currentTarget.style.borderColor = 'transparent';
-              }}
+              className="px-3 py-1.5 text-white text-sm font-medium rounded border transition-colors duration-120 bg-theme-primary border-transparent hover:bg-theme-primary-hover hover:border-[#8D95F2]"
             >
               Edit Event
             </Link>
             <div className="flex gap-3">
               <Link 
                 href={`/en/events/${event.id}/timeline`}
-                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
-                style={{ 
-                  backgroundColor: colors.background.card, 
-                  borderColor: colors.border.subtle, 
-                  color: colors.text.secondary 
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.hover;
-                  e.currentTarget.style.color = colors.text.primary;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.card;
-                  e.currentTarget.style.color = colors.text.secondary;
-                }}
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center bg-theme-bg-card border-theme-border-subtle text-theme-text-secondary hover:bg-theme-bg-hover hover:text-theme-text-primary"
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -499,20 +452,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               </Link>
               <Link 
                 href={`/en/events/${event.id}/vendors`}
-                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
-                style={{ 
-                  backgroundColor: colors.background.card, 
-                  borderColor: colors.border.subtle,
-                  color: colors.text.secondary
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.hover;
-                  e.currentTarget.style.color = colors.text.primary;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.card;
-                  e.currentTarget.style.color = colors.text.secondary;
-                }}
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center bg-theme-bg-card border-theme-border-subtle text-theme-text-secondary hover:bg-theme-bg-hover hover:text-theme-text-primary"
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M17 21V19C17 16.7909 15.2091 15 13 15H5C2.79086 15 1 16.7909 1 19V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -524,20 +464,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               </Link>
               <Link 
                 href={`/en/events/${event.id}/budget`}
-                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
-                style={{ 
-                  backgroundColor: colors.background.card, 
-                  borderColor: colors.border.subtle,
-                  color: colors.text.secondary
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.hover;
-                  e.currentTarget.style.color = colors.text.primary;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.card;
-                  e.currentTarget.style.color = colors.text.secondary;
-                }}
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center bg-theme-bg-card border-theme-border-subtle text-theme-text-secondary hover:bg-theme-bg-hover hover:text-theme-text-primary"
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 1V23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -547,20 +474,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               </Link>
               <Link 
                 href={`/en/events/${event.id}/participants`}
-                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center"
-                style={{ 
-                  backgroundColor: colors.background.card, 
-                  borderColor: colors.border.subtle,
-                  color: colors.text.secondary
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.hover;
-                  e.currentTarget.style.color = colors.text.primary;
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.background.card;
-                  e.currentTarget.style.color = colors.text.secondary;
-                }}
+                className="px-3 py-1.5 text-sm font-medium rounded border transition-colors duration-120 flex items-center bg-theme-bg-card border-theme-border-subtle text-theme-text-secondary hover:bg-theme-bg-hover hover:text-theme-text-primary"
               >
                 <svg className="mr-1.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -578,29 +492,21 @@ export default function EventDetailClient({ event }: EventDetailProps) {
       {/* Main content - with Linear-inspired improvements */}
       <div className="space-y-8">
         {/* Essential information panel */}
-        <div className="rounded-md p-5 shadow-sm" style={{ 
-          backgroundColor: colors.background.card,
-          borderColor: colors.border.subtle,
-          borderWidth: '1px'
-        }}>
+        <div className="rounded-md p-5 shadow-sm bg-theme-bg-card border border-theme-border-subtle">
           <SectionHeader title="Event Details" />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <InfoItem 
-              label="Start Date" 
+              label="Start date" 
               value={
-                <div className="flex items-center">
-                  <span className="font-mono text-[15px]" style={{ color: colors.text.primary }}>{formatDate(event.startDate.toString())}</span>
-                </div>
+                <span className="font-mono text-[15px] text-theme-text-primary">{formatDate(event.startDate.toString())}</span>
               } 
             />
             
             <InfoItem 
-              label="End Date" 
+              label="End date" 
               value={
-                <div className="flex items-center">
-                  <span className="font-mono text-[15px]" style={{ color: colors.text.primary }}>{formatDate(event.endDate.toString())}</span>
-                </div>
+                <span className="font-mono text-[15px] text-theme-text-primary">{formatDate(event.endDate.toString())}</span>
               } 
             />
           </div>
@@ -614,10 +520,10 @@ export default function EventDetailClient({ event }: EventDetailProps) {
             label="Expected Attendees" 
             value={
               <div className="flex items-center">
-                <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-1.5 text-theme-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                 </svg>
-                <span style={{ color: colors.text.primary }}>{event.attendeeCount}</span>
+                <span className="text-theme-text-primary">{event.attendeeCount}</span>
               </div>
             } 
           />
@@ -627,7 +533,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               label="Description" 
               value={
                 <div className="prose prose-sm prose-invert max-w-none">
-                  <p className="whitespace-pre-line text-[14px] leading-relaxed text-gray-300" style={{ color: colors.text.primary }}>
+                  <p className="whitespace-pre-line text-[14px] leading-relaxed text-theme-text-primary">
                     {event.description}
                   </p>
                 </div>
@@ -637,19 +543,19 @@ export default function EventDetailClient({ event }: EventDetailProps) {
         </div>
         
         {/* Timeline Progress - Linear-inspired compact visualization */}
-        <div className="pt-6" style={{ borderColor: colors.border.subtle }}>
+        <div className="pt-6 border-t border-theme-border-subtle">
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-sm font-medium" style={{ color: colors.text.secondary }}>Timeline Progress</h3>
-            <Link href={`/en/events/${event.id}/timeline`} className="text-xs font-medium" style={{ color: colors.primary.default }}>
+            <h3 className="text-sm font-medium text-theme-text-secondary">Timeline Progress</h3>
+            <Link href={`/en/events/${event.id}/timeline`} className="text-xs font-medium text-theme-primary">
               View Timeline
             </Link>
           </div>
           
-          <div className="h-2 w-full rounded-full overflow-hidden" style={{ backgroundColor: colors.border.subtle }}>
-            <div className="h-full rounded-full" style={{ backgroundColor: colors.primary.default, width: `${timelineProgress}%` }}></div>
+          <div className="h-2 w-full rounded-full overflow-hidden bg-theme-border-subtle">
+            <div className="h-full rounded-full bg-theme-primary" style={{ width: `${timelineProgress}%` }}></div>
           </div>
           
-          <div className="flex justify-between text-xs mt-1" style={{ color: colors.text.tertiary }}>
+          <div className="flex justify-between text-xs mt-1 text-theme-text-tertiary">
             <span>{formatSimpleDate(event.startDate.toString())}</span>
             <span>{timelineProgress}% Complete</span>
             <span>{formatSimpleDate(event.endDate.toString())}</span>
@@ -686,83 +592,88 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 )}
               </div>
             ) : (
-              <span className="text-xs" style={{ color: colors.text.tertiary }}>No vendors assigned</span>
+              <span className="text-xs text-theme-text-tertiary">No vendors assigned</span>
             )}
           </CompactCard>
           
           <CompactCard title="Budget" value={`$${budgetInfo.allocated.toLocaleString()}`}>
-            <div className="w-full">
-              <div className="h-1 w-full rounded-full overflow-hidden" style={{ backgroundColor: colors.border.subtle }}>
-                <div 
-                  className="h-full rounded-full" 
-                  style={{ 
-                    backgroundColor: budgetInfo.allocated > budgetInfo.total 
-                      ? '#ef4444' // red for over budget
-                      : colors.status.confirmed.text, // green for under budget
-                    width: budgetInfo.total ? `${Math.min(100, (budgetInfo.allocated / budgetInfo.total) * 100)}%` : '0%' 
-                  }}
-                ></div>
+            {budgetInfo.total > 0 ? (
+              <div className="w-full">
+                <div className="h-1 w-full rounded-full overflow-hidden bg-theme-border-subtle">
+                  <div 
+                    className={`h-full rounded-full ${budgetInfo.allocated > budgetInfo.total ? 'bg-red-500' : 'bg-theme-status-confirmed-text'}`} 
+                    style={{ 
+                      width: budgetInfo.total ? `${Math.min(100, (budgetInfo.allocated / budgetInfo.total) * 100)}%` : '0%' 
+                    }}
+                  ></div>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span className={`text-[10px] flex items-center ${budgetInfo.allocated > budgetInfo.total ? 'text-red-500' : 'text-theme-text-tertiary'}`}>
+                    {budgetInfo.total ? (
+                      budgetInfo.allocated > budgetInfo.total ? (
+                        <>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-0.5">
+                            <path d="M12 9V14M12 17.5V17.51M6.6 20H17.4C18.8852 20 19.6279 20 20.1613 19.6955C20.6265 19.4272 20.9944 19.0178 21.2251 18.5264C21.5 17.9558 21.5 17.2055 21.5 15.7051V8.29492C21.5 6.79449 21.5 6.04428 21.2251 5.47367C20.9944 4.98215 20.6265 4.57284 20.1613 4.30448C19.6279 4 18.8852 4 17.4 4H6.6C5.11477 4 4.37215 4 3.83869 4.30448C3.37346 4.57284 3.00558 4.98215 2.77487 5.47367C2.5 6.04428 2.5 6.79449 2.5 8.29492V15.7051C2.5 17.2055 2.5 17.9558 2.77487 18.5264C3.00558 19.0178 3.37346 19.4272 3.83869 19.6955C4.37215 20 5.11477 20 6.6 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Over budget
+                        </>
+                      ) : `${Math.round((budgetInfo.allocated / budgetInfo.total) * 100)}%`
+                    ) : '0%'}
+                  </span>
+                  <span className="text-[10px] text-theme-text-tertiary">
+                    Target: ${budgetInfo.total.toLocaleString()}
+                  </span>
+                </div>
+                {budgetInfo.total === 0 && (
+                  <button 
+                    className="mt-2 text-xs font-medium text-left text-theme-primary"
+                    onClick={() => router.push(`/events/${event.id}/budget`)}
+                  >
+                    Set up budget →
+                  </button>
+                )}
               </div>
-              <div className="flex justify-between mt-1">
-                <span className="text-[10px] flex items-center" style={{ 
-                  color: budgetInfo.allocated > budgetInfo.total ? '#ef4444' : colors.text.tertiary 
-                }}>
-                  {budgetInfo.total ? (
-                    budgetInfo.allocated > budgetInfo.total ? (
-                      <>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-0.5">
-                          <path d="M12 9V14M12 17.5V17.51M6.6 20H17.4C18.8852 20 19.6279 20 20.1613 19.6955C20.6265 19.4272 20.9944 19.0178 21.2251 18.5264C21.5 17.9558 21.5 17.2055 21.5 15.7051V8.29492C21.5 6.79449 21.5 6.04428 21.2251 5.47367C20.9944 4.98215 20.6265 4.57284 20.1613 4.30448C19.6279 4 18.8852 4 17.4 4H6.6C5.11477 4 4.37215 4 3.83869 4.30448C3.37346 4.57284 3.00558 4.98215 2.77487 5.47367C2.5 6.04428 2.5 6.79449 2.5 8.29492V15.7051C2.5 17.2055 2.5 17.9558 2.77487 18.5264C3.00558 19.0178 3.37346 19.4272 3.83869 19.6955C4.37215 20 5.11477 20 6.6 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        Over budget
-                      </>
-                    ) : `${Math.round((budgetInfo.allocated / budgetInfo.total) * 100)}%`
-                  ) : '0%'}
-                </span>
-                <span className="text-[10px]" style={{ color: colors.text.tertiary }}>
-                  Target: ${budgetInfo.total.toLocaleString()}
-                </span>
+            ) : (
+              <div className="w-full">
+                <div className="h-1 w-full rounded-full overflow-hidden bg-theme-border-subtle">
+                  <div className="h-full rounded-full bg-theme-border-strong" style={{ width: '0%' }}></div>
+                </div>
+                <div className="mt-2">
+                  <button 
+                    className="text-xs font-medium text-left text-theme-primary" 
+                    onClick={() => router.push(`/events/${event.id}/budget`)}
+                  >
+                    Set up budget →
+                  </button>
+                </div>
               </div>
-              {budgetInfo.total === 0 && (
-                <button 
-                  className="mt-2 text-xs font-medium text-left" 
-                  style={{ color: colors.primary.default }}
-                  onClick={() => router.push(`/events/${event.id}/budget`)}
-                >
-                  Set up budget →
-                </button>
-              )}
-            </div>
+            )}
           </CompactCard>
           
-          <CompactCard title="Participants" value={participants.length}>
+          <CompactCard title="Participants" value={participants.length.toString()}>
             {participants.length > 0 ? (
               <div className="flex flex-col w-full">
-                <div className="h-1 w-full rounded-full overflow-hidden" style={{ backgroundColor: colors.border.subtle }}>
+                <div className="h-1 w-full rounded-full overflow-hidden bg-theme-border-subtle">
                   <div 
-                    className="h-full rounded-full" 
+                    className="h-full rounded-full bg-theme-primary" 
                     style={{ 
-                      backgroundColor: colors.primary.default, 
                       width: event.attendeeCount ? `${Math.min(100, (participants.length / event.attendeeCount) * 100)}%` : '0%' 
                     }}
                   ></div>
                 </div>
-                <span className="text-[10px] mt-1" style={{ color: colors.text.tertiary }}>
+                <span className="text-[10px] mt-1 text-theme-text-tertiary">
                   {event.attendeeCount ? `${Math.round((participants.length / event.attendeeCount) * 100)}% of capacity` : 'No capacity set'}
                 </span>
               </div>
             ) : (
-              <span className="text-xs" style={{ color: colors.text.tertiary }}>No participants yet</span>
+              <span className="text-xs text-theme-text-tertiary">No participants yet</span>
             )}
           </CompactCard>
         </div>
         
         {/* Status-Based Action Items - Linear-inspired workflow */}
-        <div className="rounded-md p-4 mt-4" style={{ 
-          backgroundColor: colors.background.card,
-          borderColor: colors.border.subtle,
-          borderWidth: '1px'
-        }}>
-          <h3 className="text-sm font-medium mb-3" style={{ color: colors.text.secondary }}>
+        <div className="rounded-md p-4 mt-4 bg-theme-bg-card border border-theme-border-subtle">
+          <h3 className="text-sm font-medium mb-3 text-theme-text-secondary">
             Next Steps
           </h3>
           
@@ -771,8 +682,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               <>
                 <Link 
                   href={`/en/events/${event.id}/timeline/add`}
-                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-800"
-                  style={{ color: colors.text.secondary }}
+                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-theme-bg-hover text-theme-text-secondary"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -781,8 +691,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 </Link>
                 <Link 
                   href={`/en/events/${event.id}/vendors`}
-                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-800"
-                  style={{ color: colors.text.secondary }}
+                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-theme-bg-hover text-theme-text-secondary"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -796,8 +705,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               <>
                 <Link 
                   href={`/en/events/${event.id}/participants`}
-                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-800"
-                  style={{ color: colors.text.secondary }}
+                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-theme-bg-hover text-theme-text-secondary"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -806,8 +714,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 </Link>
                 <Link 
                   href={`/en/events/${event.id}/budget`}
-                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-800"
-                  style={{ color: colors.text.secondary }}
+                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-theme-bg-hover text-theme-text-secondary"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -821,8 +728,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
               <>
                 <Link 
                   href={`/en/events/${event.id}/timeline`}
-                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-800"
-                  style={{ color: colors.text.secondary }}
+                  className="flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-theme-bg-hover text-theme-text-secondary"
                 >
                   <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -833,8 +739,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
             )}
             
             {event.status === 'completed' && (
-              <div className="flex items-center px-3 py-2 text-sm rounded-md"
-                style={{ color: colors.text.tertiary }}>
+              <div className="flex items-center px-3 py-2 text-sm rounded-md text-theme-text-tertiary">
                 <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>

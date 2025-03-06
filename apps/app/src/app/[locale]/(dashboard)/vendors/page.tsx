@@ -3,9 +3,8 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import type { Vendor } from '@/types/vendor';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useQueryState, parseAsString, parseAsBoolean } from 'nuqs';
-import { colors } from '@/styles/colors';
 
 // Filter state interface
 interface VendorFilters {
@@ -49,6 +48,8 @@ const priceOptions = {
 
 function VendorsPage() {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   
   // State for API data
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -354,22 +355,35 @@ function VendorsPage() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6" style={{ backgroundColor: colors.background.page }}>
+    <div className="w-full max-w-7xl mx-auto p-6 bg-theme-bg-page">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold" style={{ color: colors.text.primary }}>Vendors</h1>
-        <Link 
-          href="/en/vendors/add"
-          className="px-4 py-2 bg-[#5E6AD2] text-white rounded-md text-sm font-medium hover:bg-[#6872E5] transition-all duration-200 border border-transparent hover:border-[#8D95F2] shadow-[0_2px_4px_rgba(0,0,0,0.08),0_1px_2px_rgba(94,106,210,0.2)]"
-        >
-          Add Vendor
-        </Link>
+        <h1 className="text-2xl font-semibold text-theme-text-primary">Vendors</h1>
+        <div className="flex space-x-3">
+          <Link 
+            href="/en/vendors/discover"
+            className="px-4 py-2 bg-theme-bg-card text-theme-text-primary rounded-md text-sm font-medium hover:bg-theme-bg-hover transition-colors duration-200 border border-theme-border-subtle hover:border-theme-border-strong"
+          >
+            <span className="flex items-center">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
+                <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+              </svg>
+              Discover
+            </span>
+          </Link>
+          <Link 
+            href="/en/vendors/add"
+            className="px-4 py-2 bg-theme-primary text-white rounded-md text-sm font-medium hover:bg-theme-primary-hover transition-colors duration-200 border border-transparent"
+          >
+            Add Vendor
+          </Link>
+        </div>
       </div>
 
       {/* Filter bar */}
-      <div className="flex flex-wrap items-center mb-6 pb-3" style={{ borderBottomColor: colors.border.subtle, borderBottomWidth: '1px' }}>
+      <div className="flex flex-wrap items-center mb-6 pb-3 border-b border-theme-border-subtle">
         {/* Search input - Left aligned */}
         <div className="relative flex-grow max-w-sm mr-3">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" style={{ color: colors.text.tertiary }}>
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-theme-text-tertiary">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
             </svg>
@@ -378,20 +392,14 @@ function VendorsPage() {
             value={searchQuery || ''}
             onChange={handleUpdateSearch}
             type="text"
-            className="w-full rounded-md pl-10 pr-12 py-1.5 text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2]"
-            style={{ 
-              backgroundColor: colors.background.input,
-              borderColor: colors.border.subtle,
-              borderWidth: '1px',
-              color: colors.text.primary
-            }}
-            placeholder="Search vendors..."
+            className="w-full rounded-md pl-10 pr-12 py-1.5 text-sm bg-theme-bg-input border border-theme-border-subtle text-theme-text-primary placeholder-theme-text-tertiary focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary"
+            placeholder="Search vendors or locations..."
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 hover:text-white"
-              style={{ color: colors.text.tertiary }}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-theme-text-tertiary hover:text-theme-text-secondary"
+              aria-label="Clear search"
             >
               <svg width="12" height="12" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
@@ -402,208 +410,246 @@ function VendorsPage() {
         
         <div className="flex items-center gap-2">
           {/* Category filter */}
-          <div className="relative" ref={setDropdownRef('category')} data-dropdown>
+          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('category')}>
             <button
               onClick={(e) => toggleDropdown('category', e)}
-              className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors
-                ${categoryFilter ? 'text-white bg-[#1F1F1F] border border-[#2D2D2D]' : 'text-gray-400 hover:text-white'}`}
+              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                categoryFilter 
+                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+              }`}
             >
-              Category
-              {categoryFilter && (
-                <>
-                  <span className="ml-1 text-white">:</span>
-                  <span className="ml-1 text-[#5E6AD2]">{getCategoryName(categoryFilter)}</span>
-                </>
-              )}
+              <span>
+                {categoryFilter ? categoryOptions[categoryFilter as keyof typeof categoryOptions] : 'Category'}
+              </span>
               <svg 
-                width="12" 
-                height="12" 
+                className="ml-1 w-4 h-4" 
                 viewBox="0 0 15 15" 
                 fill="none" 
-                xmlns="http://www.w3.org/2000/svg" 
-                className={`ml-1 ${openDropdown === 'category' ? 'rotate-180' : ''}`}
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" />
+                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
               </svg>
             </button>
+            
+            {/* Dropdown menu */}
             {openDropdown === 'category' && (
-              <div className="absolute top-full left-0 mt-1 w-48 bg-[#1A1A1A] border border-[#262626] rounded-md shadow-lg z-10">
-                {Object.keys(categoryOptions).map((value) => (
-                  <button
-                    key={value}
-                    className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between
-                      ${categoryFilter === value ? 'text-white bg-[#232323]' : 'text-gray-400 hover:bg-[#232323] hover:text-white'}`}
-                    onClick={() => {
-                      setCategoryFilter(value === categoryFilter ? null : value);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {getCategoryName(value)}
-                    {categoryFilter === value && (
-                      <svg width="12" height="12" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                      </svg>
-                    )}
-                  </button>
-                ))}
+              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
+                <div className="py-1">
+                  {/* Category options */}
+                  {Object.entries(categoryOptions).map(([key, label]) => (
+                    <button
+                      key={key}
+                      onClick={() => { 
+                        setCategoryFilter(prev => prev === key ? null : key); 
+                        setOpenDropdown(null);
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm ${
+                        categoryFilter === key
+                          ? 'bg-theme-primary-light text-theme-primary'
+                          : 'text-theme-text-secondary hover:bg-theme-bg-hover'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                  
+                  {/* Clear filter option - only show if filter is active */}
+                  {categoryFilter && (
+                    <>
+                      <div className="border-t border-theme-border-subtle my-1"></div>
+                      <button
+                        onClick={() => { 
+                          setCategoryFilter(null); 
+                          setOpenDropdown(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-hover"
+                      >
+                        Clear filter
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
           {/* Capacity filter */}
-          <div className="relative" ref={setDropdownRef('capacity')} data-dropdown>
+          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('capacity')}>
             <button
               onClick={(e) => toggleDropdown('capacity', e)}
-              className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors
-                ${capacityFilter ? 'text-white bg-[#1F1F1F] border border-[#2D2D2D]' : 'text-gray-400 hover:text-white'}`}
+              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                capacityFilter 
+                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+              }`}
             >
-              Capacity
-              {capacityFilter && (
-                <>
-                  <span className="ml-1 text-white">:</span>
-                  <span className="ml-1 text-[#5E6AD2]">{getCapacityName(capacityFilter)}</span>
-                </>
-              )}
+              <span>
+                {capacityFilter ? getCapacityName(capacityFilter) : 'Capacity'}
+              </span>
               <svg 
-                width="12" 
-                height="12" 
+                className="ml-1 w-4 h-4" 
                 viewBox="0 0 15 15" 
                 fill="none" 
-                xmlns="http://www.w3.org/2000/svg" 
-                className={`ml-1 ${openDropdown === 'capacity' ? 'rotate-180' : ''}`}
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" />
+                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
               </svg>
             </button>
+            
+            {/* Dropdown menu */}
             {openDropdown === 'capacity' && (
-              <div className="absolute top-full left-0 mt-1 w-48 bg-[#1A1A1A] border border-[#262626] rounded-md shadow-lg z-10">
-                {Object.entries(capacityOptions).map(([value, label]) => (
-                  <button
-                    key={value}
-                    className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between
-                      ${capacityFilter === value ? 'text-white bg-[#232323]' : 'text-gray-400 hover:bg-[#232323] hover:text-white'}`}
-                    onClick={() => {
-                      setCapacityFilter(value === capacityFilter ? null : value);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {label}
-                    {capacityFilter === value && (
-                      <svg width="12" height="12" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                      </svg>
-                    )}
-                  </button>
-                ))}
+              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
+                <div className="py-1">
+                  {/* Capacity options */}
+                  {Object.entries(capacityOptions).map(([key, label]) => (
+                    <button
+                      key={key}
+                      onClick={() => { 
+                        setCapacityFilter(prev => prev === key ? null : key); 
+                        setOpenDropdown(null);
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm ${
+                        capacityFilter === key
+                          ? 'bg-theme-primary-light text-theme-primary'
+                          : 'text-theme-text-secondary hover:bg-theme-bg-hover'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                  
+                  {/* Clear filter option - only show if filter is active */}
+                  {capacityFilter && (
+                    <>
+                      <div className="border-t border-theme-border-subtle my-1"></div>
+                      <button
+                        onClick={() => { 
+                          setCapacityFilter(null); 
+                          setOpenDropdown(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-hover"
+                      >
+                        Clear filter
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
           {/* Price filter */}
-          <div className="relative" ref={setDropdownRef('price')} data-dropdown>
+          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('price')}>
             <button
               onClick={(e) => toggleDropdown('price', e)}
-              className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors
-                ${priceFilter ? 'text-white bg-[#1F1F1F] border border-[#2D2D2D]' : 'text-gray-400 hover:text-white'}`}
+              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                priceFilter 
+                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+              }`}
             >
-              Price
-              {priceFilter && (
-                <>
-                  <span className="ml-1 text-white">:</span>
-                  <span className="ml-1 text-[#5E6AD2]">{getPriceName(priceFilter)}</span>
-                </>
-              )}
+              <span>
+                {priceFilter ? getPriceName(priceFilter) : 'Price'}
+              </span>
               <svg 
-                width="12" 
-                height="12" 
+                className="ml-1 w-4 h-4" 
                 viewBox="0 0 15 15" 
                 fill="none" 
-                xmlns="http://www.w3.org/2000/svg" 
-                className={`ml-1 ${openDropdown === 'price' ? 'rotate-180' : ''}`}
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" />
+                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
               </svg>
             </button>
+            
+            {/* Dropdown menu */}
             {openDropdown === 'price' && (
-              <div className="absolute top-full left-0 mt-1 w-48 bg-[#1A1A1A] border border-[#262626] rounded-md shadow-lg z-10">
-                {Object.entries(priceOptions).map(([value, label]) => (
-                  <button
-                    key={value}
-                    className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between
-                      ${priceFilter === value ? 'text-white bg-[#232323]' : 'text-gray-400 hover:bg-[#232323] hover:text-white'}`}
-                    onClick={() => {
-                      setPriceFilter(value === priceFilter ? null : value);
-                      setOpenDropdown(null);
-                    }}
-                  >
-                    {label}
-                    {priceFilter === value && (
-                      <svg width="12" height="12" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                      </svg>
-                    )}
-                  </button>
-                ))}
+              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
+                <div className="py-1">
+                  {/* Price options */}
+                  {Object.entries(priceOptions).map(([key, label]) => (
+                    <button
+                      key={key}
+                      onClick={() => { 
+                        setPriceFilter(prev => prev === key ? null : key); 
+                        setOpenDropdown(null);
+                      }}
+                      className={`block w-full text-left px-4 py-2 text-sm ${
+                        priceFilter === key
+                          ? 'bg-theme-primary-light text-theme-primary'
+                          : 'text-theme-text-secondary hover:bg-theme-bg-hover'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                  
+                  {/* Clear filter option - only show if filter is active */}
+                  {priceFilter && (
+                    <>
+                      <div className="border-t border-theme-border-subtle my-1"></div>
+                      <button
+                        onClick={() => { 
+                          setPriceFilter(null); 
+                          setOpenDropdown(null);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-hover"
+                      >
+                        Clear filter
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
 
           {/* Favorites filter */}
-          <div className="relative" ref={setDropdownRef('favorites')} data-dropdown>
+          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('favorites')}>
             <button
               onClick={(e) => toggleDropdown('favorites', e)}
-              className={`px-3 py-1.5 rounded-md text-sm flex items-center gap-1.5 transition-colors
-                ${showFavorites || prioritizeFavorites ? 'text-white bg-[#1F1F1F] border border-[#2D2D2D]' : 'text-gray-400 hover:text-white'}`}
+              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                showFavorites || prioritizeFavorites
+                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+              }`}
             >
-              Favorites
-              {(showFavorites || prioritizeFavorites) && (
-                <>
-                  <span className="ml-1 text-white">:</span>
-                  <span className="ml-1 text-[#5E6AD2]">
-                    {showFavorites ? 'Show Only' : ''}
-                    {showFavorites && prioritizeFavorites ? ' + ' : ''}
-                    {prioritizeFavorites ? 'Sort First' : ''}
-                  </span>
-                </>
-              )}
+              <span>
+                {showFavorites || prioritizeFavorites ? 'Show Favorites Only' : 'Favorites'}
+              </span>
               <svg 
-                width="12" 
-                height="12" 
+                className="ml-1 w-4 h-4" 
                 viewBox="0 0 15 15" 
                 fill="none" 
-                xmlns="http://www.w3.org/2000/svg" 
-                className={`ml-1 ${openDropdown === 'favorites' ? 'rotate-180' : ''}`}
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" />
+                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
               </svg>
             </button>
+            
+            {/* Dropdown menu */}
             {openDropdown === 'favorites' && (
-              <div className="absolute top-full left-0 mt-1 w-48 bg-[#1A1A1A] border border-[#262626] rounded-md shadow-lg z-10">
-                <button
-                  className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between
-                    ${showFavorites ? 'text-white bg-[#232323]' : 'text-gray-400 hover:bg-[#232323] hover:text-white'}`}
-                  onClick={toggleShowFavoritesOnly}
-                >
-                  Show Favorites Only
-                  {showFavorites && (
-                    <svg width="12" height="12" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                    </svg>
-                  )}
-                </button>
-                <div className="w-full border-t border-[#262626]"></div>
-                <button
-                  className={`w-full px-3 py-2 text-left text-sm flex items-center justify-between
-                    ${prioritizeFavorites ? 'text-white bg-[#232323]' : 'text-gray-400 hover:bg-[#232323] hover:text-white'}`}
-                  onClick={togglePrioritizeFavorites}
-                >
-                  Sort Favorites First
-                  {prioritizeFavorites && (
-                    <svg width="12" height="12" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M11.4669 3.72684C11.7558 3.91574 11.8369 4.30308 11.648 4.59198L7.39799 11.092C7.29783 11.2452 7.13556 11.3467 6.95402 11.3699C6.77247 11.3931 6.58989 11.3355 6.45446 11.2124L3.70446 8.71241C3.44905 8.48022 3.43023 8.08494 3.66242 7.82953C3.89461 7.57412 4.28989 7.55529 4.5453 7.78749L6.75292 9.79441L10.6018 3.90792C10.7907 3.61902 11.178 3.53795 11.4669 3.72684Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-                    </svg>
-                  )}
-                </button>
+              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
+                <div className="py-1">
+                  {/* Favorites options */}
+                  <button
+                    onClick={toggleShowFavoritesOnly}
+                    className={`block w-full text-left px-4 py-2 text-sm ${
+                      showFavorites ? 'bg-theme-primary-light text-theme-primary' : 'text-theme-text-secondary hover:bg-theme-bg-hover'
+                    }`}
+                  >
+                    Show Favorites Only
+                  </button>
+                  <div className="border-t border-theme-border-subtle my-1"></div>
+                  <button
+                    onClick={togglePrioritizeFavorites}
+                    className={`block w-full text-left px-4 py-2 text-sm ${
+                      prioritizeFavorites ? 'bg-theme-primary-light text-theme-primary' : 'text-theme-text-secondary hover:bg-theme-bg-hover'
+                    }`}
+                  >
+                    Sort Favorites First
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -612,7 +658,7 @@ function VendorsPage() {
           {(searchQuery || categoryFilter || capacityFilter || priceFilter || showFavorites || prioritizeFavorites) && (
             <button
               onClick={clearAllFilters}
-              className="ml-2 text-sm text-[#5E6AD2] hover:text-[#6872E5] transition-colors"
+              className="ml-2 text-sm text-theme-primary hover:text-theme-primary transition-colors"
             >
               Clear all
             </button>
@@ -628,202 +674,182 @@ function VendorsPage() {
         </div>
       )}
 
-      {/* Loading State - Enhance with subtle shadow */}
-      {isLoading ? (
-        <div className="py-12 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5E6AD2] shadow-[0_0_10px_rgba(94,106,210,0.2)]"></div>
-        </div>
-      ) : filteredVendors.length === 0 ? (
-        // Empty state - Updated for color consistency
-        <div className="flex flex-col items-center justify-center h-56 border rounded-lg" 
-             style={{ borderColor: colors.border.subtle, backgroundColor: colors.background.card }}>
-          {vendors.length === 0 ? (
-            <>
-              <p className="mb-4" style={{ color: colors.text.secondary }}>No vendors found</p>
-              <p className="text-sm mb-6" style={{ color: colors.text.tertiary }}>Add your first vendor to get started</p>
-              <Link 
-                href="/en/vendors/add"
-                className="px-4 py-2 text-sm inline-flex items-center rounded-md transition-colors"
-                style={{
-                  backgroundColor: colors.background.hover,
-                  color: colors.text.secondary,
-                  borderColor: colors.border.subtle,
-                  borderWidth: '1px'
-                }}
-              >
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-                  <path d="M6 2V10M2 6H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Add Vendor
-              </Link>
-            </>
-          ) : (
-            <>
-              <p className="mb-4" style={{ color: colors.text.secondary }}>No matching vendors</p>
-              <p className="text-sm" style={{ color: colors.text.tertiary }}>Try adjusting your search or filters</p>
-            </>
-          )}
-        </div>
-      ) : (
-        // Table View - Updated for color consistency
-        <div className="border rounded-md overflow-hidden shadow-sm" 
-             style={{ borderColor: colors.border.subtle, backgroundColor: colors.background.card }}>
-          {/* Table Header */}
-          <div className="grid grid-cols-10 text-left border-b" style={{ borderColor: colors.border.subtle }}>
-            <div 
-              className="col-span-4 px-4 py-3 cursor-pointer hover:bg-[#161616]/80 transition-all duration-150 flex items-center group"
-              onClick={() => handleSort('name')}
-              role="button"
-              aria-sort={sortField === 'name' 
-                ? (sortDirection === 'asc' ? 'ascending' : 'descending') 
-                : 'none'}
-            >
-              <span className="text-[13px] font-medium" style={{ color: colors.text.tertiary }}>Name</span>
-              <svg 
-                className={`ml-1 w-3.5 h-3.5 transition-all duration-150 ${
-                  sortField === 'name' 
-                    ? 'text-gray-400' 
-                    : 'text-gray-500 opacity-0 group-hover:opacity-50'
-                }`} 
-                viewBox="0 0 14 14" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {sortField === 'name' && sortDirection === 'desc' ? (
-                  <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                ) : (
-                  <path d="M3 9L7 5L11 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                )}
-              </svg>
-            </div>
-            <div className="col-span-2 px-4 py-3">
-              <span className="text-[13px] font-medium" style={{ color: colors.text.tertiary }}>Category</span>
-            </div>
-            <div 
-              className="col-span-2 px-4 py-3 cursor-pointer hover:bg-[#161616]/80 transition-all duration-150 flex items-center group"
-              onClick={() => handleSort('capacity')}
-              role="button"
-              aria-sort={sortField === 'capacity' 
-                ? (sortDirection === 'asc' ? 'ascending' : 'descending') 
-                : 'none'}
-            >
-              <span className="text-[13px] font-medium" style={{ color: colors.text.tertiary }}>Capacity</span>
-              <svg 
-                className={`ml-1 w-3.5 h-3.5 transition-all duration-150 ${
-                  sortField === 'capacity' 
-                    ? 'text-gray-400' 
-                    : 'text-gray-500 opacity-0 group-hover:opacity-50'
-                }`} 
-                viewBox="0 0 14 14" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {sortField === 'capacity' && sortDirection === 'desc' ? (
-                  <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                ) : (
-                  <path d="M3 9L7 5L11 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                )}
-              </svg>
-            </div>
-            <div 
-              className="col-span-2 px-4 py-3 cursor-pointer hover:bg-[#161616]/80 transition-all duration-150 flex items-center group"
-              onClick={() => handleSort('priceTier')}
-              role="button"
-              aria-sort={sortField === 'priceTier' 
-                ? (sortDirection === 'asc' ? 'ascending' : 'descending') 
-                : 'none'}
-            >
-              <span className="text-[13px] font-medium" style={{ color: colors.text.tertiary }}>Price</span>
-              <svg 
-                className={`ml-1 w-3.5 h-3.5 transition-all duration-150 ${
-                  sortField === 'priceTier' 
-                    ? 'text-gray-400' 
-                    : 'text-gray-500 opacity-0 group-hover:opacity-50'
-                }`} 
-                viewBox="0 0 14 14" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {sortField === 'priceTier' && sortDirection === 'desc' ? (
-                  <path d="M3 5L7 9L11 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                ) : (
-                  <path d="M3 9L7 5L11 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                )}
-              </svg>
-            </div>
+      {/* Loading State */}
+      {isLoading && (
+        <div className="py-12 text-center">
+          <div className="mx-auto w-16 h-16 mb-4 flex items-center justify-center">
+            <svg className="animate-spin h-8 w-8 text-theme-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
           </div>
-          
-          {/* Table Rows */}
-          {filteredVendors.map((vendor) => (
-            <Link
-              key={vendor.id}
-              href={`/en/vendors/${vendor.id}`}
-              className="grid grid-cols-10 text-left border-b border-[#1F1F1F] hover:bg-[#161616]/80 transition-all duration-150 cursor-pointer"
-            >
-              <div className="col-span-4 px-4 py-3">
-                <div className="flex items-center">
-                  {vendor.isFavorite ? (
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleFavorite(vendor);
-                      }}
-                      className="mr-2 text-[#5E6AD2] hover:opacity-80 transition-opacity relative group"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
-                      </svg>
-                      <span className="absolute left-0 top-full mt-1 whitespace-nowrap bg-[#222222] text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-10">
-                        Remove from favorites
-                      </span>
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        toggleFavorite(vendor);
-                      }}
-                      className="mr-2 text-gray-500 hover:text-gray-300 transition-colors relative group"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
-                      </svg>
-                      <span className="absolute left-0 top-full mt-1 whitespace-nowrap bg-[#222222] text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none z-10">
-                        Add to favorites
-                      </span>
-                    </button>
-                  )}
-                  <div>
-                    <span className="font-medium text-white">{vendor.name}</span>
-                    {vendor.location && (
-                      <div className="text-xs text-gray-500 mt-1">{vendor.location}</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="col-span-2 px-4 py-3">
-                <span className="text-gray-400 capitalize">{vendor.category}</span>
-              </div>
-              <div className="col-span-2 px-4 py-3">
-                <span className="text-gray-400">{vendor.capacity || '—'}</span>
-              </div>
-              <div className="col-span-2 px-4 py-3">
-                <div className="inline-flex px-2 py-1 bg-[#1A1A1A]/90 border border-[#2A2A2A] rounded text-xs text-gray-400 shadow-[0_1px_2px_rgba(0,0,0,0.06)] backdrop-blur-[1px]">
-                  {Array(vendor.priceTier).fill('$').join('')}
-                </div>
-              </div>
-            </Link>
-          ))}
+          <h3 className="text-lg font-medium text-theme-text-primary">Loading vendors</h3>
+          <p className="mt-1 text-theme-text-secondary">Please wait while we fetch your vendor data.</p>
         </div>
       )}
-      
+
       {/* Results Summary */}
       {!isLoading && filteredVendors.length > 0 && (
-        <div className="mt-4 text-xs text-gray-500">
+        <div className="mt-4 text-xs text-theme-text-tertiary">
           Showing {filteredVendors.length} vendor{filteredVendors.length !== 1 ? 's' : ''}
           {(searchQuery || categoryFilter || capacityFilter || priceFilter) && ' matching your filters'}
+        </div>
+      )}
+
+      {/* Vendor Table View */}
+      {!isLoading && filteredVendors.length > 0 && (
+        <div className="mt-6 border rounded-md overflow-hidden shadow-sm border-theme-border-subtle bg-theme-bg-card">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b border-theme-border-subtle">
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Vendor</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Category</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Location</th>
+                <th className="text-left px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-theme-text-tertiary">Price</th>
+                <th className="w-5"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredVendors.map((vendor) => (
+                <tr 
+                  key={vendor.id}
+                  onClick={() => router.push(`/${locale}/vendors/${vendor.id}`)}
+                  className="border-t border-theme-border-subtle hover:bg-theme-bg-hover transition-colors duration-150 cursor-pointer group relative"
+                  tabIndex={0}
+                  role="link"
+                  aria-label={`View details for ${vendor.name}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(`/${locale}/vendors/${vendor.id}`);
+                    }
+                  }}
+                >
+                  <td className="px-4 py-3">
+                    <div className="flex items-center">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(vendor);
+                        }}
+                        className={`mr-2 p-1.5 rounded-full ${
+                          vendor.isFavorite
+                            ? 'text-theme-primary'
+                            : 'text-theme-text-tertiary group-hover:text-theme-text-secondary'
+                        }`}
+                        aria-label={vendor.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill={vendor.isFavorite ? 'currentColor' : 'none'}
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                      </button>
+                      <div>
+                        <div className="font-medium text-theme-text-primary">{vendor.name}</div>
+                        {vendor.contactName && (
+                          <div className="text-sm text-theme-text-secondary mt-0.5">
+                            {vendor.contactName}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-theme-text-secondary">
+                    <span className="capitalize">{vendor.category}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <div className="text-theme-text-secondary">
+                        {vendor.location || 'No location specified'}
+                      </div>
+                      {vendor.capacity && vendor.capacity > 0 && (
+                        <div className="flex items-center text-xs mt-1 text-theme-text-tertiary">
+                          <svg className="mr-1" width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                            <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                          {vendor.capacity}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-theme-text-secondary">
+                    {'$'.repeat(vendor.priceTier)}
+                    <span className="text-theme-text-tertiary">{'$'.repeat(4 - vendor.priceTier)}</span>
+                    
+                    {vendor.rating && (
+                      <div className="flex items-center text-xs mt-1 text-theme-text-tertiary">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          stroke="none"
+                          className="mr-1"
+                        >
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        {vendor.rating}/5
+                      </div>
+                    )}
+                  </td>
+                  
+                  {/* Linear-style subtle chevron that appears on hover/focus */}
+                  <td className="w-5 opacity-0 group-hover:opacity-40 focus-within:opacity-40 transition-opacity duration-150">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-theme-text-tertiary">
+                      <path d="M6 12l4-4-4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && filteredVendors.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-12 mt-6 border border-theme-border-subtle rounded-lg bg-theme-bg-card">
+          <svg
+            className="w-12 h-12 mb-3 text-theme-text-tertiary"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+              d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
+            />
+            <polyline strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" points="17 21 17 13 7 13 7 21" />
+            <polyline strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" points="7 3 7 8 15 8" />
+          </svg>
+          <h3 className="text-lg font-medium text-theme-text-primary mb-1">No vendors found</h3>
+          <p className="text-theme-text-secondary text-center max-w-sm">
+            {vendors.length > 0
+              ? "Try adjusting your filters to see more results."
+              : "You haven't added any vendors yet. Get started by adding your first vendor."}
+          </p>
+          {vendors.length === 0 && (
+            <Link
+              href="/en/vendors/add"
+              className="mt-4 px-4 py-2 bg-theme-primary text-white rounded-md text-sm font-medium hover:bg-theme-primary-hover transition-colors duration-200"
+            >
+              Add Vendor
+            </Link>
+          )}
         </div>
       )}
     </div>

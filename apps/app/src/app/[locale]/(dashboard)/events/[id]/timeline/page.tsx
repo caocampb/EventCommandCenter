@@ -146,7 +146,7 @@ export default async function TimelinePage({ params }: { params: { id: string } 
       <div className="mb-6">
         <Link 
           href={`/en/events/${params.id}`} 
-          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-3 transition-colors duration-120"
+          className="inline-flex items-center text-sm text-text-tertiary hover:text-text-primary mb-3 transition-colors duration-120"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -157,7 +157,7 @@ export default async function TimelinePage({ params }: { params: { id: string } 
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-xl font-semibold mb-1">Timeline</h1>
-            <p className="text-gray-400 text-[15px]">
+            <p className="text-text-tertiary text-[15px]">
               Timeline for {event.name}
             </p>
           </div>
@@ -167,7 +167,7 @@ export default async function TimelinePage({ params }: { params: { id: string } 
             )}
             <Link 
               href={`/en/events/${params.id}/timeline/add`}
-              className="px-3 py-2 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-white font-medium rounded-md transition-colors duration-120 border border-[#333333] hover:border-[#444444] inline-flex items-center shadow-sm"
+              className="px-3 py-2 bg-bg-tertiary hover:bg-bg-hover text-sm text-text-primary font-medium rounded-md transition-colors duration-120 border border-border-primary hover:border-border-strong inline-flex items-center shadow-sm"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -191,7 +191,7 @@ export default async function TimelinePage({ params }: { params: { id: string } 
       <div className="space-y-6">
         {dateEntries.length > 0 ? (
           dateEntries.map(([dateStr, blocks]) => (
-            <div key={dateStr} className="border-t border-[#1F1F1F] pt-6 first:border-t-0 first:pt-0">
+            <div key={dateStr} className="border-t border-border-primary pt-6 first:border-t-0 first:pt-0">
               <TimelineViewVertical
                 blocks={blocks}
                 dateKey={dateStr}
@@ -200,11 +200,11 @@ export default async function TimelinePage({ params }: { params: { id: string } 
             </div>
           ))
         ) : (
-          <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-6 text-center shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-            <p className="text-gray-400 mb-4">No timeline blocks added yet</p>
+          <div className="bg-bg-secondary border border-border-primary rounded-md p-6 text-center shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+            <p className="text-text-tertiary mb-4">No timeline blocks added yet</p>
             <Link
               href={`/en/events/${params.id}/timeline/add`}
-              className="px-3 py-1.5 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-gray-400 hover:text-white font-medium rounded transition-colors duration-120 border border-[#333333] inline-flex items-center"
+              className="px-3 py-1.5 bg-bg-tertiary hover:bg-bg-hover text-sm text-text-tertiary hover:text-text-primary font-medium rounded transition-colors duration-120 border border-border-primary inline-flex items-center"
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-1.5">
                 <path d="M12 5v14M5 12h14"/>

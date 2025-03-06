@@ -41,7 +41,7 @@ export function ExportRunOfShowButton({
     <button
       onClick={handleExport}
       disabled={isGenerating || blocks.length === 0}
-      className="px-3 py-2 bg-[#1E1E1E] hover:bg-[#2A2A2A] text-sm text-white font-medium rounded-md transition-colors duration-120 border border-[#333333] hover:border-[#444444] inline-flex items-center shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      className="px-3 py-2 bg-bg-tertiary hover:bg-bg-hover text-sm text-text-primary font-medium rounded-md transition-colors duration-120 border border-border-primary hover:border-border-strong inline-flex items-center shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
       title={blocks.length === 0 ? 'Add timeline blocks first' : 'Generate Run of Show PDF'}
     >
       <svg 

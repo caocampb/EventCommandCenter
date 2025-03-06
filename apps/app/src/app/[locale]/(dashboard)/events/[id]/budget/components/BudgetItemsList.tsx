@@ -1,7 +1,6 @@
 'use client';
 
 import type { BudgetItem } from '@/types/budget';
-import { colors } from '@/styles/colors';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { formatCurrency } from '@/lib/utils';
@@ -123,9 +122,9 @@ export function BudgetItemsList({
   };
   
   return (
-    <div className="border border-[#1F1F1F] rounded-md overflow-hidden" style={{ backgroundColor: colors.background.card }}>
-      <div className="p-5 border-b border-[#1F1F1F] flex justify-between items-center">
-        <h2 className="text-[15px] font-medium text-white">Budget Items</h2>
+    <div className="border border-border-primary rounded-md overflow-hidden bg-bg-secondary">
+      <div className="p-5 border-b border-border-primary flex justify-between items-center">
+        <h2 className="text-[15px] font-medium text-text-primary">Budget Items</h2>
         
         {/* Action buttons container */}
         <div className="flex items-center gap-3">
@@ -139,8 +138,8 @@ export function BudgetItemsList({
                 }}
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-md transition-colors duration-120 ${
                   activeFilters.length > 0 
-                    ? 'bg-[#1C1C1C] text-white border border-[#333333]' 
-                    : 'text-gray-400 hover:text-gray-200 transition-colors duration-150'
+                    ? 'bg-bg-tertiary text-text-primary border border-border-primary' 
+                    : 'text-text-tertiary hover:text-text-primary transition-colors duration-150'
                 }`}
               >
                 <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -151,19 +150,19 @@ export function BudgetItemsList({
                 </svg>
                 Filter
                 {activeFilters.length > 0 && (
-                  <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full bg-[#5E6AD2] text-white">
+                  <span className="ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full bg-primary-default text-white">
                     {activeFilters.length}
                   </span>
                 )}
               </button>
               
               {isFilterDropdownOpen && (
-                <div className="absolute top-full right-0 mt-2 w-64 bg-[#1C1C1C] border border-[#333333] rounded-md shadow-lg overflow-hidden z-10">
-                  <div className="p-3 border-b border-[#333333] flex justify-between items-center">
-                    <h3 className="text-[13px] font-medium text-white">Filter by Category</h3>
+                <div className="absolute top-full right-0 mt-2 w-64 bg-bg-tertiary border border-border-primary rounded-md shadow-lg overflow-hidden z-10">
+                  <div className="p-3 border-b border-border-primary flex justify-between items-center">
+                    <h3 className="text-[13px] font-medium text-text-primary">Filter by Category</h3>
                     <button 
                       onClick={clearAllFilters}
-                      className="text-[12px] text-[#5E6AD2] hover:text-[#6872E5]"
+                      className="text-[12px] text-primary-default hover:text-primary-hover"
                     >
                       Clear all
                     </button>
@@ -173,14 +172,14 @@ export function BudgetItemsList({
                       <button
                         key={category}
                         className={`flex items-center w-full px-3 py-2 text-left text-[13px] ${
-                          isFilterActive(category) ? 'text-white bg-[#2D2D2D]' : 'text-gray-400 hover:bg-[#232323]'
+                          isFilterActive(category) ? 'text-text-primary bg-bg-hover' : 'text-text-tertiary hover:bg-bg-hover/50'
                         }`}
                         onClick={() => toggleCategoryFilter(category)}
                       >
                         <div className={`w-4 h-4 mr-2 rounded border flex items-center justify-center ${
                           isFilterActive(category) 
-                            ? 'bg-[#5E6AD2] border-[#5E6AD2]' 
-                            : 'border-[#444444]'
+                            ? 'bg-primary-default border-primary-default' 
+                            : 'border-border-strong'
                         }`}>
                           {isFilterActive(category) && (
                             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">

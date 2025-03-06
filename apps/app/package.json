@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.758.0",
     "@hookform/resolvers": "^4.1.2",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@v1/analytics": "workspace:*",
@@ -28,6 +29,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.2",
+    "sonner": "^2.0.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
