@@ -17,16 +17,13 @@ import { AddBudgetItemForm } from './components/AddBudgetItemForm';
 import { BudgetItemsList } from './components/BudgetItemsList';
 import { ExportMenu } from './components/ExportMenu';
 
-// Import colors
-import { colors } from '@/styles/colors';
-
 // Load state components
 function LoadingState() {
     return (
       <div className="w-full max-w-3xl mx-auto p-6">
         <div className="flex items-center space-x-4">
-          <div className="h-5 w-5 animate-spin rounded-full border-b-2" style={{ borderColor: colors.primary.default }}></div>
-          <p className="text-gray-400">Loading budget data...</p>
+          <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-primary-default"></div>
+          <p className="text-text-tertiary">Loading budget data...</p>
         </div>
       </div>
     );
@@ -38,7 +35,7 @@ function ErrorState({ error, eventId }: { error: string, eventId: string }) {
         <div className="mb-6">
           <Link 
             href={`/en/events/${eventId}`}
-            className="inline-flex items-center text-sm text-gray-400 hover:text-white transition-colors duration-150"
+            className="inline-flex items-center text-sm text-text-tertiary hover:text-text-primary transition-colors duration-150"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
               <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -47,7 +44,7 @@ function ErrorState({ error, eventId }: { error: string, eventId: string }) {
           </Link>
         </div>
         
-        <div className="bg-red-500/5 border border-red-500/20 text-red-500 px-4 py-3 rounded-md text-sm">
+        <div className="bg-error-default/5 border border-error-default/20 text-error-default px-4 py-3 rounded-md text-sm">
           {error}
         </div>
       </div>
@@ -126,7 +123,7 @@ export default function EventBudgetPage() {
       )}
       
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-md font-medium text-white">Budget Items</h2>
+        <h2 className="text-md font-medium text-text-primary">Budget Items</h2>
         
         <ExportMenu
           items={budgetItems}

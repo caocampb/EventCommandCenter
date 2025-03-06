@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import type { VendorAssignment } from '../hooks/useEventVendors';
-import { colors } from '@/styles/colors';
 
 interface NewBudgetItem {
   description: string;
@@ -81,11 +80,11 @@ export function AddBudgetItemForm({
   };
   
   return (
-    <div className="border border-[#1F1F1F] rounded-md p-5 mb-6" style={{ backgroundColor: colors.background.card }}>
-      <h2 className="text-[15px] font-medium text-white mb-4">Add Budget Item</h2>
+    <div className="border border-border-primary rounded-md p-5 mb-6 bg-bg-secondary">
+      <h2 className="text-[15px] font-medium text-text-primary mb-4">Add Budget Item</h2>
       
       {error && (
-        <div className="mb-4 px-3 py-2 bg-[#E5484D]/10 border border-[#E5484D]/20 rounded-md text-[#E5484D] text-sm">
+        <div className="mb-4 px-3 py-2 bg-error-default/10 border border-error-default/20 rounded-md text-error-default text-sm">
           {error}
         </div>
       )}
@@ -93,7 +92,7 @@ export function AddBudgetItemForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Description field */}
         <div>
-          <label htmlFor="description" className="block text-[13px] text-gray-400 mb-1">
+          <label htmlFor="description" className="block text-[13px] text-text-tertiary mb-1">
             Description
           </label>
           <input
@@ -104,14 +103,14 @@ export function AddBudgetItemForm({
               trackUserActivity();
               setNewItem({...newItem, description: e.target.value});
             }}
-            className="w-full px-3 py-2 bg-[#0C0C0C] border border-[#1F1F1F] rounded-md text-[14px] placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-150"
+            className="w-full px-3 py-2 bg-bg-tertiary border border-border-primary rounded-md text-[14px] placeholder:text-text-quaternary focus:outline-none focus:ring-1 focus:ring-primary-default focus:border-primary-default transition-colors duration-150"
             placeholder="Enter item description"
           />
         </div>
         
         {/* Category field */}
         <div>
-          <label htmlFor="category" className="block text-[13px] text-gray-400 mb-1">
+          <label htmlFor="category" className="block text-[13px] text-text-tertiary mb-1">
             Category
           </label>
           <div className="relative">
@@ -124,7 +123,7 @@ export function AddBudgetItemForm({
                 setNewItem({...newItem, category: e.target.value});
               }}
               list="categories"
-              className="w-full px-3 py-2 bg-[#0C0C0C] border border-[#1F1F1F] rounded-md text-[14px] placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-150"
+              className="w-full px-3 py-2 bg-bg-tertiary border border-border-primary rounded-md text-[14px] placeholder:text-text-quaternary focus:outline-none focus:ring-1 focus:ring-primary-default focus:border-primary-default transition-colors duration-150"
               placeholder="Enter or select a category"
             />
             <datalist id="categories">
@@ -137,7 +136,7 @@ export function AddBudgetItemForm({
 
         {/* Vendor field */}
         <div>
-          <label htmlFor="vendorId" className="block text-[13px] text-gray-400 mb-1">
+          <label htmlFor="vendorId" className="block text-[13px] text-text-tertiary mb-1">
             Vendor (Optional)
           </label>
           <select
@@ -147,7 +146,7 @@ export function AddBudgetItemForm({
               trackUserActivity();
               setNewItem({...newItem, vendorId: e.target.value || undefined});
             }}
-            className="w-full px-3 py-2 bg-[#0C0C0C] border border-[#1F1F1F] rounded-md text-[14px] placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-150"
+            className="w-full px-3 py-2 bg-bg-tertiary border border-border-primary rounded-md text-[14px] placeholder:text-text-quaternary focus:outline-none focus:ring-1 focus:ring-primary-default focus:border-primary-default transition-colors duration-150"
           >
             <option value="">-- Select Vendor (Optional) --</option>
             {vendors.map((assignment) => (
@@ -160,7 +159,7 @@ export function AddBudgetItemForm({
         
         {/* Amount field */}
         <div>
-          <label htmlFor="plannedAmount" className="block text-[13px] text-gray-400 mb-1">
+          <label htmlFor="plannedAmount" className="block text-[13px] text-text-tertiary mb-1">
             Planned Amount
           </label>
           <input
@@ -172,7 +171,7 @@ export function AddBudgetItemForm({
               trackUserActivity();
               setNewItem({...newItem, plannedAmount: parseInt(e.target.value, 10) || 0});
             }}
-            className="w-full px-3 py-2 bg-[#0C0C0C] border border-[#1F1F1F] rounded-md text-[14px] placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-150"
+            className="w-full px-3 py-2 bg-bg-tertiary border border-border-primary rounded-md text-[14px] placeholder:text-text-quaternary focus:outline-none focus:ring-1 focus:ring-primary-default focus:border-primary-default transition-colors duration-150"
             placeholder="Enter amount"
           />
         </div>
@@ -187,16 +186,16 @@ export function AddBudgetItemForm({
               trackUserActivity();
               setNewItem({...newItem, isPaid: e.target.checked});
             }}
-            className="h-4 w-4 rounded border-gray-600 text-[#5E6AD2] focus:ring-[#5E6AD2]"
+            className="h-4 w-4 rounded border-border-primary text-primary-default focus:ring-primary-default"
           />
-          <label htmlFor="isPaid" className="ml-2 block text-[13px] text-gray-400">
+          <label htmlFor="isPaid" className="ml-2 block text-[13px] text-text-tertiary">
             Already paid
           </label>
         </div>
         
         {/* Add Budget Type toggle */}
         <div>
-          <label className="block text-[13px] text-gray-400 mb-1">Budget Type</label>
+          <label className="block text-[13px] text-text-tertiary mb-1">Budget Type</label>
           <div className="flex space-x-3">
             <button
               type="button"
@@ -206,8 +205,8 @@ export function AddBudgetItemForm({
               }}
               className={`flex-1 px-3 py-2 rounded-md text-[14px] border transition-colors duration-150 ${
                 !newItem.isPerAttendee 
-                  ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]/30 text-[#5E6AD2]' 
-                  : 'bg-[#0C0C0C] border-[#1F1F1F] text-gray-400 hover:border-[#5E6AD2]/20'
+                  ? 'bg-primary-default/10 border-primary-default/30 text-primary-default' 
+                  : 'bg-bg-tertiary border-border-primary text-text-tertiary hover:border-primary-default/20'
               }`}
             >
               Fixed Cost
@@ -220,14 +219,14 @@ export function AddBudgetItemForm({
               }}
               className={`flex-1 px-3 py-2 rounded-md text-[14px] border transition-colors duration-150 ${
                 newItem.isPerAttendee
-                  ? 'bg-[#5E6AD2]/10 border-[#5E6AD2]/30 text-[#5E6AD2]'
-                  : 'bg-[#0C0C0C] border-[#1F1F1F] text-gray-400 hover:border-[#5E6AD2]/20'
+                  ? 'bg-primary-default/10 border-primary-default/30 text-primary-default'
+                  : 'bg-bg-tertiary border-border-primary text-text-tertiary hover:border-primary-default/20'
               }`}
             >
               Per Student
             </button>
           </div>
-          <p className="mt-1 text-[12px] text-gray-500">
+          <p className="mt-1 text-[12px] text-text-quaternary">
             {newItem.isPerAttendee 
               ? 'This cost applies per student attending the event.' 
               : 'This is a fixed cost regardless of attendance.'}
@@ -242,14 +241,16 @@ export function AddBudgetItemForm({
               trackUserActivity();
               onCancel();
             }}
-            className="px-3 py-1.5 bg-[#1A1A1A] hover:bg-[#252525] text-gray-400 rounded-md text-[13px] mr-3 transition-colors duration-150"
+            className="px-3 py-1.5 bg-bg-tertiary hover:bg-bg-hover text-text-tertiary rounded-md text-[13px] mr-3 transition-colors duration-150"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-3 py-1.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md text-[13px] transition-colors duration-150 border border-transparent hover:border-[#8D95F2] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`px-3 py-1.5 bg-primary-default hover:bg-primary-hover text-white rounded-md text-[13px] transition-colors duration-150 ${
+              isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+            }`}
           >
             {isSubmitting ? 'Adding...' : 'Add Item'}
           </button>

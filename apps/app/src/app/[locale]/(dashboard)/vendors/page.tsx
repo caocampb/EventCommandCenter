@@ -5,6 +5,7 @@ import type { Vendor } from '@/types/vendor';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useQueryState, parseAsString, parseAsBoolean } from 'nuqs';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 // Filter state interface
 interface VendorFilters {
@@ -56,10 +57,6 @@ function VendorsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Dropdown state
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  
   // Use useQueryState hooks for filter state
   const [searchQuery, setSearchQuery] = useQueryState('q', parseAsString);
   const [categoryFilter, setCategoryFilter] = useQueryState('cat', parseAsString);
@@ -69,11 +66,6 @@ function VendorsPage() {
   const [sortField, setSortField] = useQueryState('sort', parseAsString);
   const [sortDirection, setSortDirection] = useQueryState('dir', parseAsString.withDefault('asc'));
   const [prioritizeFavorites, setPrioritizeFavorites] = useQueryState('pfav', parseAsString);
-  
-  // ref for dropdown handling
-  const setDropdownRef = (id: string) => (el: HTMLDivElement | null) => {
-    dropdownRefs.current[id] = el;
-  };
   
   // Fetch vendors whenever the component mounts
   useEffect(() => {
@@ -115,15 +107,11 @@ function VendorsPage() {
   // Toggle prioritize favorites
   const togglePrioritizeFavorites = () => {
     setPrioritizeFavorites(prioritizeFavorites === 'true' ? null : 'true');
-    // Close dropdown after selection
-    setOpenDropdown(null);
   };
   
   // Toggle show favorites only
   const toggleShowFavoritesOnly = () => {
     setShowFavorites(prev => !prev);
-    // Close dropdown after selection
-    setOpenDropdown(null);
   };
   
   // Apply all filters to the vendors data
@@ -310,9 +298,6 @@ function VendorsPage() {
     setSortField('');
     setSortDirection('asc');
     setPrioritizeFavorites('');
-    
-    // Close any open dropdowns
-    setOpenDropdown(null);
   };
   
   // Clear sort preferences only
@@ -320,34 +305,8 @@ function VendorsPage() {
     setSortField(null);
     setSortDirection(null);
     setPrioritizeFavorites(null);
-    
-    // Close any open dropdowns
-    setOpenDropdown(null);
   };
   
-  // Toggle dropdown open/closed
-  const toggleDropdown = (dropdown: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setOpenDropdown(prev => prev === dropdown ? null : dropdown);
-  };
-  
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (openDropdown) {
-        const currentRef = dropdownRefs.current[openDropdown];
-        if (currentRef && !currentRef.contains(e.target as Node)) {
-          setOpenDropdown(null);
-        }
-      }
-    };
-    
-    document.addEventListener('click', handleOutsideClick);
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  }, [openDropdown]);
-
   // Fix the input element and the search handler function
   const handleUpdateSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -410,249 +369,226 @@ function VendorsPage() {
         
         <div className="flex items-center gap-2">
           {/* Category filter */}
-          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('category')}>
-            <button
-              onClick={(e) => toggleDropdown('category', e)}
-              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
-                categoryFilter 
-                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
-                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
-              }`}
-            >
-              <span>
-                {categoryFilter ? categoryOptions[categoryFilter as keyof typeof categoryOptions] : 'Category'}
-              </span>
-              <svg 
-                className="ml-1 w-4 h-4" 
-                viewBox="0 0 15 15" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button
+                className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                  categoryFilter 
+                    ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                    : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+                }`}
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-              </svg>
-            </button>
-            
-            {/* Dropdown menu */}
-            {openDropdown === 'category' && (
-              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
-                <div className="py-1">
-                  {/* Category options */}
-                  {Object.entries(categoryOptions).map(([key, label]) => (
-                    <button
-                      key={key}
-                      onClick={() => { 
-                        setCategoryFilter(prev => prev === key ? null : key); 
-                        setOpenDropdown(null);
-                      }}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        categoryFilter === key
-                          ? 'bg-theme-primary-light text-theme-primary'
-                          : 'text-theme-text-secondary hover:bg-theme-bg-hover'
-                      }`}
+                <span>{getCategoryName(categoryFilter || '')}</span>
+                <svg 
+                  className="ml-1 w-4 h-4" 
+                  viewBox="0 0 15 15" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                </svg>
+              </button>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="z-50 min-w-[8rem] overflow-hidden rounded-md border border-theme-border-subtle bg-theme-bg-card p-1 shadow-md animate-in fade-in-80 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1"
+                sideOffset={5}
+              >
+                {Object.entries(categoryOptions).map(([key, label]) => (
+                  <DropdownMenu.Item
+                    key={key}
+                    className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
+                      categoryFilter === key
+                        ? 'bg-theme-primary-light text-theme-primary'
+                        : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                    }`}
+                    onClick={() => setCategoryFilter(prev => prev === key ? null : key)}
+                  >
+                    {label}
+                  </DropdownMenu.Item>
+                ))}
+                
+                {categoryFilter && (
+                  <>
+                    <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
+                    <DropdownMenu.Item
+                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover"
+                      onClick={() => setCategoryFilter(null)}
                     >
-                      {label}
-                    </button>
-                  ))}
-                  
-                  {/* Clear filter option - only show if filter is active */}
-                  {categoryFilter && (
-                    <>
-                      <div className="border-t border-theme-border-subtle my-1"></div>
-                      <button
-                        onClick={() => { 
-                          setCategoryFilter(null); 
-                          setOpenDropdown(null);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-hover"
-                      >
-                        Clear filter
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+                      Clear filter
+                    </DropdownMenu.Item>
+                  </>
+                )}
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
 
           {/* Capacity filter */}
-          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('capacity')}>
-            <button
-              onClick={(e) => toggleDropdown('capacity', e)}
-              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
-                capacityFilter 
-                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
-                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
-              }`}
-            >
-              <span>
-                {capacityFilter ? getCapacityName(capacityFilter) : 'Capacity'}
-              </span>
-              <svg 
-                className="ml-1 w-4 h-4" 
-                viewBox="0 0 15 15" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button
+                className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                  capacityFilter 
+                    ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                    : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+                }`}
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-              </svg>
-            </button>
-            
-            {/* Dropdown menu */}
-            {openDropdown === 'capacity' && (
-              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
-                <div className="py-1">
-                  {/* Capacity options */}
-                  {Object.entries(capacityOptions).map(([key, label]) => (
-                    <button
-                      key={key}
-                      onClick={() => { 
-                        setCapacityFilter(prev => prev === key ? null : key); 
-                        setOpenDropdown(null);
-                      }}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        capacityFilter === key
-                          ? 'bg-theme-primary-light text-theme-primary'
-                          : 'text-theme-text-secondary hover:bg-theme-bg-hover'
-                      }`}
+                <span>{getCapacityName(capacityFilter || '')}</span>
+                <svg 
+                  className="ml-1 w-4 h-4" 
+                  viewBox="0 0 15 15" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                </svg>
+              </button>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="z-50 min-w-[8rem] overflow-hidden rounded-md border border-theme-border-subtle bg-theme-bg-card p-1 shadow-md animate-in fade-in-80 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1"
+                sideOffset={5}
+              >
+                {Object.entries(capacityOptions).map(([key, label]) => (
+                  <DropdownMenu.Item
+                    key={key}
+                    className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
+                      capacityFilter === key
+                        ? 'bg-theme-primary-light text-theme-primary'
+                        : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                    }`}
+                    onClick={() => setCapacityFilter(prev => prev === key ? null : key)}
+                  >
+                    {label}
+                  </DropdownMenu.Item>
+                ))}
+                
+                {capacityFilter && (
+                  <>
+                    <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
+                    <DropdownMenu.Item
+                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover"
+                      onClick={() => setCapacityFilter(null)}
                     >
-                      {label}
-                    </button>
-                  ))}
-                  
-                  {/* Clear filter option - only show if filter is active */}
-                  {capacityFilter && (
-                    <>
-                      <div className="border-t border-theme-border-subtle my-1"></div>
-                      <button
-                        onClick={() => { 
-                          setCapacityFilter(null); 
-                          setOpenDropdown(null);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-hover"
-                      >
-                        Clear filter
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+                      Clear filter
+                    </DropdownMenu.Item>
+                  </>
+                )}
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
 
           {/* Price filter */}
-          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('price')}>
-            <button
-              onClick={(e) => toggleDropdown('price', e)}
-              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
-                priceFilter 
-                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
-                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
-              }`}
-            >
-              <span>
-                {priceFilter ? getPriceName(priceFilter) : 'Price'}
-              </span>
-              <svg 
-                className="ml-1 w-4 h-4" 
-                viewBox="0 0 15 15" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button
+                className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                  priceFilter 
+                    ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                    : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+                }`}
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-              </svg>
-            </button>
-            
-            {/* Dropdown menu */}
-            {openDropdown === 'price' && (
-              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
-                <div className="py-1">
-                  {/* Price options */}
-                  {Object.entries(priceOptions).map(([key, label]) => (
-                    <button
-                      key={key}
-                      onClick={() => { 
-                        setPriceFilter(prev => prev === key ? null : key); 
-                        setOpenDropdown(null);
-                      }}
-                      className={`block w-full text-left px-4 py-2 text-sm ${
-                        priceFilter === key
-                          ? 'bg-theme-primary-light text-theme-primary'
-                          : 'text-theme-text-secondary hover:bg-theme-bg-hover'
-                      }`}
+                <span>{getPriceName(priceFilter || '')}</span>
+                <svg 
+                  className="ml-1 w-4 h-4" 
+                  viewBox="0 0 15 15" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                </svg>
+              </button>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="z-50 min-w-[8rem] overflow-hidden rounded-md border border-theme-border-subtle bg-theme-bg-card p-1 shadow-md animate-in fade-in-80 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1"
+                sideOffset={5}
+              >
+                {Object.entries(priceOptions).map(([key, label]) => (
+                  <DropdownMenu.Item
+                    key={key}
+                    className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
+                      priceFilter === key
+                        ? 'bg-theme-primary-light text-theme-primary'
+                        : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                    }`}
+                    onClick={() => setPriceFilter(prev => prev === key ? null : key)}
+                  >
+                    {label}
+                  </DropdownMenu.Item>
+                ))}
+                
+                {priceFilter && (
+                  <>
+                    <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
+                    <DropdownMenu.Item
+                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover"
+                      onClick={() => setPriceFilter(null)}
                     >
-                      {label}
-                    </button>
-                  ))}
-                  
-                  {/* Clear filter option - only show if filter is active */}
-                  {priceFilter && (
-                    <>
-                      <div className="border-t border-theme-border-subtle my-1"></div>
-                      <button
-                        onClick={() => { 
-                          setPriceFilter(null); 
-                          setOpenDropdown(null);
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-hover"
-                      >
-                        Clear filter
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+                      Clear filter
+                    </DropdownMenu.Item>
+                  </>
+                )}
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
 
           {/* Favorites filter */}
-          <div className="relative mr-2 mb-2 sm:mb-0" ref={setDropdownRef('favorites')}>
-            <button
-              onClick={(e) => toggleDropdown('favorites', e)}
-              className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
-                showFavorites || prioritizeFavorites
-                  ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
-                  : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
-              }`}
-            >
-              <span>
-                {showFavorites || prioritizeFavorites ? 'Show Favorites Only' : 'Favorites'}
-              </span>
-              <svg 
-                className="ml-1 w-4 h-4" 
-                viewBox="0 0 15 15" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger asChild>
+              <button
+                className={`flex items-center px-3 py-1.5 text-sm rounded-md border transition-all duration-150 ${
+                  showFavorites || prioritizeFavorites
+                    ? 'bg-theme-primary-light text-theme-primary border-theme-primary/20' 
+                    : 'bg-theme-bg-card text-theme-text-secondary border-theme-border-subtle hover:border-theme-border-strong'
+                }`}
               >
-                <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
-              </svg>
-            </button>
-            
-            {/* Dropdown menu */}
-            {openDropdown === 'favorites' && (
-              <div className="absolute left-0 mt-1 z-10 w-48 rounded-md shadow-lg bg-theme-bg-card border border-theme-border-subtle">
-                <div className="py-1">
-                  {/* Favorites options */}
-                  <button
-                    onClick={toggleShowFavoritesOnly}
-                    className={`block w-full text-left px-4 py-2 text-sm ${
-                      showFavorites ? 'bg-theme-primary-light text-theme-primary' : 'text-theme-text-secondary hover:bg-theme-bg-hover'
-                    }`}
-                  >
-                    Show Favorites Only
-                  </button>
-                  <div className="border-t border-theme-border-subtle my-1"></div>
-                  <button
-                    onClick={togglePrioritizeFavorites}
-                    className={`block w-full text-left px-4 py-2 text-sm ${
-                      prioritizeFavorites ? 'bg-theme-primary-light text-theme-primary' : 'text-theme-text-secondary hover:bg-theme-bg-hover'
-                    }`}
-                  >
-                    Sort Favorites First
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+                <span>
+                  {showFavorites || prioritizeFavorites ? 'Show Favorites Only' : 'Favorites'}
+                </span>
+                <svg 
+                  className="ml-1 w-4 h-4" 
+                  viewBox="0 0 15 15" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M3.13523 6.15803C3.3241 5.95657 3.64052 5.94637 3.84197 6.13523L7.5 9.56464L11.158 6.13523C11.3595 5.94637 11.6759 5.95657 11.8648 6.15803C12.0536 6.35949 12.0434 6.67591 11.842 6.86477L7.84197 10.6148C7.64964 10.7951 7.35036 10.7951 7.15803 10.6148L3.15803 6.86477C2.95657 6.67591 2.94637 6.35949 3.13523 6.15803Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
+                </svg>
+              </button>
+            </DropdownMenu.Trigger>
+
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="z-50 min-w-[8rem] overflow-hidden rounded-md border border-theme-border-subtle bg-theme-bg-card p-1 shadow-md animate-in fade-in-80 data-[side=bottom]:slide-in-from-top-1 data-[side=left]:slide-in-from-right-1 data-[side=right]:slide-in-from-left-1 data-[side=top]:slide-in-from-bottom-1"
+                sideOffset={5}
+              >
+                <DropdownMenu.Item
+                  className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
+                    showFavorites
+                      ? 'bg-theme-primary-light text-theme-primary'
+                      : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                  }`}
+                  onClick={() => setShowFavorites(prev => !prev)}
+                >
+                  Show Favorites Only
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
+                <DropdownMenu.Item
+                  className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
+                    prioritizeFavorites
+                      ? 'bg-theme-primary-light text-theme-primary'
+                      : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                  }`}
+                  onClick={() => setPrioritizeFavorites(prev => prev === 'true' ? null : 'true')}
+                >
+                  Sort Favorites First
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
 
           {/* Clear all filters button */}
           {(searchQuery || categoryFilter || capacityFilter || priceFilter || showFavorites || prioritizeFavorites) && (
