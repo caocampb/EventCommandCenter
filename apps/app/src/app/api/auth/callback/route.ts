@@ -1,5 +1,9 @@
-import { createClient } from "@v1/supabase/server";
-import { NextResponse } from "next/server";
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+// Ensure this route is always handled at runtime, not during build
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -7,7 +11,7 @@ export async function GET(request: Request) {
   const next = searchParams.get("next") ?? "/";
 
   if (code) {
-    const supabase = createClient();
+    const supabase = createRouteHandlerClient({ cookies });
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       const forwardedHost = request.headers.get("x-forwarded-host");

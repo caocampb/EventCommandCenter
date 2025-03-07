@@ -3,6 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { vendorSchema } from "@/lib/validations/vendor-schema";
 import { VendorDbRow } from "@/types/vendor";
 
+// Ensure this route is always handled at runtime, not during build
+export const dynamic = 'force-dynamic';
+
 // Supabase service role client for bypassing RLS
 // Use hardcoded values directly from .env for development
 const SUPABASE_URL = "http://127.0.0.1:55321";

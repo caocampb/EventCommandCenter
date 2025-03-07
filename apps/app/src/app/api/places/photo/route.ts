@@ -7,6 +7,9 @@ import { NextResponse } from 'next/server';
  * 2. Bypass CORS issues
  * 3. Support both legacy and v1 API formats
  */
+// Ensure this route is always handled at runtime, not during build
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     // Get the parameters from the URL

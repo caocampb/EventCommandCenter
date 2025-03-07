@@ -3,6 +3,10 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { eventSchema } from "@/lib/validations/event-schema";
 import { createClient } from "@supabase/supabase-js";
+import { EventStatus } from "@/types/event";
+
+// Ensure this route is always handled at runtime, not during build
+export const dynamic = 'force-dynamic';
 
 // Get environment variables - debugging output
 console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);

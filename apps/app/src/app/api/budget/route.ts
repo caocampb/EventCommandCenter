@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { formatDateForDisplay } from "@/utils/timezone-utils";
 
 // Supabase service role client for bypassing RLS
+// Use hardcoded values directly from .env for development
 const SUPABASE_URL = "http://127.0.0.1:55321";
 const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
 
@@ -11,8 +12,11 @@ const serviceRoleClient = createClient(
   SUPABASE_SERVICE_KEY
 );
 
+// Ensure this route is always handled at runtime, not during build
+export const dynamic = 'force-dynamic';
+
 // GET /api/budget - Get aggregated budget data
-export async function GET() {
+export async function GET(request: Request) {
   try {
     console.log("GET /api/budget - Starting request");
 
