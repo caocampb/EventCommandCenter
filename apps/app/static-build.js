@@ -6,20 +6,20 @@
  * when generating client reference manifests during the build.
  */
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 // Only run this in production builds
 if (process.env.NODE_ENV === 'production') {
   // Function to ensure directory exists
-  const ensureDirectoryExists = (dirPath: string) => {
+  const ensureDirectoryExists = (dirPath) => {
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
   };
 
   // Create an empty client reference manifest file for problematic paths
-  const createEmptyManifest = (routePath: string) => {
+  const createEmptyManifest = (routePath) => {
     const normalizedPath = path.normalize(routePath);
     const manifestPath = path.join(process.cwd(), '.next/server/app', normalizedPath, 'page_client-reference-manifest.js');
     
@@ -51,6 +51,4 @@ self.__RSC_CSS_MANIFEST={};
   
   // Create manifests for all paths
   paths.forEach(createEmptyManifest);
-}
-
-export {}; 
+} 
