@@ -13,35 +13,39 @@ import {
 } from '../../lib/validations/timeline-block-schema';
 import { TimelineBlock } from '../../types/timeline';
 import { formatDateTimeForInput, localToUTCString } from '../../utils/timezone-utils';
-import { colors } from '@/styles/colors';
 
 // Get status-specific styling in Linear fashion
 function getStatusStyles(status: string) {
   switch (status) {
     case 'pending':
       return {
-        active: `bg-[${colors.status.pending.bg}] text-[${colors.status.pending.text}] border border-[${colors.status.pending.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: 'bg-theme-status-pending-bg text-theme-status-pending-text border border-theme-status-pending-text/20',
+        inactive: 'bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong'
       };
     case 'in-progress':
       return {
-        active: `bg-[${colors.status.inProgress.bg}] text-[${colors.status.inProgress.text}] border border-[${colors.status.inProgress.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: 'bg-theme-status-in-progress-bg text-theme-status-in-progress-text border border-theme-status-in-progress-text/20',
+        inactive: 'bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong'
       };
     case 'complete':
       return {
-        active: `bg-[${colors.status.confirmed.bg}] text-[${colors.status.confirmed.text}] border border-[${colors.status.confirmed.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: 'bg-theme-status-confirmed-bg text-theme-status-confirmed-text border border-theme-status-confirmed-text/20',
+        inactive: 'bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong'
       };
     case 'cancelled':
       return {
-        active: `bg-[${colors.status.cancelled.bg}] text-[${colors.status.cancelled.text}] border border-[${colors.status.cancelled.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: 'bg-theme-status-cancelled-bg text-theme-status-cancelled-text border border-theme-status-cancelled-text/20',
+        inactive: 'bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong'
+      };
+    case 'draft':
+      return {
+        active: 'bg-theme-status-draft-bg text-theme-status-draft-text border border-theme-status-draft-text/20',
+        inactive: 'bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong'
       };
     default:
       return {
-        active: `bg-[${colors.status.draft.bg}] text-[${colors.status.draft.text}] border border-[${colors.status.draft.text}]/20`,
-        inactive: `bg-transparent border border-[${colors.border.subtle}] text-[${colors.text.tertiary}] hover:text-[${colors.text.secondary}] hover:border-[${colors.border.strong}]`
+        active: 'bg-theme-status-draft-bg text-theme-status-draft-text border border-theme-status-draft-text/20',
+        inactive: 'bg-transparent border border-theme-border-subtle text-theme-text-tertiary hover:text-theme-text-secondary hover:border-theme-border-strong'
       };
   }
 }
@@ -417,38 +421,17 @@ export function EditTimelineBlockForm({ eventId, blockId, block }: EditTimelineB
                 key={status}
                 type="button"
                 onClick={() => form.setValue('status', status)}
-                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150`}
-                style={{
-                  backgroundColor: form.watch('status') === status 
-                    ? (status === 'complete' 
-                        ? colors.status.confirmed.bg 
-                        : status === 'cancelled'
-                          ? colors.status.cancelled.bg
-                          : status === 'in-progress'
-                            ? colors.status.inProgress.bg
-                            : colors.status.pending.bg)
-                    : 'transparent',
-                  color: form.watch('status') === status 
-                    ? (status === 'complete' 
-                        ? colors.status.confirmed.text 
-                        : status === 'cancelled'
-                          ? colors.status.cancelled.text
-                          : status === 'in-progress'
-                            ? colors.status.inProgress.text
-                            : colors.status.pending.text)
-                    : colors.text.tertiary,
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  borderColor: form.watch('status') === status 
-                    ? (status === 'complete' 
-                        ? `${colors.status.confirmed.text}20` 
-                        : status === 'cancelled'
-                          ? `${colors.status.cancelled.text}20`
-                          : status === 'in-progress'
-                            ? `${colors.status.inProgress.text}20`
-                            : `${colors.status.pending.text}20`)
-                    : colors.border.subtle
-                }}
+                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150 border ${
+                  form.watch('status') === status 
+                    ? status === 'complete' 
+                      ? 'bg-theme-status-confirmed-bg text-theme-status-confirmed-text border-theme-status-confirmed-text/20'
+                      : status === 'cancelled'
+                        ? 'bg-theme-status-cancelled-bg text-theme-status-cancelled-text border-theme-status-cancelled-text/20'
+                        : status === 'in-progress'
+                          ? 'bg-theme-status-in-progress-bg text-theme-status-in-progress-text border-theme-status-in-progress-text/20'
+                          : 'bg-theme-status-pending-bg text-theme-status-pending-text border-theme-status-pending-text/20'
+                    : 'bg-transparent text-theme-text-tertiary border-theme-border-subtle hover:text-theme-text-secondary hover:border-theme-border-strong'
+                }`}
               >
                 {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
