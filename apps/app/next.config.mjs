@@ -7,6 +7,12 @@ const nextConfig = {
   experimental: {
     instrumentationHook: process.env.NODE_ENV === "production",
   },
+  output: "standalone",
+  reactStrictMode: true,
+  poweredByHeader: false,
+  serverComponentsExternalPackages: process.env.NODE_ENV === "production" 
+    ? ['@supabase/auth-helpers-nextjs'] 
+    : [],
 };
 
 export default withSentryConfig(nextConfig, {

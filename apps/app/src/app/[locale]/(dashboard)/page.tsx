@@ -1,12 +1,13 @@
 import { SignOut } from "@/components/sign-out";
 import { getI18n } from "@/locales/server";
 import { getUser } from "@v1/supabase/queries";
+import { ClientBoundary } from "@/utils/client-boundary";
 
 export const metadata = {
   title: "Home",
 };
 
-// Add dynamic = 'force-dynamic' to ensure proper SSR handling
+// Make this page fully dynamic to prevent build-time errors
 export const dynamic = 'force-dynamic';
 
 export default async function Page() {
@@ -14,12 +15,14 @@ export default async function Page() {
   const t = await getI18n();
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center justify-center gap-4">
-        <p>{t("welcome", { name: data?.user?.email })}</p>
+    <ClientBoundary>
+      <div className="h-screen w-screen flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p>{t("welcome", { name: data?.user?.email })}</p>
 
-        <SignOut />
+          <SignOut />
+        </div>
       </div>
-    </div>
+    </ClientBoundary>
   );
 }
