@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { eventSchema } from "@/lib/validations/event-schema";
 import { createClient } from "@supabase/supabase-js";
-import { EventStatus } from "@/types/event";
+import { EventStatus } from "@/types/events";
 
 // Ensure this route is always handled at runtime, not during build
 export const dynamic = 'force-dynamic';
