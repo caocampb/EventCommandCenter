@@ -6,6 +6,9 @@ export const metadata = {
   title: "Home",
 };
 
+// Add dynamic = 'force-dynamic' to ensure proper SSR handling
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   const { data } = await getUser();
   const t = await getI18n();
