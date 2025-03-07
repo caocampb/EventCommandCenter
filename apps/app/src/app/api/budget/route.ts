@@ -4,7 +4,7 @@ import { formatDateForDisplay } from "@/utils/timezone-utils";
 
 // Supabase service role client for bypassing RLS
 // Use hardcoded values directly from .env for development
-const SUPABASE_URL = "http://127.0.0.1:55321";
+const SUPABASE_URL = "http://127.0.0.1:54321";
 const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
 
 const serviceRoleClient = createClient(
@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     // Fetch all events with budget data
     const { data: events, error: eventsError } = await serviceRoleClient
       .from("events")
-      .select("id, name, start_date, total_budget")
+      .select("id, name, start_date")
       .order("start_date", { ascending: false });
     
     if (eventsError) {
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
       }
 
       // Calculate event totals
-      const eventBudget = event.total_budget || 0;
+      const eventBudget = 0; // Default to 0 as total_budget column doesn't exist
       const eventPlanned = budgetItems.reduce((sum, item) => sum + (item.planned_amount || 0), 0);
       const eventSpent = budgetItems.reduce((sum, item) => sum + (item.actual_amount || 0), 0);
       
@@ -81,7 +81,7 @@ export async function GET(request: Request) {
         budget: eventPlanned,
         spent: eventSpent,
         remaining: eventPlanned - eventSpent,
-        totalBudget: eventBudget
+        totalBudget: eventPlanned // Use planned amount as the total budget since we don't have a dedicated column
       });
 
       // Aggregate by category

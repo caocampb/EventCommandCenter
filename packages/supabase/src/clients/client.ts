@@ -7,7 +7,7 @@ export const createClient = () =>
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookieOptions: {
-        name: "sb-auth", // Use a consistent, simple name
+        name: "sb-auth",
         path: "/",
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",

@@ -1,32 +1,40 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "../types";
+import type { CookieOptions } from "@supabase/ssr";
 
 export const createClient = () => {
-  const cookieStore = cookies();
-
+  // Use the standard Supabase server client with default cookie configuration
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
+        // Use the standard Next.js cookie methods
+        get(name) {
+          return cookies().get(name)?.value;
         },
-        setAll(cookiesToSet) {
+        set(name, value, options) {
           try {
-            for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
-            }
-          } catch (error) {}
+            cookies().set(name, value, options);
+          } catch (error) {
+            console.error(`Error setting cookie '${name}':`, error);
+          }
         },
+        remove(name, options) {
+          try {
+            cookies().delete(name);
+          } catch (error) {
+            console.error(`Error removing cookie '${name}':`, error);
+          }
+        }
       },
       cookieOptions: {
-        name: "sb-auth", // Use a consistent, simple name
+        name: "sb-auth",
         path: "/",
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
-      }
-    },
+      },
+    }
   );
 };
