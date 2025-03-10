@@ -2,16 +2,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// This is a minimal middleware that does nothing but pass the request through
-export function middleware(request: NextRequest) {
-  return NextResponse.next();
-}
-
-// Original middleware saved for reference
-/*
 import { updateSession } from "@v1/supabase/middleware";
 import { createI18nMiddleware } from "next-international/middleware";
-import { type NextRequest, NextResponse } from "next/server";
 
 const I18nMiddleware = createI18nMiddleware({
   locales: ["en", "fr"],
@@ -45,7 +37,7 @@ export async function middleware(request: NextRequest) {
     // Process the request with the i18n middleware
     const i18nResult = I18nMiddleware(request);
     
-    // Skip auth check for API routes to avoid potential issues
+    // Skip auth checks for API routes to avoid potential issues
     if (pathname.startsWith('/api/')) {
       return i18nResult;
     }
@@ -57,35 +49,28 @@ export async function middleware(request: NextRequest) {
       // Check for login paths with simplified logic
       const isLoginPath = pathname.includes("/login");
       
-      // Handle API routes separately
-      if (pathname.startsWith('/api/')) {
-        return response;
-      }
-      
       // Redirect to events page if user is authenticated and trying to access login
       if (isLoginPath && user) {
-        return NextResponse.redirect(new URL("/en/events", request.url));
+        return NextResponse.redirect(new URL(`/${pathname.split('/')[1]}/events`, request.url));
       }
       
       // Redirect to login if user is not authenticated and not accessing login
       if (!isLoginPath && !user) {
-        return NextResponse.redirect(new URL("/en/login", request.url));
+        return NextResponse.redirect(new URL(`/${pathname.split('/')[1]}/login`, request.url));
       }
       
       return response;
     } catch (authError) {
-      // If authentication fails, still allow the request to proceed
-      // This prevents auth errors from breaking the entire app
-      console.error("Auth middleware error:", authError);
+      // If authentication checking fails, still allow the request to proceed
+      console.error("Auth error in middleware:", authError);
       return i18nResult;
     }
   } catch (error) {
-    // Global error handler - make sure the request still goes through
-    console.error("Middleware error:", error);
+    // Global error handler - ensure middleware never crashes the app
+    console.error("Global middleware error:", error);
     return NextResponse.next();
   }
 }
-*/
 
 export const config = {
   matcher: [
