@@ -3,11 +3,11 @@
  */
 
 /**
- * Safely creates a route object from a string path for use with Next.js router or Link component
+ * Safely creates a route object from a string path for use with Next.js Link component
  * 
  * @param path - The path/URL to navigate to
  * @param locale - Optional locale to include in the path (will be prefixed if not already present)
- * @returns A route object compatible with Next.js router.push and Link href
+ * @returns A route object compatible with Next.js Link href
  * 
  * @example
  * // In a component
@@ -15,9 +15,6 @@
  * 
  * // With Link
  * <Link href={createSafeRoute(`/events/${eventId}`)} />
- * 
- * // With router
- * router.push(createSafeRoute(`/events/${eventId}`, locale));
  */
 export function createSafeRoute(path: string, locale?: string) {
   // If locale is provided and path doesn't already start with the locale, add it
@@ -48,4 +45,35 @@ export function createLocalePath(path: string, locale: string): string {
   }
   
   return `/${locale}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+/**
+ * Safely navigates using the Next.js router while handling type inconsistencies
+ * 
+ * @param router - The Next.js router instance from useRouter()
+ * @param path - The path to navigate to
+ * @param locale - Optional locale to include
+ * 
+ * @example
+ * import { useRouter, useParams } from 'next/navigation';
+ * import { safeNavigate } from '@/utils/route-helpers';
+ * 
+ * // In your component
+ * const router = useRouter();
+ * const params = useParams();
+ * const locale = params.locale as string;
+ * 
+ * // Navigate safely
+ * safeNavigate(router, '/events', locale);
+ */
+export function safeNavigate(router: any, path: string, locale?: string): void {
+  let targetPath = path;
+  
+  // Add locale if provided and not already in the path
+  if (locale && !path.startsWith(`/${locale}/`)) {
+    targetPath = `/${locale}${path.startsWith('/') ? path : `/${path}`}`;
+  }
+  
+  // Use type assertion to work around Next.js type inconsistencies
+  router.push(targetPath as any);
 } 
