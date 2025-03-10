@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { ReactNode, useCallback } from 'react';
 
 interface ClickableTableRowProps {
@@ -11,16 +11,25 @@ interface ClickableTableRowProps {
 
 /**
  * A table row that navigates to the provided href when clicked
- * Uses the router for navigation
+ * Uses a locale-aware approach for navigation
  */
 export function ClickableTableRow({ href, children, className = '' }: ClickableTableRowProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   
-  // Use a callback to handle navigation
+  // Create a properly formatted path with locale
+  const getLocalizedPath = useCallback((path: string) => {
+    if (!locale) return path;
+    if (path.startsWith(`/${locale}/`)) return path;
+    return `/${locale}${path.startsWith('/') ? path : `/${path}`}`;
+  }, [locale]);
+  
+  // Handle the navigation
   const handleClick = useCallback(() => {
-    // Navigate to the href
-    router.push(href);
-  }, [router, href]);
+    const targetPath = getLocalizedPath(href);
+    router.push(targetPath);
+  }, [router, href, getLocalizedPath]);
   
   return (
     <tr
