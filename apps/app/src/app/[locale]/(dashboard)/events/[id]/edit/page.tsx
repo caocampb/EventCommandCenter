@@ -10,14 +10,17 @@ export const metadata = {
   title: "Edit Event",
 };
 
-export default async function EditEventPage({ params }: { params: { id: string } }) {
+export default async function EditEventPage({ params }: { params: { id: string, locale: string } }) {
   const supabase = createServerComponentClient({ cookies });
+  
+  // Get locale directly from params
+  const { id, locale } = params;
   
   // Fetch event data
   const { data: eventData, error } = await supabase
     .from("events")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
     
   if (error || !eventData) {
@@ -57,13 +60,13 @@ export default async function EditEventPage({ params }: { params: { id: string }
       {/* Header with back button */}
       <div className="mb-8">
         <Link 
-          href={`/events/${event.id}`}
+          href={`/${locale}/events/${event.id}`}
           className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors duration-120"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
-            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M20 11H7.83L13.42 5.41L12 4L4 12L12 20L13.41 18.59L7.83 13H20V11Z" fill="currentColor"/>
           </svg>
-          Back to event
+          Back to Event
         </Link>
         
         <h1 className="text-xl font-semibold tracking-tight mb-2">Edit Event</h1>
