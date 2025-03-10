@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { ReactNode, useCallback } from 'react';
+import { safeNavigate } from '@/utils/route-helpers';
 
 interface ClickableTableRowProps {
   href: string;
@@ -11,24 +12,16 @@ interface ClickableTableRowProps {
 
 /**
  * A table row that navigates to the provided href when clicked
- * Uses type assertion to work around Next.js type inconsistencies
+ * Uses the safeNavigate utility for consistent routing
  */
 export function ClickableTableRow({ href, children, className = '' }: ClickableTableRowProps) {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
   
-  // Handle the click with a properly localized path
+  // Use the safeNavigate helper function for clean routing
   const handleClick = useCallback(() => {
-    // Get the properly formatted path
-    let targetPath = href;
-    if (locale && !href.startsWith(`/${locale}/`)) {
-      targetPath = `/${locale}${href.startsWith('/') ? href : `/${href}`}`;
-    }
-    
-    // Use type assertion to bypass the strict type checking
-    // This is necessary due to inconsistencies in Next.js type definitions
-    router.push(targetPath as any);
+    safeNavigate(router, href, locale);
   }, [router, href, locale]);
   
   return (
