@@ -1,7 +1,7 @@
 'use client';
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useCallback, useState, useEffect } from "react";
 import Link from "next/link";
 import { Event, EventStatus } from "@/types/events";
@@ -179,6 +179,8 @@ function getVendorColor(vendorId: unknown): string {
 
 export default function EventDetailClient({ event }: EventDetailProps) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale as string;
   const supabase = createClientComponentClient();
   const [isDeleting, setIsDeleting] = useState(false);
   const [timelineBlocks, setTimelineBlocks] = useState<TimelineBlock[]>([]);
@@ -627,7 +629,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 {budgetInfo.total === 0 && (
                   <button 
                     className="mt-2 text-xs font-medium text-left text-theme-primary"
-                    onClick={() => router.push(`/events/${event.id}/budget`)}
+                    onClick={() => router.push(`/${locale}/events/${event.id}/budget`)}
                   >
                     Set up budget →
                   </button>
@@ -641,7 +643,7 @@ export default function EventDetailClient({ event }: EventDetailProps) {
                 <div className="mt-2">
                   <button 
                     className="text-xs font-medium text-left text-theme-primary" 
-                    onClick={() => router.push(`/events/${event.id}/budget`)}
+                    onClick={() => router.push(`/${locale}/events/${event.id}/budget`)}
                   >
                     Set up budget →
                   </button>
