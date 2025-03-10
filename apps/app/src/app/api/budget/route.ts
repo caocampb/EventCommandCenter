@@ -34,15 +34,7 @@ export async function GET(request: Request) {
       // Get event's budget items
       const { data: budgetItems, error: budgetError } = await serviceClient
         .from("budget_items")
-        .select(`
-          id, 
-          description, 
-          category, 
-          planned_amount, 
-          actual_amount, 
-          vendor_id, 
-          is_paid
-        `)
+        .select("*")
         .eq("event_id", event.id);
       
       if (budgetError) {
@@ -50,15 +42,14 @@ export async function GET(request: Request) {
         continue; // Skip this event but continue with others
       }
 
-      // Calculate event totals
-      const eventBudget = 0; // Default to 0 as total_budget column doesn't exist
+      // Calculate event totals - note total_budget no longer exists
       const eventPlanned = budgetItems.reduce((sum, item) => sum + (item.planned_amount || 0), 0);
       const eventSpent = budgetItems.reduce((sum, item) => sum + (item.actual_amount || 0), 0);
       
-      // Update global totals
-      totalBudget += eventBudget;
+      // Update global totals - use planned as the budget since we don't have total_budget
       totalAllocated += eventPlanned;
       totalSpent += eventSpent;
+      totalBudget += eventPlanned; // Use planned as budget since total_budget was removed
       
       // Add to event budgets array
       eventBudgets.push({
