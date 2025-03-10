@@ -2,7 +2,6 @@
   "buildCommand": "cd apps/app && bun run build",
   "installCommand": "bun install",
   "outputDirectory": "apps/app/.next",
-  "ignoreCommand": "turbo-ignore",
   "framework": "nextjs",
   "regions": ["lhr1"],
   "build": {
