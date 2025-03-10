@@ -17,6 +17,11 @@ export function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
   
+  // Enhanced debugging for production issues
+  console.log("Package - Environment mode:", process.env.NODE_ENV);
+  console.log("Package - Supabase URL available:", !!supabaseUrl);
+  console.log("Package - Supabase service key available:", !!supabaseServiceKey);
+  
   // Check if required variables are present
   if (!supabaseUrl || !supabaseServiceKey) {
     console.warn("Missing required Supabase environment variables for service role client. Using development fallbacks:", {
@@ -24,6 +29,11 @@ export function createServiceRoleClient() {
       hasServiceKey: !!supabaseServiceKey
     });
   }
+  
+  // Log which URL we're using (without exposing the full key)
+  const finalUrl = supabaseUrl || DEV_SUPABASE_URL;
+  const usingServiceKey = supabaseServiceKey ? "production key" : "development key";
+  console.log(`Package - Creating Supabase client with URL: ${finalUrl} and ${usingServiceKey}`);
   
   // Create and return the client with a more flexible type
   // Using 'any' here is pragmatic for API routes where we know the tables exist

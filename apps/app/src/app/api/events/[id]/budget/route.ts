@@ -9,77 +9,64 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    console.log(`GET /api/events/${params.id}/budget - Starting request`);
+    console.log("Budget route - Starting GET request for event:", params.id);
     
-    if (!params.id) {
-      return NextResponse.json(
-        { error: "Event ID is required" },
-        { status: 400 }
-      );
+    const eventId = params.id;
+    if (!eventId) {
+      return NextResponse.json({ error: "Event ID is required" }, { status: 400 });
     }
+    
+    // Debugging Supabase connection
+    console.log("Budget route - About to query Supabase");
     
     // Fetch budget items for the event
     const { data, error } = await serviceClient
       .from("budget_items")
       .select("*")
-      .eq("event_id", params.id)
-      .order("category", { ascending: true })
-      .order("created_at", { ascending: true });
+      .eq("event_id", eventId)
+      .order("created_at", { ascending: false });
     
     if (error) {
       console.error("Error fetching budget items:", error);
       return NextResponse.json(
-        { error: "Failed to fetch budget items: " + error.message },
+        { error: "Failed to fetch budget items", details: error },
         { status: 500 }
       );
     }
     
+    console.log(`Budget route - Successfully retrieved ${data?.length || 0} budget items`);
+    
     // Map database rows to our expected frontend format
-    const mappedItems = data.map((item) => ({
+    const budgetItems = data.map(item => ({
       id: item.id,
       eventId: item.event_id,
       description: item.description,
       category: item.category,
+      vendorId: item.vendor_id,
       plannedAmount: item.planned_amount,
       actualAmount: item.actual_amount,
-      vendorId: item.vendor_id,
       isPaid: item.is_paid,
-      isPerAttendee: item.is_per_attendee,
       notes: item.notes,
       createdAt: item.created_at,
-      updatedAt: item.updated_at
+      updatedAt: item.updated_at,
     }));
     
-    // Calculate totals
-    const totals = {
-      plannedTotal: mappedItems.reduce((sum, item) => sum + item.plannedAmount, 0),
-      actualTotal: mappedItems.reduce((sum, item) => sum + (item.actualAmount || 0), 0),
-      // Group by category
-      categories: Object.entries(
-        mappedItems.reduce((acc: { [key: string]: { planned: number, actual: number } }, item) => {
-          const category = item.category || 'Uncategorized';
-          if (!acc[category]) {
-            acc[category] = { planned: 0, actual: 0 };
-          }
-          acc[category].planned += item.plannedAmount;
-          acc[category].actual += item.actualAmount || 0;
-          return acc;
-        }, {})
-      ).map(([category, totals]) => ({
-        category,
-        plannedAmount: totals.planned,
-        actualAmount: totals.actual
-      }))
-    };
-    
-    return NextResponse.json({ 
-      data: mappedItems, 
-      totals 
-    });
+    return NextResponse.json({ data: budgetItems });
   } catch (error) {
-    console.error("Error in budget items GET route:", error);
+    console.error("Unexpected error in budget GET route:", error);
+    
+    // Log more details about the error
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    
     return NextResponse.json(
-      { error: "Internal server error: " + (error instanceof Error ? error.message : String(error)) },
+      { 
+        error: "An unexpected error occurred", 
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }
