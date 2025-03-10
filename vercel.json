@@ -1,13 +1,7 @@
 {
-  "buildCommand": "turbo run build --filter=@v1/app",
+  "buildCommand": "cd apps/app && NEXT_TELEMETRY_DISABLED=1 SKIP_TYPE_CHECK=1 bun next build && node static-build.js",
   "installCommand": "bun install",
   "outputDirectory": "apps/app/.next",
   "framework": "nextjs",
-  "regions": ["lhr1"],
-  "build": {
-    "env": {
-      "SKIP_TYPE_CHECK": "1",
-      "NEXT_TELEMETRY_DISABLED": "1"
-    }
-  }
+  "regions": ["lhr1"]
 } 
