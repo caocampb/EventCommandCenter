@@ -37,24 +37,40 @@ function formatDate(dateString: string) {
 export default async function EventsPage() {
   const t = await getI18n();
   const locale = "en"; // This would come from your i18n setup
-  const supabase = createServerComponentClient({ cookies });
   
-  // Fetch events
-  const { data: eventsData, error } = await supabase
-    .from("events")
-    .select("*")
-    .order("created_at", { ascending: false });
+  // Add error handling around Supabase client creation and data fetching
+  let events: Event[] = [];
+  let fetchError: string | null = null;
+  
+  try {
+    // Create Supabase client with error handling
+    const supabase = createServerComponentClient({ cookies });
     
-  // Transform data to match our Event component interface
-  const events = eventsData?.map((event: EventDbRow) => ({
-    id: event.id,
-    name: event.name,
-    description: event.description,
-    date: formatDate(event.start_date),
-    location: event.location,
-    status: event.status as 'draft' | 'confirmed' | 'cancelled' | 'pending',
-    attendeeCount: event.attendee_count || 0,
-  })) as Event[] || [];
+    // Fetch events with error handling
+    const { data: eventsData, error } = await supabase
+      .from("events")
+      .select("*")
+      .order("created_at", { ascending: false });
+    
+    if (error) {
+      console.error("Error fetching events:", error);
+      fetchError = error.message;
+    } else if (eventsData) {
+      // Transform data to match our Event component interface
+      events = eventsData.map((event: EventDbRow) => ({
+        id: event.id,
+        name: event.name,
+        description: event.description,
+        date: formatDate(event.start_date),
+        location: event.location,
+        status: event.status as 'draft' | 'confirmed' | 'cancelled' | 'pending',
+        attendeeCount: event.attendee_count || 0,
+      }));
+    }
+  } catch (err) {
+    console.error("Exception fetching events:", err);
+    fetchError = err instanceof Error ? err.message : "Unknown error fetching events";
+  }
 
   return (
     <div className="px-6 py-6 bg-theme-bg-page">
@@ -68,14 +84,26 @@ export default async function EventsPage() {
         </PrimaryButton>
       </div>
 
-      {events.length === 0 ? (
+      {fetchError && (
+        <div className="flex flex-col items-center justify-center h-56 border rounded-lg border-theme-border-subtle bg-theme-bg-card">
+          <p className="mb-2 font-medium text-theme-status-error-text">Error loading events</p>
+          <p className="text-sm text-theme-text-tertiary mb-4">
+            {fetchError}
+          </p>
+          <PrimaryButton href={`/${locale}/events`}>
+            Retry
+          </PrimaryButton>
+        </div>
+      )}
+
+      {!fetchError && events.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-56 border rounded-lg border-theme-border-subtle bg-theme-bg-card">
           <p className="mb-2 font-medium text-theme-text-secondary">No events found</p>
           <p className="text-sm text-theme-text-tertiary">
             Create your first event to get started with your planning
           </p>
         </div>
-      ) : (
+      ) : !fetchError && (
         // Linear-style table view with our updated components
         <div className="border rounded-md overflow-hidden shadow-sm border-theme-border-subtle bg-theme-bg-card">
           <table className="w-full border-collapse">
