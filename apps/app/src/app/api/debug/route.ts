@@ -5,12 +5,36 @@ import { createClient } from "@supabase/supabase-js";
 // Set this to run in all environments, including production
 export const dynamic = "force-dynamic";
 
+// Define proper types for test results
+interface SupabaseTestResult {
+  status: "pending" | "success" | "failed";
+  error: null | {
+    message: string;
+    stack?: string;
+    code?: string;
+    details?: string;
+  };
+  serviceClientResult?: any;
+  directClientResult?: any;
+}
+
 export async function GET() {
   try {
     // Basic debug info
-    const debugInfo = {
+    const debugInfo: {
+      timestamp: string;
+      environment: string;
+      environmentVariables: Record<string, string>;
+      packageVersions: Record<string, string>;
+      nodeVersion: string;
+      platform: string;
+      arch: string;
+      tests: {
+        supabase: SupabaseTestResult;
+      };
+    } = {
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV,
+      environment: process.env.NODE_ENV || "unknown",
       environmentVariables: {
         nextPublicSupabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? "Set" : "Not set",
         supabaseServiceKey: process.env.SUPABASE_SERVICE_KEY ? "Set" : "Not set", 
@@ -43,11 +67,14 @@ export async function GET() {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
       const supabaseKey = process.env.SUPABASE_SERVICE_KEY || "";
       
-      console.log(`Supabase URL length: ${supabaseUrl.length}, Key length: ${supabaseKey.length}`);
+      console.log(`Supabase URL length: ${supabaseUrl.length}, Key available: ${supabaseKey ? "Yes" : "No"}`);
       
       if (!supabaseUrl || !supabaseKey) {
         throw new Error("Missing Supabase URL or Service Key");
       }
+
+      // Try to log partial URL to help with debugging without exposing full URL
+      console.log(`Supabase domain: ${new URL(supabaseUrl).hostname}`);
 
       // Test with service client
       console.log("Testing with service client");
@@ -69,24 +96,34 @@ export async function GET() {
         serviceClientResult: data,
         directClientResult: directResult.data
       };
-    } catch (supabaseError) {
+    } catch (supabaseError: any) {
       console.error("Supabase test error:", supabaseError);
+      
+      // Extract error details safely
+      const errorDetails = {
+        message: supabaseError?.message || "Unknown error",
+        stack: supabaseError?.stack,
+        code: supabaseError?.code,
+        details: supabaseError?.details
+      };
+      
+      // Also log full error object for server-side debugging
+      console.error("Full Supabase error:", JSON.stringify(supabaseError, null, 2));
+
       debugInfo.tests.supabase = {
         status: "failed",
-        error: supabaseError instanceof Error ? 
-               { message: supabaseError.message, stack: supabaseError.stack } : 
-               String(supabaseError)
+        error: errorDetails
       };
     }
 
     return NextResponse.json(debugInfo);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Debug route error:", error);
     return NextResponse.json(
       {
         error: "Error generating debug info",
-        message: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+        message: error?.message || String(error),
+        stack: error?.stack,
       },
       { status: 500 }
     );
