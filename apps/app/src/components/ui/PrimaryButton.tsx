@@ -16,7 +16,7 @@ interface PrimaryButtonProps {
 export function PrimaryButton({ href, children, className = '' }: PrimaryButtonProps) {
   return (
     <Link
-      href={href}
+      href={{ pathname: href }}
       className={`inline-flex items-center px-4 py-2 text-sm font-medium rounded-md 
                  transition-colors duration-150 border shadow-sm 
                  bg-theme-primary text-white border-transparent
