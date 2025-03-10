@@ -24,6 +24,5 @@
       "cache": false
     }
   },
-  "globalEnv": ["NODE_ENV", "VERCEL"],
-  "experimentalSpaces": true
+  "globalEnv": ["NODE_ENV", "VERCEL"]
 }
