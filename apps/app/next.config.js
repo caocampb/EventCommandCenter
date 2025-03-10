@@ -2,29 +2,18 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Output standalone build for better Vercel compatibility
+  output: 'standalone',
   experimental: {
     // Prevent problematic builds on Vercel
     serverComponentsExternalPackages: [],
-    // Disable incrementality in production
-    incrementalCacheHandlerPath: process.env.NODE_ENV === 'production' 
-      ? false 
-      : undefined,
+    // Disable incremental caching in production to avoid stale artifacts
+    incrementalCacheHandlerPath: false,
+    // Workaround for clientModules issues in Next.js 14.x
+    optimizePackageImports: ['@v1/ui']
   },
   // Fix module resolution errors
   transpilePackages: ['@v1/ui'],
-  // Workaround for the clientModules issue
-  webpack: (config, { isServer }) => {
-    // Add a plugin to reset problematic caching
-    if (!isServer) {
-      config.cache = {
-        type: 'filesystem',
-        buildDependencies: {
-          config: [__filename],
-        },
-      };
-    }
-    return config;
-  },
   // Internationalization settings
   i18n: {
     locales: ['en'],
