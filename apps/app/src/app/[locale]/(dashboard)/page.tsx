@@ -3,6 +3,9 @@ import { getI18n } from "@/locales/server";
 import { getUser } from "@v1/supabase/queries";
 import { ClientBoundary } from "@/utils/client-boundary";
 
+// Force dynamic rendering to prevent client reference manifest issues
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Home",
 };

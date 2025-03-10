@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent client reference manifest issues
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

@@ -8,6 +8,9 @@ import { StatusPill } from "@/components/ui/StatusPill";
 import { EventRow, Event } from "../events/components/EventRow";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 
+// Force dynamic rendering to prevent client reference manifest issues
+export const dynamic = 'force-dynamic';
+
 // Type for the event data returned from Supabase
 type EventDbRow = {
   id: string;

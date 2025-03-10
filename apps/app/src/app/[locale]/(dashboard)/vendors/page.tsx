@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent client reference manifest issues
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import type { Vendor } from '@/types/vendor';
 import Link from 'next/link';
