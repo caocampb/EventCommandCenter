@@ -4,15 +4,21 @@ const nextConfig = {
   swcMinify: true,
   // Output standalone build for better Vercel compatibility
   output: 'standalone',
+  // Disable static image optimization to avoid build issues
+  images: {
+    disableStaticImages: true,
+  },
+  // Disable static page generation for dynamic routes
   experimental: {
-    // Prevent problematic builds on Vercel
+    // Force all pages to be server-side rendered to avoid client reference manifest issues
+    appDir: true,
     serverComponentsExternalPackages: [],
-    // Disable incremental caching in production to avoid stale artifacts
+    // Disable incrementality completely - this is a key fix for the client reference manifest issue
     incrementalCacheHandlerPath: false,
+    // Disable static generation for dynamic routes
+    staticPageGenerationTimeout: 0,
     // Workaround for clientModules issues in Next.js 14.x
     optimizePackageImports: ['@v1/ui'],
-    // Enable proper handling of locale routes
-    typedRoutes: true
   },
   // Fix module resolution errors
   transpilePackages: ['@v1/ui'],
@@ -26,6 +32,23 @@ const nextConfig = {
         permanent: true,
       },
     ];
+  },
+  
+  // Critical setting for Vercel deployment with dynamic routes
+  // This tells Next.js to generate the manifest files during build time
+  webpack: (config, { dev, isServer }) => {
+    // Only in production builds
+    if (!dev && !isServer) {
+      // Ensure client reference manifests are generated properly
+      config.optimization.splitChunks = {
+        cacheGroups: {
+          default: false,
+          vendors: false,
+        },
+      };
+    }
+    
+    return config;
   },
 }
 

@@ -1,25 +1,13 @@
-import { SignOut } from "@/components/sign-out";
-import { getI18n } from "@/locales/server";
-import { getUser } from "@v1/supabase/queries";
-import { ClientBoundary } from "@/utils/client-boundary";
+import { redirect } from 'next/navigation';
 
-export const metadata = {
-  title: "Home",
-};
-
-export default async function Page() {
-  const { data } = await getUser();
-  const t = await getI18n();
-
-  return (
-    <ClientBoundary>
-      <div className="h-screen w-screen flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <p>{t("welcome", { name: data?.user?.email })}</p>
-
-          <SignOut />
-        </div>
-      </div>
-    </ClientBoundary>
-  );
+/**
+ * Dashboard index page - redirects to events by default
+ * Using a server component for redirection ensures we avoid client reference manifest issues
+ */
+export default function DashboardPage({ params }: { params: { locale: string } }) {
+  // Simple server-side redirect to events page
+  redirect(`/${params.locale}/events`);
+  
+  // This will never be reached due to the redirect
+  return null;
 }
