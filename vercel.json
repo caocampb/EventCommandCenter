@@ -1,5 +1,5 @@
 {
-  "buildCommand": "turbo run build",
+  "buildCommand": "cd apps/app && bun run build",
   "installCommand": "bun install",
   "outputDirectory": "apps/app/.next",
   "ignoreCommand": "turbo-ignore",
