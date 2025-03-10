@@ -1,0 +1,17 @@
+import { getI18n } from "@/locales/server";
+import { getUser } from "@v1/supabase/queries";
+import { DashboardContent } from "./components/dashboard-content";
+
+export const metadata = {
+  title: "Dashboard",
+};
+
+export default async function DashboardPage() {
+  // Server-side data fetching
+  const { data } = await getUser();
+  const t = await getI18n();
+  
+  // Pass only the data needed to the client component
+  const welcomeMessage = t("welcome", { name: data?.user?.email });
+  return <DashboardContent userEmail={data?.user?.email} welcomeMessage={welcomeMessage} />;
+} 

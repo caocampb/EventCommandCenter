@@ -5,6 +5,7 @@ import AuthButton from '@/components/auth/auth-button';
 import SidebarNav from '@/components/navigation/sidebar-nav';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import '@/styles/radix-fix.css'; // Fix for Radix UI dropdown z-index issues
+import { Suspense } from "react";
 
 // Ensure proper Next.js build handling
 export const revalidate = 0;
@@ -65,7 +66,11 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
         <div 
           className="flex-1 overflow-auto bg-theme-bg-page"
         >
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen">
+            <Suspense fallback={<div>Loading...</div>}>
+              {children}
+            </Suspense>
+          </main>
         </div>
       </div>
     </>
