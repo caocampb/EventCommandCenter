@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd apps/app && NEXT_TELEMETRY_DISABLED=1 SKIP_TYPE_CHECK=1 bun next build && node static-build.js",
+  "buildCommand": "ls -la && find . -type d | grep -v node_modules && NEXT_TELEMETRY_DISABLED=1 SKIP_TYPE_CHECK=1 npx --yes turbo-ignore && npx turbo build --filter=@v1/app",
   "installCommand": "bun install",
   "outputDirectory": "apps/app/.next",
   "framework": "nextjs",
