@@ -36,14 +36,26 @@ export async function middleware(request: NextRequest) {
   // Handle auth session
   const { response, user } = await updateSession(request, i18nResult);
 
+  // Check for login paths - account for locale paths (both /login and /en/login should work)
+  const isLoginPath = pathname === "/login" || 
+                     pathname.endsWith("/login") ||
+                     pathname === "/en/login" || 
+                     pathname === "/fr/login";
+
+  // Don't redirect for API routes and auth callback
+  if (pathname.startsWith('/api/auth/callback') || 
+      pathname.startsWith('/api/')) {
+    return response;
+  }
+
   // Redirect to events page if user is authenticated and trying to access login
-  if (request.nextUrl.pathname.endsWith("/login") && user) {
-    return NextResponse.redirect(new URL("/events", request.url));
+  if (isLoginPath && user) {
+    return NextResponse.redirect(new URL("/en/events", request.url));
   }
 
   // Redirect to login if user is not authenticated and not accessing login
-  if (!request.nextUrl.pathname.endsWith("/login") && !user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!isLoginPath && !user) {
+    return NextResponse.redirect(new URL("/en/login", request.url));
   }
 
   return response;
