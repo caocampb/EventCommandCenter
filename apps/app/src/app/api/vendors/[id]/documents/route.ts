@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { serviceClient } from "@/lib/supabase-service";
-import { documentSchema } from "@/lib/validations/document-schema";
 import { VendorDocument, VendorDocumentDbRow } from "@/types/vendor";
 import { z } from "zod";
 
