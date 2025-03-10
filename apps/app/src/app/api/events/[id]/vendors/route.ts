@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
+import { z } from "zod";
 import { eventVendorSchema } from "@/lib/validations/vendor-schema";
 import { VendorDbRow } from "@/types/vendor";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 // Define the type for the joined data
 interface EventVendorJoinedRow {
@@ -41,7 +33,7 @@ export async function GET(
     }
     
     // Fetch event_vendors for the event and join with vendors table
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("event_vendors")
       .select(`
         id,
@@ -144,7 +136,7 @@ export async function POST(
     const validatedData = validationResult.data;
     
     // Check if vendor exists
-    const { data: vendorData, error: vendorError } = await serviceRoleClient
+    const { data: vendorData, error: vendorError } = await serviceClient
       .from("vendors")
       .select("id")
       .eq("id", validatedData.vendorId)
@@ -159,7 +151,7 @@ export async function POST(
     }
     
     // Check if event exists
-    const { data: eventData, error: eventError } = await serviceRoleClient
+    const { data: eventData, error: eventError } = await serviceClient
       .from("events")
       .select("id")
       .eq("id", validatedData.eventId)
@@ -174,7 +166,7 @@ export async function POST(
     }
     
     // Check if the assignment already exists
-    const { data: existingData, error: existingError } = await serviceRoleClient
+    const { data: existingData, error: existingError } = await serviceClient
       .from("event_vendors")
       .select("id")
       .eq("event_id", validatedData.eventId)
@@ -189,7 +181,7 @@ export async function POST(
     }
     
     // Create the event-vendor assignment
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("event_vendors")
       .insert({
         event_id: validatedData.eventId,

@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
+import { documentSchema } from "@/lib/validations/document-schema";
 import { VendorDocument, VendorDocumentDbRow } from "@/types/vendor";
 import { z } from "zod";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 // Document schema for validation
 const documentSchema = z.object({
@@ -39,7 +31,7 @@ export async function GET(
     }
     
     // Fetch documents for this vendor
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("vendor_documents")
       .select("*")
       .eq("vendor_id", vendorId)
@@ -92,7 +84,7 @@ export async function POST(
     }
     
     // Check if vendor exists
-    const { data: vendorData, error: vendorError } = await serviceRoleClient
+    const { data: vendorData, error: vendorError } = await serviceClient
       .from("vendors")
       .select("id")
       .eq("id", vendorId)
@@ -127,7 +119,7 @@ export async function POST(
     
     // Upload to Supabase Storage
     const filePath = `${vendorId}/${Date.now()}_${name}`;
-    const { data: uploadData, error: uploadError } = await serviceRoleClient
+    const { data: uploadData, error: uploadError } = await serviceClient
       .storage
       .from("vendor-documents")
       .upload(filePath, fileBuffer, {
@@ -144,7 +136,7 @@ export async function POST(
     }
     
     // Create document record in database
-    const { data: document, error: documentError } = await serviceRoleClient
+    const { data: document, error: documentError } = await serviceClient
       .from("vendor_documents")
       .insert({
         vendor_id: vendorId,
@@ -160,7 +152,7 @@ export async function POST(
       console.error("Error creating document record:", documentError);
       
       // Try to delete the uploaded file if the database insert fails
-      await serviceRoleClient
+      await serviceClient
         .storage
         .from("vendor-documents")
         .remove([uploadData.path]);
@@ -221,7 +213,7 @@ export async function DELETE(
     }
     
     // Get document to find its path
-    const { data: document, error: fetchError } = await serviceRoleClient
+    const { data: document, error: fetchError } = await serviceClient
       .from("vendor_documents")
       .select("file_path")
       .eq("id", documentId)
@@ -245,7 +237,7 @@ export async function DELETE(
     }
     
     // Delete from storage
-    const { error: storageError } = await serviceRoleClient
+    const { error: storageError } = await serviceClient
       .storage
       .from("vendor-documents")
       .remove([document.file_path]);
@@ -256,7 +248,7 @@ export async function DELETE(
     }
     
     // Delete from database
-    const { error: dbError } = await serviceRoleClient
+    const { error: dbError } = await serviceClient
       .from("vendor_documents")
       .delete()
       .eq("id", documentId)

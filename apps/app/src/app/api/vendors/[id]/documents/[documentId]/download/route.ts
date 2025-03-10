@@ -1,14 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
+import { serviceClient } from "@/lib/supabase-service";
 
 // GET /api/vendors/[id]/documents/[documentId]/download - Download a document
 export async function GET(
@@ -35,7 +26,7 @@ export async function GET(
     console.log("Is preview request:", isPreview);
     
     // Get document to find its path and type
-    const { data: document, error: fetchError } = await serviceRoleClient
+    const { data: document, error: fetchError } = await serviceClient
       .from("vendor_documents")
       .select("file_path, file_type, name")
       .eq("id", documentId)
@@ -59,7 +50,7 @@ export async function GET(
     }
     
     // Download from storage
-    const { data: fileData, error: downloadError } = await serviceRoleClient
+    const { data: fileData, error: downloadError } = await serviceClient
       .storage
       .from("vendor-documents")
       .download(document.file_path);

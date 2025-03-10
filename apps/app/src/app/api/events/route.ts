@@ -1,22 +1,11 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { serviceClient } from "@/lib/supabase-service";
 import { eventSchema } from "@/lib/validations/event-schema";
-import { createClient } from "@supabase/supabase-js";
 import { EventStatus } from "@/types/events";
 
 // Get environment variables - debugging output
 console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
 console.log("SUPABASE SERVICE KEY LENGTH:", process.env.SUPABASE_SERVICE_KEY ? process.env.SUPABASE_SERVICE_KEY.length : 0);
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 // Type for the event data returned from Supabase
 type EventDbRow = {
@@ -46,12 +35,8 @@ export async function GET(request: Request) {
     
     console.log(`Search param: ${search}, Exclude param: ${exclude}`);
     
-    // TEMPORARY FOR MVP DEVELOPMENT:
-    // Use service role client to bypass RLS policies during development
-    // TODO: Implement proper authentication before production
-    
     // Start the query
-    let query = serviceRoleClient
+    let query = serviceClient
       .from("events")
       .select("*");
     
@@ -136,7 +121,7 @@ export async function POST(request: Request) {
     
     // Map camelCase to snake_case for database columns
     // Use the service role client which bypasses RLS
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("events")
       .insert({
         name: validatedData.name,

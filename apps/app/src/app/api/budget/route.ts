@@ -1,15 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
 import { formatDateForDisplay } from "@/utils/timezone-utils";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 // GET /api/budget - Get aggregated budget data
 export async function GET(request: Request) {
@@ -17,7 +8,7 @@ export async function GET(request: Request) {
     console.log("GET /api/budget - Starting request");
 
     // Fetch all events with budget data
-    const { data: events, error: eventsError } = await serviceRoleClient
+    const { data: events, error: eventsError } = await serviceClient
       .from("events")
       .select("id, name, start_date")
       .order("start_date", { ascending: false });
@@ -41,7 +32,7 @@ export async function GET(request: Request) {
     // Fetch budget items for each event
     for (const event of events) {
       // Get event's budget items
-      const { data: budgetItems, error: budgetError } = await serviceRoleClient
+      const { data: budgetItems, error: budgetError } = await serviceClient
         .from("budget_items")
         .select(`
           id, 
@@ -101,7 +92,7 @@ export async function GET(request: Request) {
         .map(item => item.vendor_id);
       
       if (vendorIds.length > 0) {
-        const { data: vendorData, error: vendorError } = await serviceRoleClient
+        const { data: vendorData, error: vendorError } = await serviceClient
           .from("vendors")
           .select("id, name")
           .in("id", vendorIds);

@@ -1,15 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
 import { eventSchema } from "@/lib/validations/event-schema";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 // GET /api/events/[id] - Get a single event
 export async function GET(
@@ -26,7 +17,7 @@ export async function GET(
       );
     }
     
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("events")
       .select("*")
       .eq("id", id)
@@ -98,7 +89,7 @@ export async function PATCH(
     if (body.total_budget !== undefined && Object.keys(body).length === 1) {
       console.log("PATCH: Updating total_budget to:", body.total_budget);
       
-      const { data, error } = await serviceRoleClient
+      const { data, error } = await serviceClient
         .from("events")
         .update({
           total_budget: body.total_budget,
@@ -147,7 +138,7 @@ export async function PATCH(
         );
       }
       
-      const { data, error } = await serviceRoleClient
+      const { data, error } = await serviceClient
         .from("events")
         .update({
           status: body.status,
@@ -197,7 +188,7 @@ export async function PATCH(
     
     // Map camelCase to snake_case for database columns
     console.log("PATCH: About to update database record");
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("events")
       .update({
         name: validatedData.name,
@@ -274,7 +265,7 @@ export async function DELETE(
       );
     }
     
-    const { error } = await serviceRoleClient
+    const { error } = await serviceClient
       .from("events")
       .delete()
       .eq("id", id);

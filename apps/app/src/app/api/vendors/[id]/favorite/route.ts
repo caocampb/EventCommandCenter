@@ -1,14 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
+import { serviceClient } from "@/lib/supabase-service";
 
 // PUT /api/vendors/[id]/favorite - Update favorite status of a vendor
 export async function PUT(
@@ -38,7 +29,7 @@ export async function PUT(
     }
     
     // Update the vendor's favorite status
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("vendors")
       .update({ is_favorite: body.isFavorite })
       .eq("id", params.id)

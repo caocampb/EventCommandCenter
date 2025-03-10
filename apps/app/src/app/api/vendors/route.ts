@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createServiceClient } from "@/lib/supabase-service";
 import { vendorSchema } from "@/lib/validations/vendor-schema";
 import { VendorDbRow } from "@/types/vendor";
 
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || "";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
+// Use environment variables instead of hardcoded values
+const serviceClient = createServiceClient();
 
 // GET /api/vendors - Get all vendors with optional filtering
 export async function GET(request: Request) {
@@ -27,7 +21,7 @@ export async function GET(request: Request) {
     const isFavorite = url.searchParams.get('isFavorite');
     
     // Start building query
-    let query = serviceRoleClient
+    let query = serviceClient
       .from("vendors")
       .select("*")
       .order("name", { ascending: true });
@@ -127,7 +121,7 @@ export async function POST(request: Request) {
     const validatedData = validationResult.data;
     
     // Map camelCase to snake_case for database columns
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("vendors")
       .insert({
         name: validatedData.name,

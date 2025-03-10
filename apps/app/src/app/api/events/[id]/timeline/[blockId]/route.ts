@@ -1,16 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
 import { timelineBlockSchema, updateTimelineBlockSchema } from "../../../../../../lib/validations/timeline-block-schema";
-
-// Supabase service role client for bypassing RLS
-// Use hardcoded values directly from .env for development
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 // GET /api/events/[id]/timeline/[blockId] - Get a specific timeline block
 export async function GET(
@@ -30,7 +20,7 @@ export async function GET(
     }
 
     // Fetch the specific timeline block
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("timeline_blocks")
       .select("*")
       .eq("id", blockId)
@@ -99,7 +89,7 @@ export async function DELETE(
     console.log(`Attempting to delete timeline block ${blockId} from event ${eventId}`);
     
     // Delete the timeline block
-    const { error } = await serviceRoleClient
+    const { error } = await serviceClient
       .from("timeline_blocks")
       .delete()
       .eq("id", blockId)
@@ -188,7 +178,7 @@ export async function PATCH(
     }
     
     // Update the timeline block
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("timeline_blocks")
       .update(updateData)
       .eq("id", blockId)

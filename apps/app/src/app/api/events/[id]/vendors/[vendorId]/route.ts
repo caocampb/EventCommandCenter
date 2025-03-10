@@ -1,14 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-// Supabase service role client for bypassing RLS
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
+import { serviceClient } from "@/lib/supabase-service";
 
 // DELETE /api/events/[id]/vendors/[vendorId] - Remove a vendor from an event
 export async function DELETE(
@@ -34,7 +25,7 @@ export async function DELETE(
     }
     
     // Check if the assignment exists
-    const { data: existingData, error: checkError } = await serviceRoleClient
+    const { data: existingData, error: checkError } = await serviceClient
       .from("event_vendors")
       .select("id")
       .eq("event_id", params.id)
@@ -56,7 +47,7 @@ export async function DELETE(
     }
     
     // Delete the event-vendor assignment
-    const { error } = await serviceRoleClient
+    const { error } = await serviceClient
       .from("event_vendors")
       .delete()
       .eq("event_id", params.id)

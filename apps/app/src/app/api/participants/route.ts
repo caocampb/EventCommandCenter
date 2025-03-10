@@ -1,19 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
 import { z } from "zod";
 import { participantSchema } from "@/lib/validations/participant-schema";
 import { ParticipantDbRow } from "@/types/participant";
-
-// Supabase service role client for bypassing RLS
-// Use hardcoded values directly from .env for development
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-// Create a Supabase client with the service role key
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 /**
  * GET /api/participants
@@ -25,7 +14,7 @@ export async function GET(req: NextRequest) {
     // Service role bypasses RLS
     
     // Get all participants
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("participants")
       .select("*")
       .order("name", { ascending: true });
@@ -84,7 +73,7 @@ export async function POST(req: NextRequest) {
     };
     
     // Insert the new participant
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("participants")
       .insert(participantData)
       .select("*")

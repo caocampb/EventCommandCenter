@@ -1,19 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { serviceClient } from "@/lib/supabase-service";
 import { z } from "zod";
 import { eventParticipantSchema } from "@/lib/validations/participant-schema";
 import { ParticipantDbRow } from "@/types/participant";
-
-// Supabase service role client for bypassing RLS
-// Use hardcoded values directly from .env for development
-const SUPABASE_URL = "http://127.0.0.1:54321";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-
-// Create a Supabase client with the service role key
-const serviceRoleClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY
-);
 
 /**
  * GET /api/events/[id]/participants
@@ -30,7 +19,7 @@ export async function GET(
     const eventId = params.id;
     
     // First, check if the event exists
-    const { data: eventData, error: eventError } = await serviceRoleClient
+    const { data: eventData, error: eventError } = await serviceClient
       .from("events")
       .select("id")
       .eq("id", eventId)
@@ -41,7 +30,7 @@ export async function GET(
     }
     
     // Get participants for this event with their status
-    const { data, error } = await serviceRoleClient
+    const { data, error } = await serviceClient
       .from("event_participants")
       .select(`
         id, 
@@ -111,7 +100,7 @@ export async function POST(
     const eventId = params.id;
     
     // First, check if the event exists
-    const { data: eventData, error: eventError } = await serviceRoleClient
+    const { data: eventData, error: eventError } = await serviceClient
       .from("events")
       .select("id")
       .eq("id", eventId)
@@ -146,7 +135,7 @@ export async function POST(
       }));
       
       // First, insert all participants that don't exist yet
-      const { error: participantsError } = await serviceRoleClient
+      const { error: participantsError } = await serviceClient
         .from("participants")
         .upsert(participants, { 
           onConflict: 'email'
@@ -160,7 +149,7 @@ export async function POST(
       // Get the inserted participants by email
       const emails = participants.map(p => p.email);
       
-      const { data: insertedParticipants, error: fetchError } = await serviceRoleClient
+      const { data: insertedParticipants, error: fetchError } = await serviceClient
         .from("participants")
         .select("id, email")
         .in("email", emails);
@@ -184,7 +173,7 @@ export async function POST(
       }));
       
       // Insert the event-participant relationships
-      const { error: relationError } = await serviceRoleClient
+      const { error: relationError } = await serviceClient
         .from("event_participants")
         .upsert(eventParticipants, {
           onConflict: 'event_id,participant_id'
@@ -214,7 +203,7 @@ export async function POST(
         });
         
         // Add the event-participant relationship
-        const { data, error } = await serviceRoleClient
+        const { data, error } = await serviceClient
           .from("event_participants")
           .insert({
             event_id: eventId,
@@ -279,7 +268,7 @@ export async function POST(
         };
         
         // Insert or update the participant
-        const { data: participant, error: participantError } = await serviceRoleClient
+        const { data: participant, error: participantError } = await serviceClient
           .from("participants")
           .upsert(participantData, { onConflict: 'email' })
           .select()
@@ -291,7 +280,7 @@ export async function POST(
         }
         
         // Now add the event-participant relationship
-        const { data: relationship, error: relationshipError } = await serviceRoleClient
+        const { data: relationship, error: relationshipError } = await serviceClient
           .from("event_participants")
           .insert({
             event_id: eventId,
@@ -375,7 +364,7 @@ export async function DELETE(
     }
     
     // Delete the event-participant relationship
-    const { error } = await serviceRoleClient
+    const { error } = await serviceClient
       .from("event_participants")
       .delete()
       .eq("event_id", eventId)
