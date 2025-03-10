@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 
 // Navigation item component
 function NavItem({ 
@@ -18,7 +18,7 @@ function NavItem({
 }) {
   return (
     <Link
-      href={href}
+      href={{ pathname: href }}
       className={`
         nav-item flex items-center px-3 py-2 text-sm rounded-md mb-0.5
         text-theme-text-secondary border-l-2 border-transparent
