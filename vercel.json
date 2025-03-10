@@ -1,5 +1,0 @@
-{
-  "buildCommand": "./vercel-build.sh",
-  "installCommand": null,
-  "outputDirectory": "apps/app/.next"
-} 
