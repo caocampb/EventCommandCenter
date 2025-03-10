@@ -15,68 +15,36 @@ const POSSIBLE_PKCE_COOKIE_NAMES = [
 ];
 
 export async function GET(request: Request) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const state = requestUrl.searchParams.get('state');
-  
-  console.log('Auth callback received:');
-  console.log('- Code present:', !!code);
-  console.log('- State present:', !!state);
-  console.log('- Request URL:', request.url);
-  console.log('- Origin:', requestUrl.origin);
-  
-  // Log all cookies for debugging
-  const cookieList = cookies().getAll();
-  const cookieNames = cookieList.map(cookie => cookie.name);
-  console.log('Available cookies:', cookieNames);
-  
   try {
+    const requestUrl = new URL(request.url);
+    const code = requestUrl.searchParams.get('code');
+    
+    // Required parameter validation
     if (!code) {
-      console.log('No code parameter found, redirecting to login with error');
       return NextResponse.redirect(`${requestUrl.origin}/en/login?error=missing-code`);
     }
 
-    // Create Supabase client (will handle cookies automatically)
+    // Create Supabase client
     const supabase = createClient();
     
-    // Use direct exchangeCodeForSession approach to handle the callback
-    console.log('Exchanging code for session...');
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    
-    if (error) {
-      console.error('Auth error during code exchange:', error);
+    // Handle the auth callback
+    try {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       
-      if (error.code === 'flow_state_not_found') {
-        console.log('Flow state not found. This typically happens when using a code twice or when the state is expired.');
-        // Clear the existing cookies to provide a clean slate for the next attempt
-        for (const cookie of cookieList) {
-          console.log(`Clearing cookie: ${cookie.name}`);
-          cookies().delete(cookie.name);
-        }
-        return NextResponse.redirect(`${requestUrl.origin}/en/login?error=expired-session&message=${encodeURIComponent('Your authentication session expired. Please try again.')}`);
+      if (error) {
+        console.error('Auth error:', error);
+        return NextResponse.redirect(`${requestUrl.origin}/en/login?error=auth-error&message=${encodeURIComponent(error.message)}`);
       }
       
-      return NextResponse.redirect(`${requestUrl.origin}/en/login?error=auth-error&message=${encodeURIComponent(error.message)}`);
+      // On successful authentication, redirect to the events page
+      return NextResponse.redirect(`${requestUrl.origin}/en/events`);
+    } catch (authError) {
+      console.error('Auth exchange error:', authError);
+      return NextResponse.redirect(`${requestUrl.origin}/en/login?error=exchange-error`);
     }
-    
-    console.log('Authentication successful:', !!data?.user);
-    console.log('User email:', data?.user?.email);
-    console.log('Session expires at:', data?.session?.expires_at);
-    
-    // Explicitly set a test cookie to see if cookies are working
-    cookies().set('auth_test', 'authenticated', { 
-      path: '/',
-      maxAge: 60 * 60, // 1 hour
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-    });
-    
-    // Redirect to the events page after successful authentication
-    const redirectUrl = `${requestUrl.origin}/en/events`;
-    console.log('Redirecting to:', redirectUrl);
-    return NextResponse.redirect(redirectUrl);
   } catch (error) {
-    console.error('Unexpected error in auth callback:', error);
-    return NextResponse.redirect(`${requestUrl.origin}/en/login?error=unexpected-error&message=${encodeURIComponent('An unexpected error occurred during login')}`);
+    console.error('Callback error:', error);
+    // Ensure we always return a response even in case of errors
+    return NextResponse.redirect(`/en/login?error=callback-error`);
   }
 }
