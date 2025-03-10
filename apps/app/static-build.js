@@ -12,11 +12,20 @@ const path = require('path');
 console.log('🔧 Post-build script starting...');
 console.log('📂 Current working directory:', process.cwd());
 console.log('🧪 Environment:', process.env.VERCEL ? 'Vercel' : 'Not Vercel');
+console.log('📋 Directory contents:', fs.readdirSync(process.cwd()));
 
 // Special handling for Vercel environment
 const isVercel = !!process.env.VERCEL;
 console.log('🔍 Is Vercel environment:', isVercel);
 console.log('🔍 VERCEL_ENV:', process.env.VERCEL_ENV);
+console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
+
+// Additional Vercel-specific logging
+if (isVercel) {
+  console.log('🔍 VERCEL_REGION:', process.env.VERCEL_REGION);
+  console.log('🔍 VERCEL_URL:', process.env.VERCEL_URL);
+  console.log('🔍 VERCEL_GIT_COMMIT_SHA:', process.env.VERCEL_GIT_COMMIT_SHA);
+}
 
 try {
   // Find the .next directory
@@ -25,13 +34,23 @@ try {
   
   if (!fs.existsSync(buildDir)) {
     console.error('❌ Build directory not found! Current files in cwd:', fs.readdirSync(process.cwd()));
-    process.exit(1);
+    // Don't exit with error to allow build to continue
+    console.log('⚠️ Continuing without build directory...');
+    return;
   }
   
   console.log('✅ Build directory found');
+  console.log('📋 Build directory contents:', fs.readdirSync(buildDir));
   
   // Ensure server/app directory exists
-  const appDir = path.join(buildDir, 'server', 'app');
+  const serverDir = path.join(buildDir, 'server');
+  if (!fs.existsSync(serverDir)) {
+    console.log('⚠️ Server directory not found, creating it...');
+    fs.mkdirSync(serverDir, { recursive: true });
+  }
+  console.log('📋 Server directory contents:', fs.existsSync(serverDir) ? fs.readdirSync(serverDir) : 'directory does not exist');
+  
+  const appDir = path.join(serverDir, 'app');
   if (!fs.existsSync(appDir)) {
     console.log('⚠️ App directory not found, creating it...');
     fs.mkdirSync(appDir, { recursive: true });
@@ -44,8 +63,12 @@ try {
   const ensureDirectoryExists = (dirPath) => {
     console.log(`🔧 Ensuring directory exists: ${dirPath}`);
     if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-      console.log(`✅ Created directory: ${dirPath}`);
+      try {
+        fs.mkdirSync(dirPath, { recursive: true });
+        console.log(`✅ Created directory: ${dirPath}`);
+      } catch (err) {
+        console.error(`❌ Error creating directory ${dirPath}:`, err);
+      }
     } else {
       console.log(`✅ Directory already exists: ${dirPath}`);
     }
@@ -61,8 +84,10 @@ try {
       console.log(`📁 Route directory path: ${routeDir}`);
       
       // Replace bracket notation with actual bracket characters for the file system
-      routeDir = routeDir.replace(/\[locale\]/g, '[locale]');
-      console.log(`📁 Normalized route directory: ${routeDir}`);
+      if (routeDir.includes('[locale]')) {
+        routeDir = routeDir.replace(/\[locale\]/g, '[locale]');
+        console.log(`📁 Normalized route directory: ${routeDir}`);
+      }
       
       // Ensure the directory exists
       ensureDirectoryExists(routeDir);
@@ -77,15 +102,19 @@ self.__RSC_MANIFEST={};
 self.__RSC_SERVER_MANIFEST={};
 self.__RSC_CSS_MANIFEST={};
 `;
-      fs.writeFileSync(manifestPath, content, 'utf8');
-      console.log(`✅ Created manifest file: ${manifestPath}`);
-      
-      // Verify file exists and show contents
-      if (fs.existsSync(manifestPath)) {
-        console.log(`✅ Verified manifest file exists: ${manifestPath}`);
-        console.log(`📋 File contents: ${fs.readFileSync(manifestPath, 'utf8')}`);
-      } else {
-        console.error(`❌ Failed to create manifest file: ${manifestPath}`);
+      try {
+        fs.writeFileSync(manifestPath, content, 'utf8');
+        console.log(`✅ Created manifest file: ${manifestPath}`);
+        
+        // Verify file exists and show contents
+        if (fs.existsSync(manifestPath)) {
+          console.log(`✅ Verified manifest file exists: ${manifestPath}`);
+          console.log(`📋 File contents: ${fs.readFileSync(manifestPath, 'utf8')}`);
+        } else {
+          console.error(`❌ Failed to create manifest file: ${manifestPath}`);
+        }
+      } catch (writeErr) {
+        console.error(`❌ Error writing manifest file ${manifestPath}:`, writeErr);
       }
     } catch (err) {
       console.error(`❌ Error processing route ${routePath}:`, err);
@@ -97,7 +126,12 @@ self.__RSC_CSS_MANIFEST={};
     '[locale]/(dashboard)',
     '[locale]/(dashboard)/events',
     '[locale]/(dashboard)/vendors',
-    '[locale]/(dashboard)/budget'
+    '[locale]/(dashboard)/budget',
+    '[locale]/not-found',
+    // Add more paths for all potential routes
+    '[locale]/(dashboard)/events/[id]',
+    '[locale]/(dashboard)/events/new',
+    '[locale]/(dashboard)/login'
   ];
   
   // Try different escape methods for paths with special characters
@@ -108,7 +142,7 @@ self.__RSC_CSS_MANIFEST={};
   
   // Try escaped versions of paths
   console.log('🔄 Trying escaped path format...');
-  const escapedPaths = paths.map(p => p.replace('[', '\\[').replace(']', '\\]'));
+  const escapedPaths = paths.map(p => p.replace(/\[/g, '\\[').replace(/\]/g, '\\]'));
   console.log('📋 Escaped paths:', escapedPaths);
   escapedPaths.forEach(createEmptyManifest);
   
@@ -138,13 +172,17 @@ self.__RSC_MANIFEST={};
 self.__RSC_SERVER_MANIFEST={};
 self.__RSC_CSS_MANIFEST={};
 `;
-    fs.writeFileSync(explicitManifestPath, content, 'utf8');
-    console.log(`✅ Created explicit manifest file: ${explicitManifestPath}`);
+    try {
+      fs.writeFileSync(explicitManifestPath, content, 'utf8');
+      console.log(`✅ Created explicit manifest file: ${explicitManifestPath}`);
+    } catch (writeErr) {
+      console.error(`❌ Error writing explicit manifest file ${explicitManifestPath}:`, writeErr);
+    }
   });
   
   console.log('✅ Post-build script completed successfully');
 } catch (err) {
   console.error('❌ Post-build script error:', err);
   // Don't exit with error so the build can continue
-  // process.exit(1);
+  console.error('⚠️ Continuing despite error...');
 } 

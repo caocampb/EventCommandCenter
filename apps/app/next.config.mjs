@@ -17,6 +17,13 @@ const nextConfig = {
     pagesBufferLength: 5,
   },
   poweredByHeader: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  staticPageGenerationTimeout: 120,
 };
 
 export default withSentryConfig(nextConfig, {

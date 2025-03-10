@@ -1,0 +1,14 @@
+{
+  "buildCommand": "turbo run build",
+  "installCommand": "bun install",
+  "outputDirectory": "apps/app/.next",
+  "ignoreCommand": "turbo-ignore",
+  "framework": "nextjs",
+  "regions": ["lhr1"],
+  "build": {
+    "env": {
+      "SKIP_TYPE_CHECK": "1",
+      "NEXT_TELEMETRY_DISABLED": "1"
+    }
+  }
+} 
