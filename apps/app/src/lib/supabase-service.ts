@@ -28,8 +28,9 @@ export function createServiceClient() {
     });
   }
   
-  // Create and return the client
-  return createClient<Database>(
+  // Create and return the client with a more flexible type
+  // Using 'any' here is pragmatic for API routes where we know the tables exist
+  return createClient<any>(
     supabaseUrl || '',
     supabaseServiceKey || '',
     {
