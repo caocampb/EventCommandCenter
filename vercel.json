@@ -3,8 +3,5 @@
   "outputDirectory": "apps/app/.next",
   "framework": "nextjs",
   "cleanUrls": true,
-  "regions": ["iad1"],
-  "crons": {
-    "cleanup": "0 0 * * *"
-  }
+  "regions": ["iad1"]
 }
