@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd apps/app && bun run build",
+  "buildCommand": "turbo run build --filter=@v1/app",
   "installCommand": "bun install",
   "outputDirectory": "apps/app/.next",
   "framework": "nextjs",
