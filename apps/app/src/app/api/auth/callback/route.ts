@@ -2,9 +2,6 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@v1/supabase/server';
 
-// Ensure this route is always handled at runtime, not during build
-export const dynamic = 'force-dynamic';
-
 // Known cookie names used by Supabase - these are the ones seen in the actual logs
 const POSSIBLE_PKCE_COOKIE_NAMES = [
   'sb-auth-token-code-verifier',

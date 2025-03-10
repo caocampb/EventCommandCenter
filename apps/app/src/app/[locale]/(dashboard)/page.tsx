@@ -7,9 +7,6 @@ export const metadata = {
   title: "Home",
 };
 
-// Make this page fully dynamic to prevent build-time errors
-export const dynamic = 'force-dynamic';
-
 export default async function Page() {
   const { data } = await getUser();
   const t = await getI18n();

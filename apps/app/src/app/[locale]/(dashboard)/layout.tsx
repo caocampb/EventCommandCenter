@@ -7,7 +7,6 @@ import { ThemeToggle } from '@/components/theme/theme-toggle';
 import '@/styles/radix-fix.css'; // Fix for Radix UI dropdown z-index issues
 
 // Ensure proper Next.js build handling
-export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 

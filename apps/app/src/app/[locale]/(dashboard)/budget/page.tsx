@@ -112,9 +112,7 @@ export default function BudgetPage() {
     if (budget === 0 && spent > 0) {
       return (
         <div className="flex justify-end">
-          <span 
-            className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-over-budget-bg text-theme-status-over-budget-text border border-theme-status-over-budget-text/20"
-          >
+          <span className="budget-pill budget-pill-over-budget">
             Over Budget
           </span>
         </div>
@@ -136,12 +134,12 @@ export default function BudgetPage() {
     return (
       <div className="flex justify-end">
         <span 
-          className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
+          className={`budget-pill ${
             status === 'on-track' 
-              ? 'bg-theme-status-under-budget-bg text-theme-status-under-budget-text border border-theme-status-under-budget-text/20' 
+              ? 'budget-pill-on-track' 
               : status === 'at-risk'
-                ? 'bg-theme-status-near-limit-bg text-theme-status-near-limit-text border border-theme-status-near-limit-text/20'
-                : 'bg-theme-status-over-budget-bg text-theme-status-over-budget-text border border-theme-status-over-budget-text/20'
+                ? 'budget-pill-at-risk'
+                : 'budget-pill-over-budget'
           }`}
         >
           {status === 'on-track' ? 'On Track' : status === 'at-risk' ? 'At Risk' : 'Over Budget'}
@@ -190,7 +188,7 @@ export default function BudgetPage() {
   return (
     <div className="w-full px-6 py-6" style={rootStyle}>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-semibold tracking-tight">Budget</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-theme-text-primary">Budget</h1>
         <div className="flex gap-3">
           <Link
             href="/en/events"
@@ -260,7 +258,7 @@ export default function BudgetPage() {
             {budgetData.totalRemaining < 0 || (budgetData.totalBudget === 0 && budgetData.totalSpent > 0) ? (
               <div className="flex justify-between items-center">
                 <span className="font-mono">{`-${formatCurrency(Math.abs(budgetData.totalRemaining))}`}</span>
-                <span className="px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-error-default/20 text-error-default border border-error-default/40">
+                <span className="budget-pill budget-pill-over-budget">
                   Over Budget
                 </span>
               </div>
@@ -268,7 +266,7 @@ export default function BudgetPage() {
               <div>
                 <span className="font-mono">{formatCurrency(budgetData.totalRemaining)}</span>
                 {budgetData.totalBudget > 0 && (budgetData.totalSpent / budgetData.totalBudget) >= 0.8 && (budgetData.totalSpent / budgetData.totalBudget) < 1 && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-warning-default/20 text-warning-default border border-warning-default/40">
+                  <span className="ml-2 budget-pill budget-pill-at-risk">
                     At Risk
                   </span>
                 )}
@@ -299,7 +297,7 @@ export default function BudgetPage() {
               {budgetData.eventBudgets.map((event) => (
                 <tr 
                   key={event.id} 
-                  className="border-b border-theme-border-subtle hover:bg-black/20 cursor-pointer"
+                  className="interactive-row border-b border-theme-border-subtle hover:bg-theme-hover-row hover:border-theme-border-strong transition-all duration-200 cursor-pointer group relative"
                   onClick={() => navigateToEventBudget(event.id)}
                 >
                   <td className="px-4 py-3">
@@ -351,14 +349,15 @@ export default function BudgetPage() {
               </div>
               <div className="h-2 rounded-full overflow-hidden bg-theme-border-subtle">
                 <div 
-                  className="h-full rounded-full"
-                  style={{ 
-                    width: `${Math.min(100, (category.spent / category.budget) * 100)}%`,
-                    backgroundColor: category.spent > category.budget 
-                      ? 'var(--status-error-text)'
+                  className={`h-full rounded-full ${
+                    category.spent > category.budget 
+                      ? 'progress-bar-over-budget'
                       : category.spent > category.budget * 0.8 
-                        ? 'var(--status-warning-text)'
-                        : 'var(--status-success-text)'
+                        ? 'progress-bar-at-risk'
+                        : 'progress-bar-on-track'
+                  }`}
+                  style={{ 
+                    width: `${Math.min(100, (category.spent / category.budget) * 100)}%`
                   }}
                 ></div>
               </div>
@@ -390,7 +389,7 @@ export default function BudgetPage() {
               {budgetData.vendorTotals.map((vendor) => (
                 <tr 
                   key={vendor.id} 
-                  className="border-b border-theme-border-subtle hover:bg-black/20 cursor-pointer"
+                  className="interactive-row border-b border-theme-border-subtle hover:bg-theme-hover-row hover:border-theme-border-strong transition-all duration-200 cursor-pointer group relative"
                   onClick={() => router.push(`/en/vendors/${vendor.id}`)}
                 >
                   <td className="px-4 py-3">
@@ -425,7 +424,7 @@ export default function BudgetPage() {
                                 <span>{event.eventName}</span>
                                 <span 
                                   className="block w-2 h-2 rounded-full flex-shrink-0" 
-                                  style={{ backgroundColor: 'var(--status-error-text)' }}
+                                  style={{ backgroundColor: 'var(--status-over-budget-text)' }}
                                 ></span>
                               </Link>
                             </div>
@@ -447,10 +446,10 @@ export default function BudgetPage() {
                         
                         // Get status color (dot indicator)
                         const statusColor = status === 'over-budget'
-                          ? 'var(--status-error-text)'
+                          ? 'var(--status-over-budget-text)'
                           : status === 'at-risk'
-                            ? 'var(--status-warning-text)' 
-                            : 'var(--status-success-text)';
+                            ? 'var(--status-near-limit-text)' 
+                            : 'var(--status-under-budget-text)';
                         
                         return (
                           <div 

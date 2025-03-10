@@ -15,7 +15,7 @@ export function ClickableTableRow({
   return (
     <tr
       onClick={() => router.push(href)}
-      className="hover:bg-[#181818] transition-colors duration-120 text-[14px] cursor-pointer"
+      className="hover:bg-theme-hover-row transition-colors duration-150 text-[14px] cursor-pointer"
     >
       {children}
     </tr>

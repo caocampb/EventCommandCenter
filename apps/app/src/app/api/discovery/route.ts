@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
 
-// Ensure this route is always handled at runtime, not during build
-export const dynamic = 'force-dynamic';
-
 // Define types for Google Places results
 interface GooglePlace {
   place_id: string;

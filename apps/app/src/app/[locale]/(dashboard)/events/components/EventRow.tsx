@@ -62,7 +62,7 @@ export function EventRow({ event, locale }: EventRowProps) {
   return (
     <tr 
       onClick={handleRowClick}
-      className="border-t border-theme-border-subtle hover:bg-theme-bg-hover transition-colors duration-50 cursor-pointer group relative"
+      className="interactive-row border-b border-theme-border-subtle hover:bg-theme-hover-row hover:border-theme-border-strong focus:bg-theme-hover-row transition-all duration-200 cursor-pointer group relative"
       tabIndex={0}
       role="link"
       aria-label={`View details for ${event.name}`}
@@ -74,7 +74,7 @@ export function EventRow({ event, locale }: EventRowProps) {
       }}
     >
       <td className="px-4 py-3">
-        <div className="font-medium text-theme-text-primary group-hover:text-theme-text-primary transition-colors">{event.name}</div>
+        <div className="font-medium text-theme-text-primary transition-colors">{event.name}</div>
         {event.description && (
           <div className="text-sm text-theme-text-secondary">
             {event.description}
@@ -83,7 +83,7 @@ export function EventRow({ event, locale }: EventRowProps) {
       </td>
       <td className="px-4 py-3 text-theme-text-secondary">
         {event.date}
-        {/* Refinement 1: Date-based visual indicator */}
+        {/* Date-based visual indicator */}
         {showDaysIndicator && (
           <span 
             className={`ml-2 text-[10px] py-0.5 px-1.5 rounded-sm inline-flex items-center
@@ -96,7 +96,7 @@ export function EventRow({ event, locale }: EventRowProps) {
         )}
       </td>
       <td className="px-4 py-3">
-        {/* Refinement 3: Capacity indicators */}
+        {/* Capacity indicators */}
         <div className="flex flex-col">
           <div className="text-theme-text-secondary">{event.location}</div>
           {event.attendeeCount && event.attendeeCount > 0 && (
@@ -114,11 +114,11 @@ export function EventRow({ event, locale }: EventRowProps) {
         <StatusPill status={event.status} />
       </td>
       
-      {/* Refinement 2: Context-aware quick actions */}
+      {/* Context-aware quick actions */}
       <td className="opacity-0 group-hover:opacity-100 pr-2 transition-opacity duration-50">
         <div className="flex space-x-1">
           <button 
-            className="p-1 rounded hover:bg-theme-bg-hover transition-colors duration-50"
+            className="p-1 rounded hover:bg-theme-hover-button transition-colors duration-150"
             onClick={handleTimelineClick}
             aria-label="Go to timeline"
             title="Timeline"
@@ -131,7 +131,7 @@ export function EventRow({ event, locale }: EventRowProps) {
             </svg>
           </button>
           <button 
-            className="p-1 rounded hover:bg-theme-bg-hover transition-colors duration-50"
+            className="p-1 rounded hover:bg-theme-hover-button transition-colors duration-150"
             onClick={handleVendorClick}
             aria-label="Manage vendors"
             title="Vendors"

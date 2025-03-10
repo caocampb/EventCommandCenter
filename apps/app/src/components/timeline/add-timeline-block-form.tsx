@@ -223,14 +223,14 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
         
         {/* Title field */}
         <div className="space-y-2">
-          <label htmlFor="title" className="text-[13px] font-medium text-gray-400">
+          <label htmlFor="title" className="text-[13px] font-medium text-theme-text-secondary">
             Title
           </label>
           <input
             id="title"
             type="text"
             {...form.register('title')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px]"
             placeholder="Enter block title"
             autoFocus
           />
@@ -242,230 +242,180 @@ export function AddTimelineBlockForm({ eventId }: AddTimelineBlockFormProps) {
         {/* Time fields with precision toggle */}
         <div>
           <div className="flex justify-between items-center mb-2">
-            <label className="text-[13px] font-medium text-gray-400">Time</label>
+            <label className="text-[13px] font-medium text-theme-text-secondary">Time</label>
             
             {/* Linear-style precision toggle with improved disclosure */}
             <div className="relative group">
               <button
                 type="button"
                 onClick={() => setPrecision(precision === '30min' ? '15min' : '30min')}
-                className="text-[12px] flex items-center gap-1.5 px-2 py-1 rounded transition-colors duration-120 border border-transparent bg-[#141414] hover:bg-[#1E1E1E] hover:border-[#333333] text-gray-400 hover:text-white"
-                aria-label={`Switch to ${precision === '30min' ? '15-minute' : '30-minute'} blocks`}
+                className="inline-flex items-center text-[12px] text-theme-text-secondary bg-theme-bg-input rounded-md px-2 py-1 border border-theme-border-subtle hover:border-theme-border-strong transition-colors duration-120"
               >
-                {/* Clock icon */}
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-70">
-                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-                  <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-                
-                <span className={precision === '15min' ? 'text-[#5E6AD2]' : ''}>
-                  {precision === '30min' ? '30-min' : '15-min'}
-                </span>
-                
-                {/* Subtle toggle indicator */}
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="opacity-60">
-                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <span>{precision === '15min' ? '15-min' : '30-min'}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-1 opacity-70">
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
               
-              {/* Tooltip on hover - Linear style */}
-              <div className="absolute right-0 top-full mt-1 w-48 p-2 bg-[#1E1E1E] border border-[#333333] rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 text-[11px] leading-tight text-gray-300 z-10">
-                Toggle between 15-minute and 30-minute time blocks for more precise scheduling
+              {/* Tooltip */}
+              <div className="absolute right-0 mt-1 z-10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-150 w-48 p-2 bg-theme-bg-card border border-theme-border-subtle rounded-md shadow-lg text-[12px] text-theme-text-secondary">
+                {precision === '15min' 
+                  ? 'Using 15-minute intervals for more precise scheduling' 
+                  : 'Using 30-minute intervals (standard)'}
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label htmlFor="startTime" className="text-[13px] font-medium text-gray-400">
+          {/* Time interval fields */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Start Time */}
+            <div className="w-full">
+              <label htmlFor="startTime" className="text-[13px] text-theme-text-tertiary mb-1 block">
                 Start Time
               </label>
-              <input
-                id="startTime"
-                type="datetime-local"
-                {...form.register('startTime')}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
-              />
+              <div className="relative">
+                <input
+                  id="startTime"
+                  type="datetime-local"
+                  {...form.register('startTime')}
+                  className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary text-[14px] placeholder-theme-text-tertiary transition-colors duration-120"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-theme-text-tertiary pointer-events-none">
+                  <span className="opacity-60">{precision === '15min' ? '(15m)' : '(30m)'}</span>
+                </div>
+              </div>
               {form.formState.errors.startTime && (
                 <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.startTime.message}</p>
               )}
             </div>
             
-            <div className="space-y-2">
-              <label htmlFor="endTime" className="text-[13px] font-medium text-gray-400">
+            {/* End Time */}
+            <div className="w-full">
+              <label htmlFor="endTime" className="text-[13px] text-theme-text-tertiary mb-1 block">
                 End Time
               </label>
-              <input
-                id="endTime"
-                type="datetime-local"
-                {...form.register('endTime')}
-                className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] transition-colors duration-120 text-[14px] font-mono"
-              />
+              <div className="relative">
+                <input
+                  id="endTime"
+                  type="datetime-local"
+                  {...form.register('endTime')}
+                  className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary text-[14px] placeholder-theme-text-tertiary transition-colors duration-120"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[12px] text-theme-text-tertiary pointer-events-none">
+                  <span className="opacity-60">{precision === '15min' ? '(15m)' : '(30m)'}</span>
+                </div>
+              </div>
               {form.formState.errors.endTime && (
                 <p className="text-red-500 text-[13px] mt-1.5">{form.formState.errors.endTime.message}</p>
               )}
             </div>
           </div>
           
-          <div className="mt-1 flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-[#282828] flex items-center justify-center">
-              <div className={`w-1.5 h-1.5 rounded-full ${precision === '15min' ? 'bg-[#5E6AD2]' : 'bg-gray-500'}`}></div>
-            </div>
-            <span className="text-xs text-gray-500">
-              {precision === '15min' 
-                ? 'Times align to 15-minute intervals (XX:00, XX:15, XX:30, XX:45)'
-                : 'Times align to 30-minute intervals (XX:00, XX:30)'}
-            </span>
+          {/* Time interval disclosure */}
+          <div className="mt-2 flex items-center gap-1.5 text-[12px] text-theme-text-tertiary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>Times align to {precision === '15min' ? '15-minute' : '30-minute'} intervals (XX:00, XX:{precision === '15min' ? '15, XX:30, XX:45' : '30'})</span>
           </div>
         </div>
         
         {/* Location field */}
         <div className="space-y-2">
-          <label htmlFor="location" className="text-[13px] font-medium text-gray-400">
-            Location <span className="text-gray-600">(Optional)</span>
+          <label htmlFor="location" className="text-[13px] font-medium text-theme-text-secondary flex items-center gap-1.5">
+            Location <span className="font-normal text-theme-text-tertiary">(Optional)</span>
           </label>
           <input
             id="location"
             type="text"
             {...form.register('location')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px]"
             placeholder="Enter specific location (if different from event location)"
           />
         </div>
         
         {/* Personnel field */}
         <div className="space-y-2">
-          <label htmlFor="personnel" className="text-[13px] font-medium text-gray-400">
-            Personnel <span className="text-gray-600">(Optional)</span>
+          <label htmlFor="personnel" className="text-[13px] font-medium text-theme-text-secondary flex items-center gap-1.5">
+            Personnel <span className="font-normal text-theme-text-tertiary">(Optional)</span>
           </label>
           <input
             id="personnel"
             type="text"
             {...form.register('personnel')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px]"
             placeholder="Enter personnel responsible for this block"
           />
         </div>
         
         {/* Equipment field */}
         <div className="space-y-2">
-          <label htmlFor="equipment" className="text-[13px] font-medium text-gray-400">
-            Equipment <span className="text-gray-600">(Optional)</span>
+          <label htmlFor="equipment" className="text-[13px] font-medium text-theme-text-secondary flex items-center gap-1.5">
+            Equipment <span className="font-normal text-theme-text-tertiary">(Optional)</span>
           </label>
           <input
             id="equipment"
             type="text"
             {...form.register('equipment')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 text-[14px]"
+            className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px]"
             placeholder="Enter equipment needed for this block"
           />
         </div>
         
-        {/* Status field */}
+        {/* Status selection */}
         <div className="space-y-2">
-          <label className="text-[13px] font-medium text-gray-400">
+          <span className="text-[13px] font-medium text-theme-text-secondary block">
             Status
-          </label>
+          </span>
           <div className="flex flex-wrap gap-2">
-            {(['pending', 'in-progress', 'complete', 'cancelled'] as const).map((status) => (
-              <button
-                key={status}
-                type="button"
-                onClick={() => form.setValue('status', status)}
-                className={`px-3 py-1.5 text-[13px] rounded-md transition-colors duration-150`}
-                style={{
-                  backgroundColor: form.watch('status') === status 
-                    ? (status === 'complete' 
-                         ? "var(--status-confirmed-bg)" 
-                          : status === 'cancelled'
-                           ? "var(--status-cancelled-bg)"
-                            : status === 'in-progress'
-                             ? "var(--status-in-progress-bg)"
-                             : "var(--status-pending-bg)")
-                    : 'transparent',
-                  color: form.watch('status') === status 
-                    ? (status === 'complete' 
-                         ? "var(--status-confirmed-text)" 
-                          : status === 'cancelled'
-                           ? "var(--status-cancelled-text)"
-                            : status === 'in-progress'
-                             ? "var(--status-in-progress-text)"
-                             : "var(--status-pending-text)")
-                     : "var(--text-tertiary)",
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                  borderColor: form.watch('status') === status 
-                    ? (status === 'complete' 
-                         ? "var(--status-confirmed-text)" 
-                          : status === 'cancelled'
-                           ? "var(--status-cancelled-text)"
-                            : status === 'in-progress'
-                             ? "var(--status-in-progress-text)"
-                             : "var(--status-pending-text)")
-                     : "var(--border-subtle)"
-                }}
-              >
-                {status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
-              </button>
-            ))}
-          </div>
-          <div className="mt-2 text-[12px] text-gray-500 flex items-center">
-            <svg className="w-3.5 h-3.5 mr-1.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4M12 8h.01" />
-            </svg>
-            {form.watch('status') === 'pending' 
-              ? 'Block is scheduled but not started'
-              : form.watch('status') === 'in-progress' 
-                ? 'Block is currently in progress'
-                : form.watch('status') === 'complete'
-                  ? 'Block has been completed'
-                  : 'Block has been cancelled'}
+            {(['pending', 'in-progress', 'complete', 'cancelled'] as const).map((statusOption) => {
+              const styles = getStatusStyles(statusOption);
+              return (
+                <button
+                  key={statusOption}
+                  type="button"
+                  onClick={() => form.setValue('status', statusOption)}
+                  className={`px-3 py-1.5 rounded-md text-sm transition-colors duration-150 ${
+                    form.watch('status') === statusOption ? styles.active : styles.inactive
+                  }`}
+                >
+                  {statusOption
+                    .split('-')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')}
+                </button>
+              );
+            })}
           </div>
         </div>
         
-        {/* Description field */}
+        {/* Description/Notes field */}
         <div className="space-y-2">
-          <label htmlFor="description" className="text-[13px] font-medium text-gray-400">
-            Description <span className="text-gray-600">(Optional)</span>
+          <label htmlFor="description" className="text-[13px] font-medium text-theme-text-secondary">
+            Description
           </label>
           <textarea
             id="description"
             {...form.register('description')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
-            placeholder="Enter additional details, instructions, or notes"
-          />
-        </div>
-        
-        {/* Notes field */}
-        <div className="space-y-2">
-          <label htmlFor="notes" className="text-[13px] font-medium text-gray-400">
-            Notes <span className="text-gray-600">(Optional)</span>
-          </label>
-          <textarea
-            id="notes"
-            {...form.register('notes')}
-            className="w-full px-3 py-2 bg-[#141414] border border-[#1F1F1F] rounded-md focus:outline-none focus:ring-1 focus:ring-[#5E6AD2] focus:border-[#5E6AD2] placeholder:text-gray-600 transition-colors duration-120 min-h-[100px] resize-y text-[14px] leading-relaxed"
-            placeholder="Enter any additional notes for this block"
-          />
+            rows={4}
+            className="w-full px-3 py-2 bg-theme-bg-input border border-theme-border-subtle rounded-md focus:outline-none focus:ring-1 focus:ring-theme-primary focus:border-theme-primary placeholder:text-theme-text-tertiary transition-colors duration-120 text-[14px]"
+            placeholder="Enter detailed instructions or notes"
+          ></textarea>
         </div>
         
         {/* Submit button */}
-        <div className="flex justify-end border-t border-[#1F1F1F] pt-6 mt-2">
+        <div className="pt-2 flex justify-end">
           <button
             type="submit"
             disabled={isLoading}
-            className="px-5 py-2.5 bg-[#5E6AD2] hover:bg-[#6872E5] text-white rounded-md transition-colors duration-120 disabled:opacity-50 disabled:cursor-not-allowed text-[14px] font-medium border border-transparent hover:border-[#8D95F2] shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:shadow-[0_3px_12px_rgba(94,106,210,0.2)]"
+            className={`px-4 py-2 rounded-md text-white font-medium transition-colors duration-150 ${
+              isLoading 
+                ? 'bg-theme-primary/70 cursor-not-allowed' 
+                : 'bg-theme-primary hover:bg-theme-primary-hover'
+            }`}
           >
-            {isLoading ? (
-              <span className="flex items-center gap-2">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Creating...
-              </span>
-            ) : 'Add Timeline Block'}
+            {isLoading ? 'Creating...' : 'Create Block'}
           </button>
         </div>
       </form>

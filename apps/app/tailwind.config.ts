@@ -13,6 +13,12 @@ export default {
         "theme-bg-hover": "var(--bg-hover)",
         "theme-bg-input": "var(--bg-input)",
         
+        // Theme-based interactive states
+        "theme-hover-row": "var(--hover-row)",
+        "theme-hover-card": "var(--hover-card)",
+        "theme-hover-button": "var(--hover-button)",
+        "theme-active-item": "var(--active-item)",
+        
         // Theme-based borders
         "theme-border-subtle": "var(--border-subtle)",
         "theme-border-strong": "var(--border-strong)",
@@ -46,6 +52,7 @@ export default {
         "theme-primary": "var(--primary-default)",
         "theme-primary-hover": "var(--primary-hover)",
         "theme-primary-active": "var(--primary-active)",
+        "theme-primary-light": "var(--primary-light)",
       },
     },
   },

@@ -316,7 +316,7 @@ function VendorsPage() {
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-theme-bg-page">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-theme-text-primary">Vendors</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-theme-text-primary">Vendors</h1>
         <div className="flex space-x-3">
           <Link 
             href="/en/vendors/discover"
@@ -331,7 +331,7 @@ function VendorsPage() {
           </Link>
           <Link 
             href="/en/vendors/add"
-            className="px-4 py-2 bg-theme-primary text-white rounded-md text-sm font-medium hover:bg-theme-primary-hover transition-colors duration-200 border border-transparent"
+            className="px-4 py-2 bg-theme-bg-card text-theme-text-primary rounded-md text-sm font-medium hover:bg-theme-bg-hover transition-colors duration-200 border border-theme-border-subtle hover:border-theme-border-strong"
           >
             Add Vendor
           </Link>
@@ -401,7 +401,7 @@ function VendorsPage() {
                     className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
                       categoryFilter === key
                         ? 'bg-theme-primary-light text-theme-primary'
-                        : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                        : 'text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card'
                     }`}
                     onClick={() => setCategoryFilter(prev => prev === key ? null : key)}
                   >
@@ -413,7 +413,7 @@ function VendorsPage() {
                   <>
                     <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
                     <DropdownMenu.Item
-                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover"
+                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card"
                       onClick={() => setCategoryFilter(null)}
                     >
                       Clear filter
@@ -457,7 +457,7 @@ function VendorsPage() {
                     className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
                       capacityFilter === key
                         ? 'bg-theme-primary-light text-theme-primary'
-                        : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                        : 'text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card'
                     }`}
                     onClick={() => setCapacityFilter(prev => prev === key ? null : key)}
                   >
@@ -469,7 +469,7 @@ function VendorsPage() {
                   <>
                     <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
                     <DropdownMenu.Item
-                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover"
+                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card"
                       onClick={() => setCapacityFilter(null)}
                     >
                       Clear filter
@@ -513,7 +513,7 @@ function VendorsPage() {
                     className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
                       priceFilter === key
                         ? 'bg-theme-primary-light text-theme-primary'
-                        : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                        : 'text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card'
                     }`}
                     onClick={() => setPriceFilter(prev => prev === key ? null : key)}
                   >
@@ -525,7 +525,7 @@ function VendorsPage() {
                   <>
                     <DropdownMenu.Separator className="mx-1 my-1 h-px bg-theme-border-subtle" />
                     <DropdownMenu.Item
-                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover"
+                      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card"
                       onClick={() => setPriceFilter(null)}
                     >
                       Clear filter
@@ -569,7 +569,7 @@ function VendorsPage() {
                   className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
                     showFavorites
                       ? 'bg-theme-primary-light text-theme-primary'
-                      : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                      : 'text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card'
                   }`}
                   onClick={() => setShowFavorites(prev => !prev)}
                 >
@@ -580,7 +580,7 @@ function VendorsPage() {
                   className={`relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors ${
                     prioritizeFavorites
                       ? 'bg-theme-primary-light text-theme-primary'
-                      : 'text-theme-text-secondary hover:bg-theme-bg-hover focus:bg-theme-bg-hover'
+                      : 'text-theme-text-secondary hover:bg-theme-hover-card focus:bg-theme-hover-card'
                   }`}
                   onClick={() => setPrioritizeFavorites(prev => prev === 'true' ? null : 'true')}
                 >
@@ -650,7 +650,7 @@ function VendorsPage() {
                 <tr 
                   key={vendor.id}
                   onClick={() => router.push(`/${locale}/vendors/${vendor.id}`)}
-                  className="border-t border-theme-border-subtle hover:bg-theme-bg-hover transition-colors duration-150 cursor-pointer group relative"
+                  className="interactive-row border-t border-theme-border-subtle hover:bg-theme-hover-row hover:border-theme-border-strong transition-colors duration-150 cursor-pointer group relative"
                   tabIndex={0}
                   role="link"
                   aria-label={`View details for ${vendor.name}`}

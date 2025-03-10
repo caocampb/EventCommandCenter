@@ -13,6 +13,12 @@
   --bg-hover: #F5F5F8;
   --bg-input: #FFFFFF;
   
+  /* Interactive states */
+  --hover-row: rgba(71, 85, 235, 0.06);
+  --hover-card: rgba(0, 0, 0, 0.03);
+  --hover-button: rgba(0, 0, 0, 0.07);
+  --active-item: rgba(0, 0, 0, 0.08);
+  
   /* Borders */
   --border-subtle: #EBEBEF;
   --border-strong: #D8D8E0;
@@ -46,6 +52,7 @@
   --primary-default: #5E6AD2;
   --primary-hover: #4D59C3;
   --primary-active: #3D49B0;
+  --primary-light: rgba(94, 106, 210, 0.08);
   
   /* Budget status colors */
   --error-default: #E5484D;
@@ -61,6 +68,12 @@
   --bg-card: #141419;
   --bg-hover: #1A1A21;
   --bg-input: #0C0C10;
+  
+  /* Interactive states */
+  --hover-row: rgba(71, 85, 235, 0.08);
+  --hover-card: rgba(255, 255, 255, 0.02);
+  --hover-button: rgba(255, 255, 255, 0.04);
+  --active-item: rgba(255, 255, 255, 0.05);
   
   /* Borders */
   --border-subtle: #1F1F27;
@@ -95,9 +108,88 @@
   --primary-default: #5E6AD2;
   --primary-hover: #6872E5;
   --primary-active: #4F5ABF;
+  --primary-light: rgba(94, 106, 210, 0.12);
   
   /* Budget status colors */
   --error-default: #F2555A;
   --warning-default: #FF8B3E;
   --success-default: #3DD68C;
+} 
+
+/* ===== EXPLICIT COMPONENT STYLES ===== */
+/* These provide more specific styling for certain components
+   to ensure consistent behavior across the application */
+
+/* Table row hover styles */
+tr.interactive-row:hover {
+  background-color: var(--hover-row) !important;
+  border-color: var(--border-strong) !important;
+}
+
+/* Table row focus styles */
+tr.interactive-row:focus {
+  background-color: var(--hover-row) !important;
+  border-color: var(--border-strong) !important;
+  outline: none;
+}
+
+/* Sidebar navigation styles */
+.nav-item {
+  transition: all 150ms;
+}
+
+.nav-item:hover {
+  background-color: var(--hover-card);
+  color: var(--text-primary);
+}
+
+.nav-item.active {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border-left-color: var(--primary-default);
+}
+
+/* Budget status pill styles */
+.budget-pill {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border-width: 1px;
+}
+
+.budget-pill-over-budget {
+  background-color: rgba(217, 83, 83, 0.15);
+  color: var(--status-over-budget-text);
+  border-color: rgba(217, 83, 83, 0.3);
+}
+
+.budget-pill-at-risk {
+  background-color: rgba(229, 164, 59, 0.15);
+  color: var(--status-near-limit-text);
+  border-color: rgba(229, 164, 59, 0.3);
+}
+
+.budget-pill-on-track {
+  background-color: rgba(15, 157, 109, 0.15);
+  color: var(--status-under-budget-text);
+  border-color: rgba(15, 157, 109, 0.3);
+}
+
+/* Budget progress bar styles */
+.progress-bar-over-budget {
+  background-color: var(--status-over-budget-text);
+  opacity: 0.6;
+}
+
+.progress-bar-at-risk {
+  background-color: var(--status-near-limit-text);
+  opacity: 0.6;
+}
+
+.progress-bar-on-track {
+  background-color: var(--status-under-budget-text);
+  opacity: 0.6;
 } 

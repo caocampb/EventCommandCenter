@@ -310,15 +310,15 @@ export function BudgetItemsList({
                   </td>
                   <td className="px-4 py-3 text-center">
                     {(item.actualAmount || 0) > (item.plannedAmount || 0) ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-over-budget-bg text-theme-status-over-budget-text border border-theme-status-over-budget-text/20">
+                      <span className="budget-pill budget-pill-over-budget">
                         Over Budget
                       </span>
                     ) : (item.actualAmount || 0) > (item.plannedAmount || 0) * 0.8 ? (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-near-limit-bg text-theme-status-near-limit-text border border-theme-status-near-limit-text/20">
+                      <span className="budget-pill budget-pill-at-risk">
                         At Risk
                       </span>
                     ) : (
-                      <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-theme-status-under-budget-bg text-theme-status-under-budget-text border border-theme-status-under-budget-text/20">
+                      <span className="budget-pill budget-pill-on-track">
                         On Track
                       </span>
                     )}

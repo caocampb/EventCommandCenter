@@ -46,7 +46,7 @@ export default async function AddTimelineBlockPage({ params }: { params: { id: s
       <div className="mb-8">
         <Link 
           href={`/en/events/${event.id}/timeline`} 
-          className="inline-flex items-center text-sm text-gray-400 hover:text-white mb-4 transition-colors duration-120"
+          className="inline-flex items-center text-sm text-theme-text-secondary hover:text-theme-text-primary mb-4 transition-colors duration-120"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1.5">
             <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -54,13 +54,13 @@ export default async function AddTimelineBlockPage({ params }: { params: { id: s
           Back to timeline
         </Link>
         
-        <h1 className="text-xl font-semibold tracking-tight mb-2">Add Timeline Block</h1>
-        <p className="text-gray-400 text-[15px]">
+        <h1 className="text-xl font-semibold tracking-tight mb-2 text-theme-text-primary">Add Timeline Block</h1>
+        <p className="text-theme-text-secondary text-[15px]">
           Add a new timeline block to {event.name}
         </p>
       </div>
       
-      <div className="border-t border-[#1F1F1F] pt-8">
+      <div className="border-t border-theme-border-subtle pt-8">
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="flex-1">
             <AddTimelineBlockForm eventId={event.id} />
@@ -68,21 +68,21 @@ export default async function AddTimelineBlockPage({ params }: { params: { id: s
           
           {/* Tips sidebar */}
           <div className="w-full lg:w-72 space-y-5">
-            <div className="bg-[#141414] border border-[#1F1F1F] rounded-md p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-              <h3 className="text-[13px] font-medium uppercase tracking-wider text-gray-400 mb-3">
+            <div className="bg-theme-bg-card border border-theme-border-subtle rounded-md p-5 shadow-sm">
+              <h3 className="text-[13px] font-medium uppercase tracking-wider text-theme-text-secondary mb-3">
                 Quick Tips
               </h3>
-              <ul className="space-y-3 text-[13px] text-gray-400">
+              <ul className="space-y-3 text-[13px] text-theme-text-secondary">
                 <li className="flex gap-2.5 items-start">
-                  <span className="text-[#5E6AD2] text-xs mt-0.5">●</span>
+                  <span className="text-theme-primary text-xs mt-0.5">●</span>
                   <span>Timeline blocks must be aligned to 30-minute intervals</span>
                 </li>
                 <li className="flex gap-2.5 items-start">
-                  <span className="text-[#5E6AD2] text-xs mt-0.5">●</span>
+                  <span className="text-theme-primary text-xs mt-0.5">●</span>
                   <span>Add a specific location if different from the event location</span>
                 </li>
                 <li className="flex gap-2.5 items-start">
-                  <span className="text-[#5E6AD2] text-xs mt-0.5">●</span>
+                  <span className="text-theme-primary text-xs mt-0.5">●</span>
                   <span>Use the description field for detailed instructions</span>
                 </li>
               </ul>

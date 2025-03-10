@@ -20,10 +20,9 @@ function NavItem({
     <Link
       href={href}
       className={`
-        flex items-center px-3 py-2 text-sm rounded-md mb-0.5 transition-colors duration-120
-        ${active 
-          ? 'bg-bg-hover text-text-primary font-medium' 
-          : 'text-text-tertiary hover:text-text-primary hover:bg-bg-hover/60'}
+        nav-item flex items-center px-3 py-2 text-sm rounded-md mb-0.5
+        text-theme-text-secondary border-l-2 border-transparent
+        ${active ? 'active font-medium' : ''}
       `}
     >
       <span className="mr-3 opacity-80">{icon}</span>
