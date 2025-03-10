@@ -22,6 +22,8 @@ export async function GET(request: Request) {
   console.log('Auth callback received:');
   console.log('- Code present:', !!code);
   console.log('- State present:', !!state);
+  console.log('- Request URL:', request.url);
+  console.log('- Origin:', requestUrl.origin);
   
   // Log all cookies for debugging
   const cookieList = cookies().getAll();
@@ -30,6 +32,7 @@ export async function GET(request: Request) {
   
   try {
     if (!code) {
+      console.log('No code parameter found, redirecting to login with error');
       return NextResponse.redirect(`${requestUrl.origin}/en/login?error=missing-code`);
     }
 
@@ -37,15 +40,17 @@ export async function GET(request: Request) {
     const supabase = createClient();
     
     // Use direct exchangeCodeForSession approach to handle the callback
+    console.log('Exchanging code for session...');
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     
     if (error) {
-      console.error('Auth error:', error);
+      console.error('Auth error during code exchange:', error);
       
       if (error.code === 'flow_state_not_found') {
         console.log('Flow state not found. This typically happens when using a code twice or when the state is expired.');
         // Clear the existing cookies to provide a clean slate for the next attempt
         for (const cookie of cookieList) {
+          console.log(`Clearing cookie: ${cookie.name}`);
           cookies().delete(cookie.name);
         }
         return NextResponse.redirect(`${requestUrl.origin}/en/login?error=expired-session&message=${encodeURIComponent('Your authentication session expired. Please try again.')}`);
@@ -55,9 +60,21 @@ export async function GET(request: Request) {
     }
     
     console.log('Authentication successful:', !!data?.user);
+    console.log('User email:', data?.user?.email);
+    console.log('Session expires at:', data?.session?.expires_at);
     
-    // Redirect to the home page after successful authentication
-    return NextResponse.redirect(`${requestUrl.origin}/en`);
+    // Explicitly set a test cookie to see if cookies are working
+    cookies().set('auth_test', 'authenticated', { 
+      path: '/',
+      maxAge: 60 * 60, // 1 hour
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+    
+    // Redirect to the events page after successful authentication
+    const redirectUrl = `${requestUrl.origin}/en/events`;
+    console.log('Redirecting to:', redirectUrl);
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
     console.error('Unexpected error in auth callback:', error);
     return NextResponse.redirect(`${requestUrl.origin}/en/login?error=unexpected-error&message=${encodeURIComponent('An unexpected error occurred during login')}`);

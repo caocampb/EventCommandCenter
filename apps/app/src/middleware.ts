@@ -9,6 +9,8 @@ const I18nMiddleware = createI18nMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
+  console.log("Middleware processing:", request.nextUrl.pathname);
+  
   // Check if the pathname already has a valid locale
   const pathname = request.nextUrl.pathname;
   const pathnameHasLocale = /^\/(?:en|fr)(?:\/|$)/.test(pathname);
@@ -27,6 +29,7 @@ export async function middleware(request: NextRequest) {
     // Preserve query parameters and hash
     url.search = request.nextUrl.search;
     url.hash = request.nextUrl.hash;
+    console.log("Redirecting to add locale:", url.toString());
     return NextResponse.redirect(url);
   }
   
@@ -34,7 +37,9 @@ export async function middleware(request: NextRequest) {
   const i18nResult = I18nMiddleware(request);
   
   // Handle auth session
+  console.log("Checking auth session...");
   const { response, user } = await updateSession(request, i18nResult);
+  console.log("Auth check complete. User authenticated:", !!user);
 
   // Check for login paths - account for locale paths (both /login and /en/login should work)
   const isLoginPath = pathname === "/login" || 
@@ -45,16 +50,19 @@ export async function middleware(request: NextRequest) {
   // Don't redirect for API routes and auth callback
   if (pathname.startsWith('/api/auth/callback') || 
       pathname.startsWith('/api/')) {
+    console.log("Skipping auth redirects for API path:", pathname);
     return response;
   }
 
   // Redirect to events page if user is authenticated and trying to access login
   if (isLoginPath && user) {
+    console.log("User is authenticated and trying to access login. Redirecting to events.");
     return NextResponse.redirect(new URL("/en/events", request.url));
   }
 
   // Redirect to login if user is not authenticated and not accessing login
   if (!isLoginPath && !user) {
+    console.log("User is not authenticated and trying to access protected route. Redirecting to login.");
     return NextResponse.redirect(new URL("/en/login", request.url));
   }
 
