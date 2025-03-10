@@ -1,5 +1,11 @@
 {
-  "buildCommand": "cd $VERCEL_GIT_REPO_SLUG/apps/app && npm install && npm run build",
+  "buildCommand": "pwd && ls -la && find . -type d -maxdepth 2 | sort && echo 'Finding app directory...' && find . -name 'app' -type d | xargs -I{} sh -c 'echo \"Found: {}\"; ls -la {}' && cd apps/app || cd app || cd $(find . -path '*/app' -type d | head -1) && npm install && npm run build",
   "installCommand": null,
-  "outputDirectory": "apps/app/.next"
+  "outputDirectory": "apps/app/.next",
+  "builds": [
+    {
+      "src": "apps/app/next.config.mjs", 
+      "use": "@vercel/next"
+    }
+  ]
 } 
