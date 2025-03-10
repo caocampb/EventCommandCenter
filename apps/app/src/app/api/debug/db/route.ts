@@ -51,7 +51,7 @@ export async function GET() {
       for (const table of tables) {
         console.log(`Checking table: ${table}`);
         try {
-          const { data, error } = await serviceClient.from(table).select("count(*)").limit(1);
+          const { data, error } = await serviceClient.from(table).select("id").limit(1);
           
           if (error) {
             results.serviceClientTest.tables[table] = {
@@ -104,7 +104,7 @@ export async function GET() {
       for (const table of tables) {
         console.log(`Checking table with direct client: ${table}`);
         try {
-          const { data, error } = await directClient.from(table).select("count(*)").limit(1);
+          const { data, error } = await directClient.from(table).select("id").limit(1);
           
           if (error) {
             results.directClientTest.tables[table] = {

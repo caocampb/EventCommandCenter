@@ -79,7 +79,7 @@ export async function GET() {
       // Test with service client
       console.log("Testing with service client");
       const serviceClient = createServiceClient();
-      const { data, error } = await serviceClient.from("events").select("count(*)").limit(1);
+      const { data, error } = await serviceClient.from("events").select("id").limit(1);
       
       if (error) {
         throw error;
@@ -88,7 +88,7 @@ export async function GET() {
       // Test basic connectivity with direct client
       console.log("Testing with direct client");
       const directClient = createClient(supabaseUrl, supabaseKey);
-      const directResult = await directClient.from("events").select("count(*)").limit(1);
+      const directResult = await directClient.from("events").select("id").limit(1);
       
       debugInfo.tests.supabase = {
         status: "success",
