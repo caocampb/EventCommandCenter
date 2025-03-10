@@ -282,6 +282,7 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Set up security policy for the vendor documents bucket
 -- Only authenticated users can access
+DROP POLICY IF EXISTS "Authenticated users can access vendor documents" ON storage.objects;
 CREATE POLICY "Authenticated users can access vendor documents"
 ON storage.objects
 FOR ALL
