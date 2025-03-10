@@ -1,50 +1,47 @@
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createClient } from '@v1/supabase/server';
 
 // Ensure this route is always handled at runtime
 export const dynamic = 'force-dynamic';
 
-// Known cookie names used by Supabase - these are the ones seen in the actual logs
-const POSSIBLE_PKCE_COOKIE_NAMES = [
-  'sb-auth-token-code-verifier',
-  'sb-auth-code-verifier',
-  'sb-127-auth-token-code-verifier',
-  'sb-token-code-verifier',
-  'sb-pkce-verifier'
-];
-
 export async function GET(request: Request) {
   try {
+    // Get and log the full URL for debugging
+    const fullUrl = request.url;
+    console.log(`Auth callback URL: ${fullUrl}`);
+    
     const requestUrl = new URL(request.url);
     const code = requestUrl.searchParams.get('code');
     
-    // Required parameter validation
+    // Handle missing code
     if (!code) {
+      console.log('Auth callback: Missing code parameter');
       return NextResponse.redirect(`${requestUrl.origin}/en/login?error=missing-code`);
     }
-
-    // Create Supabase client
+    
+    console.log('Auth callback: Creating Supabase client');
     const supabase = createClient();
     
-    // Handle the auth callback
+    // Basic session exchange with minimal error handling
     try {
+      console.log('Auth callback: Exchanging code for session');
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       
       if (error) {
-        console.error('Auth error:', error);
-        return NextResponse.redirect(`${requestUrl.origin}/en/login?error=auth-error&message=${encodeURIComponent(error.message)}`);
+        console.error('Auth callback: Exchange error', error);
+        return NextResponse.redirect(`${requestUrl.origin}/en/login?error=${error.message}`);
       }
       
-      // On successful authentication, redirect to the events page
-      return NextResponse.redirect(`${requestUrl.origin}/en/events`);
-    } catch (authError) {
-      console.error('Auth exchange error:', authError);
-      return NextResponse.redirect(`${requestUrl.origin}/en/login?error=exchange-error`);
+      console.log('Auth callback: Exchange successful');
+      // Simple redirect to root on success
+      return NextResponse.redirect(`${requestUrl.origin}/en`);
+    } catch (exchangeError) {
+      console.error('Auth callback: Exception during exchange', exchangeError);
+      return NextResponse.redirect(`${requestUrl.origin}/en/login?error=exchange-exception`);
     }
-  } catch (error) {
-    console.error('Callback error:', error);
-    // Ensure we always return a response even in case of errors
-    return NextResponse.redirect(`/en/login?error=callback-error`);
+  } catch (globalError) {
+    // Global error handler
+    console.error('Auth callback: Global exception', globalError);
+    return new Response('Error during authentication', { status: 500 });
   }
 }

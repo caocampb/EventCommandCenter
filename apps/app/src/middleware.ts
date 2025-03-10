@@ -1,3 +1,14 @@
+// Temporarily disable custom middleware to debug 500 errors
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+// This is a minimal middleware that does nothing but pass the request through
+export function middleware(request: NextRequest) {
+  return NextResponse.next();
+}
+
+// Original middleware saved for reference
+/*
 import { updateSession } from "@v1/supabase/middleware";
 import { createI18nMiddleware } from "next-international/middleware";
 import { type NextRequest, NextResponse } from "next/server";
@@ -74,6 +85,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 }
+*/
 
 export const config = {
   matcher: [
